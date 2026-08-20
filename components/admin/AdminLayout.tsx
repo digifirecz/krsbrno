@@ -5,7 +5,7 @@ import { usePathname } from 'next/navigation';
 import Link from 'next/link';
 import { auth } from '@/lib/firebase';
 import { signOut } from 'firebase/auth';
-import { LogOut, LayoutDashboard, FileText, Users, Settings, LayoutTemplate, Newspaper, Layers } from 'lucide-react';
+import { LogOut, LayoutDashboard, FileText, Users, Settings, LayoutTemplate, Newspaper, Layers, ChevronDown } from 'lucide-react';
 import { getPathForTab } from '@/lib/routes';
 import { getRole, type Role } from '@/lib/roles';
 
@@ -19,10 +19,18 @@ const NAV_ITEMS = [
   { href: '/admin/clanky', label: 'Články', icon: Newspaper, exact: false },
 ];
 
+const PAGES_GROUP_ITEMS = [
+  { href: '/admin/pages', label: 'Stránky', icon: FileText },
+  { href: '/admin/sekce', label: 'Sekce', icon: Layers },
+  { href: '/admin/navigace', label: 'Navigace', icon: LayoutTemplate },
+];
+
 export default function AdminLayout({ children, setActiveTab }: AdminLayoutProps) {
   const pathname = usePathname();
   const [userEmail, setUserEmail] = useState<string | null>(null);
   const [role, setRole] = useState<Role | null>(null);
+  const pagesGroupActive = PAGES_GROUP_ITEMS.some((item) => pathname === item.href || pathname.startsWith(`${item.href}/`));
+  const [pagesGroupOpen, setPagesGroupOpen] = useState(true);
 
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged((user) => {
@@ -113,41 +121,46 @@ export default function AdminLayout({ children, setActiveTab }: AdminLayoutProps
               </Link>
             )}
 
-            <Link
-              href="/admin/sekce"
-              className={`flex items-center space-x-3 w-full px-4 py-3 rounded-xl text-sm font-semibold transition-colors cursor-pointer ${
-                isActive('/admin/sekce', false)
-                  ? 'bg-red-50 text-[#c93838]'
-                  : 'text-neutral-600 font-medium hover:bg-neutral-50 hover:text-neutral-900'
-              }`}
-            >
-              <Layers className="w-5 h-5" />
-              <span>Sekce</span>
-            </Link>
+            <div>
+              <button
+                type="button"
+                onClick={() => setPagesGroupOpen((v) => !v)}
+                className={`flex items-center justify-between w-full px-4 py-3 rounded-xl text-sm font-semibold transition-colors cursor-pointer ${
+                  pagesGroupActive
+                    ? 'text-[#c93838]'
+                    : 'text-neutral-600 font-medium hover:bg-neutral-50 hover:text-neutral-900'
+                }`}
+              >
+                <span className="flex items-center space-x-3">
+                  <FileText className="w-5 h-5" />
+                  <span>Správa stránek</span>
+                </span>
+                <ChevronDown className={`w-4 h-4 transition-transform ${pagesGroupOpen ? '' : '-rotate-90'}`} />
+              </button>
 
-            <Link
-              href="/admin/pages"
-              className={`flex items-center space-x-3 w-full px-4 py-3 rounded-xl text-sm font-semibold transition-colors cursor-pointer ${
-                isActive('/admin/pages', false)
-                  ? 'bg-red-50 text-[#c93838]'
-                  : 'text-neutral-600 font-medium hover:bg-neutral-50 hover:text-neutral-900'
-              }`}
-            >
-              <FileText className="w-5 h-5" />
-              <span>Správa stránek</span>
-            </Link>
-
-            <Link
-              href="/admin/navigace"
-              className={`flex items-center space-x-3 w-full px-4 py-3 rounded-xl text-sm font-semibold transition-colors cursor-pointer ${
-                isActive('/admin/navigace', false)
-                  ? 'bg-red-50 text-[#c93838]'
-                  : 'text-neutral-600 font-medium hover:bg-neutral-50 hover:text-neutral-900'
-              }`}
-            >
-              <LayoutTemplate className="w-5 h-5" />
-              <span>Navigace</span>
-            </Link>
+              {pagesGroupOpen && (
+                <div className="pl-4 space-y-1 pt-1">
+                  {PAGES_GROUP_ITEMS.map((item) => {
+                    const active = isActive(item.href, false);
+                    const Icon = item.icon;
+                    return (
+                      <Link
+                        key={item.href}
+                        href={item.href}
+                        className={`flex items-center space-x-3 w-full px-4 py-2.5 rounded-xl text-sm transition-colors cursor-pointer ${
+                          active
+                            ? 'bg-red-50 text-[#c93838] font-semibold'
+                            : 'text-neutral-500 font-medium hover:bg-neutral-50 hover:text-neutral-900'
+                        }`}
+                      >
+                        <Icon className="w-4 h-4" />
+                        <span>{item.label}</span>
+                      </Link>
+                    );
+                  })}
+                </div>
+              )}
+            </div>
 
             <Link
               href="/admin/nastaveni"

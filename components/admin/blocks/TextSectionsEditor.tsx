@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import IconPicker from '@/components/admin/blocks/IconPicker';
 import PhotoUpload from '@/components/admin/blocks/PhotoUpload';
+import RichTextEditor from '@/components/admin/blocks/RichTextEditor';
 import ConfirmModal from '@/components/admin/blocks/ConfirmModal';
 import type { TextSectionsData, TextSection } from '@/lib/blocks/types';
 import { Plus, Trash2 } from 'lucide-react';
@@ -34,16 +35,30 @@ export default function TextSectionsEditor({ data, onChange, pageId }: TextSecti
 
   return (
     <div className="space-y-5">
-      <div>
-        <label className={labelClass}>Pozice fotek</label>
-        <select
-          value={data.photosPosition || 'left'}
-          onChange={(e) => onChange({ ...data, photosPosition: e.target.value === 'right' ? 'right' : 'left' })}
-          className={`${fieldClass} bg-white`}
-        >
-          <option value="left">Vlevo</option>
-          <option value="right">Vpravo</option>
-        </select>
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+        <div>
+          <label className={labelClass}>Pozice fotek</label>
+          <select
+            value={data.photosPosition || 'left'}
+            onChange={(e) => onChange({ ...data, photosPosition: e.target.value === 'right' ? 'right' : 'left' })}
+            className={`${fieldClass} bg-white`}
+          >
+            <option value="left">Vlevo</option>
+            <option value="right">Vpravo</option>
+          </select>
+        </div>
+        <div>
+          <label className={labelClass}>Formát fotek</label>
+          <select
+            value={data.photoAspectRatio || 'square'}
+            onChange={(e) => onChange({ ...data, photoAspectRatio: e.target.value as TextSectionsData['photoAspectRatio'] })}
+            className={`${fieldClass} bg-white`}
+          >
+            <option value="square">Čtverec (1:1)</option>
+            <option value="landscape">Na šířku (4:3)</option>
+            <option value="portrait">Na výšku (3:4)</option>
+          </select>
+        </div>
       </div>
 
       <div className="space-y-2">
@@ -114,23 +129,30 @@ export default function TextSectionsEditor({ data, onChange, pageId }: TextSecti
                 </button>
               </div>
 
-              <IconPicker value={section.icon} onChange={(icon) => updateSection(idx, { ...section, icon })} />
+              <div>
+                <label className={labelClass}>Ikona</label>
+                <IconPicker value={section.icon} onChange={(icon) => updateSection(idx, { ...section, icon })} />
+              </div>
 
-              <input
-                type="text"
-                value={section.heading}
-                onChange={(e) => updateSection(idx, { ...section, heading: e.target.value })}
-                placeholder="Nadpis sekce *"
-                className={fieldClass}
-              />
+              <div>
+                <label className={labelClass}>
+                  Nadpis <span className="text-[#c93838]">*</span>
+                </label>
+                <input
+                  type="text"
+                  value={section.heading}
+                  onChange={(e) => updateSection(idx, { ...section, heading: e.target.value })}
+                  className={fieldClass}
+                />
+              </div>
 
-              <textarea
-                rows={6}
-                value={section.text || ''}
-                onChange={(e) => updateSection(idx, { ...section, text: e.target.value || undefined })}
-                placeholder="Text"
-                className={fieldClass}
-              />
+              <div>
+                <label className={labelClass}>Popis</label>
+                <RichTextEditor
+                  value={section.text || ''}
+                  onChange={(text) => updateSection(idx, { ...section, text: text || undefined })}
+                />
+              </div>
 
               <div className="space-y-1.5">
                 <div className="flex items-center justify-between">

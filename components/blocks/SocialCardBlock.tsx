@@ -3,8 +3,15 @@ import ImageCard from '@/components/ImageCard';
 import EmbedContent from '@/components/blocks/EmbedContent';
 import type { SocialCardData } from '@/lib/blocks/types';
 
+const ASPECT_CLASSES = {
+  square: 'aspect-square',
+  landscape: 'aspect-[4/3]',
+  portrait: 'aspect-[3/4]',
+};
+
 export default function SocialCardBlock({ data }: { data: SocialCardData }) {
   const links = data.links || [];
+  const aspectClass = ASPECT_CLASSES[data.photoAspectRatio || 'square'];
 
   const content = (
     <div className="space-y-5 font-sans text-neutral-700">
@@ -43,7 +50,7 @@ export default function SocialCardBlock({ data }: { data: SocialCardData }) {
   );
 
   const side = data.embed ? <EmbedContent data={data.embed} /> : data.photo ? (
-    <ImageCard src={data.photo.src} alt={data.photo.caption || ''} aspectRatio="aspect-[4/3]" caption={data.photo.caption} />
+    <ImageCard src={data.photo.src} alt={data.photo.caption || ''} aspectRatio={aspectClass} fixedWidth caption={data.photo.caption} />
   ) : null;
 
   return (

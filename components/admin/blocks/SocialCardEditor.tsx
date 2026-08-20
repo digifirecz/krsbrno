@@ -125,7 +125,7 @@ export default function SocialCardEditor({ data, onChange, pageId }: SocialCardE
       </div>
 
       {data.photo && (
-        <div>
+        <div className="space-y-2">
           <PhotoUpload
             value={data.photo.src}
             pageId={pageId}
@@ -136,8 +136,20 @@ export default function SocialCardEditor({ data, onChange, pageId }: SocialCardE
             value={data.photo.caption || ''}
             onChange={(e) => onChange({ ...data, photo: { ...data.photo!, caption: e.target.value || undefined } })}
             placeholder="Popisek"
-            className={`${fieldClass} mt-2`}
+            className={fieldClass}
           />
+          <div>
+            <label className={labelClass}>Formát fotky</label>
+            <select
+              value={data.photoAspectRatio || 'square'}
+              onChange={(e) => onChange({ ...data, photoAspectRatio: e.target.value as SocialCardData['photoAspectRatio'] })}
+              className={`${fieldClass} bg-white`}
+            >
+              <option value="square">Čtverec (1:1)</option>
+              <option value="landscape">Na šířku (4:3)</option>
+              <option value="portrait">Na výšku (3:4)</option>
+            </select>
+          </div>
         </div>
       )}
 

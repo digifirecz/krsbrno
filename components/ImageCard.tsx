@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import Image from 'next/image';
 import { X, Maximize2 } from 'lucide-react';
 
@@ -10,6 +11,11 @@ interface ImageCardProps {
   caption?: string;
   aspectRatio?: string;
   className?: string;
+  // Fixed width keeps every single-photo block the same physical size across
+  // the site. Grids of multiple photos side by side should fill their own
+  // cell instead, so set this false there — otherwise it just centers a
+  // small fixed box inside a wider cell, leaving a big gap next to it.
+  fixedWidth?: boolean;
 }
 
 export default function ImageCard({
@@ -18,6 +24,7 @@ export default function ImageCard({
   caption,
   aspectRatio = 'aspect-[16/10]',
   className = '',
+  fixedWidth = false,
 }: ImageCardProps) {
   const [isOpen, setIsOpen] = useState(false);
 
@@ -43,7 +50,7 @@ export default function ImageCard({
     <>
       <div
         onClick={() => setIsOpen(true)}
-        className={`relative rounded-2xl overflow-hidden ${aspectRatio} border border-neutral-200/80 shadow-xs bg-neutral-100 group cursor-pointer ${className}`}
+        className={`relative ${fixedWidth ? 'w-72 max-w-full mx-auto' : 'w-full'} rounded-2xl overflow-hidden ${aspectRatio} border border-neutral-200/80 shadow-xs bg-neutral-100 group cursor-pointer ${className}`}
         title="Kliknutím zvětšíte obrázek"
       >
         <Image
@@ -66,40 +73,43 @@ export default function ImageCard({
         )}
       </div>
 
-      {isOpen && (
-        <div
-          className="fixed inset-0 z-[9999] bg-black/90 backdrop-blur-md flex items-center justify-center p-4 sm:p-8 animate-in fade-in duration-200"
-          onClick={() => setIsOpen(false)}
-        >
-          <button
-            onClick={() => setIsOpen(false)}
-            className="absolute top-4 right-4 sm:top-6 sm:right-6 w-11 h-11 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center transition-colors cursor-pointer z-[10000] border border-white/20"
-            aria-label="Zavřít"
-          >
-            <X className="w-6 h-6" />
-          </button>
-
+      {isOpen &&
+        typeof document !== 'undefined' &&
+        createPortal(
           <div
-            className="relative max-w-6xl w-full max-h-[90vh] flex flex-col items-center justify-center animate-in zoom-in-95 duration-200"
-            onClick={(e) => e.stopPropagation()}
+            className="fixed inset-0 z-[9999] bg-black/70 backdrop-blur-md flex items-center justify-center p-4 sm:p-8 animate-in fade-in duration-200"
+            onClick={() => setIsOpen(false)}
           >
-            <div className="relative w-full h-[80vh] sm:h-[85vh] flex items-center justify-center">
-              <Image
-                src={src}
-                alt={alt}
-                fill
-                className="object-contain"
-                referrerPolicy="no-referrer"
-              />
+            <button
+              onClick={() => setIsOpen(false)}
+              className="absolute top-4 right-4 sm:top-6 sm:right-6 w-11 h-11 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center transition-colors cursor-pointer z-[10000] border border-white/20"
+              aria-label="Zavřít"
+            >
+              <X className="w-6 h-6" />
+            </button>
+
+            <div
+              className="relative max-w-6xl w-full max-h-[90vh] flex flex-col items-center justify-center animate-in zoom-in-95 duration-200"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="relative w-full h-[80vh] sm:h-[85vh] flex items-center justify-center">
+                <Image
+                  src={src}
+                  alt={alt}
+                  fill
+                  className="object-contain"
+                  referrerPolicy="no-referrer"
+                />
+              </div>
+              {caption && (
+                <p className="mt-4 text-center text-white/90 text-sm sm:text-base font-sans font-medium px-4 max-w-2xl animate-in fade-in duration-300">
+                  {caption}
+                </p>
+              )}
             </div>
-            {caption && (
-              <p className="mt-4 text-center text-white/90 text-sm sm:text-base font-sans font-medium px-4 max-w-2xl animate-in fade-in duration-300">
-                {caption}
-              </p>
-            )}
-          </div>
-        </div>
-      )}
+          </div>,
+          document.body
+        )}
     </>
   );
 }

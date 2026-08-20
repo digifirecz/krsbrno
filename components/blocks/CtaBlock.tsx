@@ -53,9 +53,9 @@ export default function CtaBlock({ data }: { data: CtaBlockData }) {
         </div>
 
         {data.photos && data.photos.length > 0 && (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-5 sm:gap-6 pt-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-5 sm:gap-6 pt-4 max-w-3xl mx-auto">
             {data.photos.map((photo, idx) => (
-              <ImageCard key={idx} src={photo.src} alt={photo.caption || ''} caption={photo.caption} />
+              <ImageCard key={idx} src={photo.src} alt={photo.caption || ''} caption={photo.caption} aspectRatio="aspect-[4/3]" fixedWidth={false} />
             ))}
           </div>
         )}

@@ -2,24 +2,31 @@ import ImageCard from '@/components/ImageCard';
 import { getIcon } from '@/lib/blocks/icons';
 import type { TextSectionsData } from '@/lib/blocks/types';
 
+const ASPECT_CLASSES = {
+  square: 'aspect-square',
+  landscape: 'aspect-[4/3]',
+  portrait: 'aspect-[3/4]',
+};
+
 export default function TextSectionsBlock({ data }: { data: TextSectionsData }) {
   const photos = data.photos || [];
   const sections = data.sections || [];
   const photosRight = data.photosPosition === 'right';
+  const aspectClass = ASPECT_CLASSES[data.photoAspectRatio || 'square'];
 
   return (
     <section className="py-14 sm:py-18 bg-white border-b border-neutral-200/70">
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 sm:gap-12 items-start">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 sm:gap-12 items-center">
           {photos.length > 0 && (
-            <div className={`lg:col-span-5 space-y-4 ${photosRight ? 'lg:order-2' : ''}`}>
+            <div className={`lg:col-span-4 space-y-4 ${photosRight ? 'lg:order-2' : ''}`}>
               {photos.map((photo, idx) => (
-                <ImageCard key={idx} src={photo.src} alt={photo.caption || ''} aspectRatio="aspect-[4/3]" caption={photo.caption} />
+                <ImageCard key={idx} src={photo.src} alt={photo.caption || ''} aspectRatio={aspectClass} fixedWidth caption={photo.caption} />
               ))}
             </div>
           )}
 
-          <div className={`${photos.length > 0 ? 'lg:col-span-7' : 'lg:col-span-12'} ${photosRight ? 'lg:order-1' : ''} space-y-8 font-sans text-neutral-700 leading-relaxed`}>
+          <div className={`${photos.length > 0 ? 'lg:col-span-8' : 'lg:col-span-12'} ${photosRight ? 'lg:order-1' : ''} space-y-8 font-sans text-neutral-700 leading-relaxed`}>
             {sections.map((section, idx) => {
               const Icon = getIcon(section.icon);
               return (
@@ -37,7 +44,10 @@ export default function TextSectionsBlock({ data }: { data: TextSectionsData }) 
 
                   <div className="text-xs sm:text-sm text-neutral-600 space-y-3 font-sans leading-relaxed">
                     {section.text && (
-                      <p className="whitespace-pre-line">{section.text}</p>
+                      <div
+                        className="[&_a]:text-[#c93838] [&_a]:underline [&_ul]:list-disc [&_ul]:pl-5 [&_ol]:list-decimal [&_ol]:pl-5 [&_p]:mb-3 [&_p:last-child]:mb-0"
+                        dangerouslySetInnerHTML={{ __html: section.text }}
+                      />
                     )}
 
                     {(section.notes || []).map((note, noteIdx) => {

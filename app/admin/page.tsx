@@ -3,10 +3,11 @@
 import { useState, useEffect } from 'react';
 import { auth } from '@/lib/firebase';
 import { onAuthStateChanged } from 'firebase/auth';
-import { Files, Users, LayoutTemplate, Newspaper } from 'lucide-react';
+import { Files, Users, LayoutTemplate, Newspaper, Layers } from 'lucide-react';
 import { getRole, getAllRoles, type Role } from '@/lib/roles';
 import { getNavConfig } from '@/lib/pages';
 import { getArticles } from '@/lib/articles';
+import { getSections } from '@/lib/sections';
 import { MANAGEABLE_PAGES } from '@/lib/blocks/pageRegistry';
 
 interface DashboardStats {
@@ -14,6 +15,7 @@ interface DashboardStats {
   articles: number;
   navItems: number;
   users: number;
+  sections: number;
 }
 
 export default function AdminDashboardPage() {
@@ -30,8 +32,8 @@ export default function AdminDashboardPage() {
   useEffect(() => {
     let active = true;
     const staticIds = new Set(MANAGEABLE_PAGES.map((p) => p.id));
-    Promise.all([getArticles(), getNavConfig(), getAllRoles()])
-      .then(([articles, navConfig, roles]) => {
+    Promise.all([getArticles(), getNavConfig(), getAllRoles(), getSections()])
+      .then(([articles, navConfig, roles, sections]) => {
         if (!active) return;
         const customCount = navConfig.filter((p) => !staticIds.has(p.id)).length;
         setStats({
@@ -39,10 +41,11 @@ export default function AdminDashboardPage() {
           articles: articles.length,
           navItems: navConfig.filter((p) => p.showInHeader || p.showInFooter).length,
           users: roles.length,
+          sections: sections.length,
         });
       })
       .catch(() => {
-        if (active) setStats({ pages: 0, articles: 0, navItems: 0, users: 0 });
+        if (active) setStats({ pages: 0, articles: 0, navItems: 0, users: 0, sections: 0 });
       });
     return () => {
       active = false;
@@ -71,6 +74,20 @@ export default function AdminDashboardPage() {
               {stats ? stats.pages : '…'}
             </p>
             <p className="text-sm text-neutral-500 mt-1.5">Stránek</p>
+          </div>
+        </a>
+        <a
+          href="/admin/sekce"
+          className="bg-neutral-50 border border-neutral-100 rounded-2xl p-6 flex items-center space-x-4 hover:border-[#c93838]/50 hover:bg-red-50/20 transition-colors"
+        >
+          <div className="w-12 h-12 bg-white shadow-sm border border-neutral-100 rounded-xl flex items-center justify-center text-[#c93838] shrink-0">
+            <Layers className="w-6 h-6" />
+          </div>
+          <div>
+            <p className="text-2xl font-extrabold text-neutral-900 font-serif leading-none">
+              {stats ? stats.sections : '…'}
+            </p>
+            <p className="text-sm text-neutral-500 mt-1.5">Sekcí</p>
           </div>
         </a>
         <a

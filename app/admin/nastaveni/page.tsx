@@ -5,10 +5,11 @@ import Image from 'next/image';
 import RequireAuth from '@/components/admin/RequireAuth';
 import ConfirmModal from '@/components/admin/blocks/ConfirmModal';
 import PhotoUpload from '@/components/admin/blocks/PhotoUpload';
+import RichTextEditor from '@/components/admin/blocks/RichTextEditor';
 import { useToast } from '@/components/admin/ToastProvider';
 import { getSocialLinks, createSocialLink, updateSocialLink, deleteSocialLink, type SocialLink } from '@/lib/socialLinks';
 import { getSiteSettings, setSiteSettings, DEFAULT_SITE_SETTINGS, type SiteSettings } from '@/lib/siteSettings';
-import { Settings, Share2, Plus, Save, CheckCircle2, X, Link2, Image as ImageIcon, MapPin, Mail } from 'lucide-react';
+import { Settings, Share2, Plus, Save, CheckCircle2, X, Link2, Image as ImageIcon, MapPin, Mail, ShieldCheck } from 'lucide-react';
 
 interface Draft {
   icon: string;
@@ -54,7 +55,8 @@ export default function AdminSettingsPage() {
     siteDraft.logo !== siteSettings.logo ||
     siteDraft.logoAlt !== siteSettings.logoAlt ||
     siteDraft.address !== siteSettings.address ||
-    siteDraft.email !== siteSettings.email;
+    siteDraft.email !== siteSettings.email ||
+    siteDraft.gdprText !== siteSettings.gdprText;
 
   const anyDirty = siteDirty || links.some(isDirty);
 
@@ -226,6 +228,26 @@ export default function AdminSettingsPage() {
                     />
                   </div>
                 </div>
+              </div>
+            )}
+
+            <div className="flex items-center space-x-2 mb-3 px-1">
+              <ShieldCheck className="w-4 h-4 text-neutral-400" />
+              <h2 className="text-xs font-bold uppercase tracking-wider text-neutral-400">GDPR</h2>
+            </div>
+
+            {loading ? (
+              <div className="py-16 flex justify-center">
+                <div className="w-8 h-8 border-4 border-[#c93838] border-t-transparent rounded-full animate-spin"></div>
+              </div>
+            ) : (
+              <div className="p-4 sm:p-5 bg-white border border-neutral-200 rounded-2xl space-y-2 mb-10">
+                <label className="block text-xs font-bold text-neutral-500">Text zobrazený v patičce a v cookie liště</label>
+                <RichTextEditor
+                  value={siteDraft.gdprText}
+                  onChange={(value) => setSiteDraft((prev) => ({ ...prev, gdprText: value }))}
+                  placeholder="Text ochrany osobních údajů…"
+                />
               </div>
             )}
 

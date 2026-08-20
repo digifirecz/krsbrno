@@ -8,7 +8,7 @@ import { PAGE_ID_TO_TAB } from '@/lib/blocks/pageRegistry';
 import { useNavConfig } from '@/lib/useNavConfig';
 import { useSocialLinks } from '@/lib/useSocialLinks';
 import { useSiteSettings } from '@/lib/useSiteSettings';
-import { DEFAULT_SITE_SETTINGS } from '@/lib/siteSettings';
+import { DEFAULT_SITE_SETTINGS, DEFAULT_GDPR_TEXT } from '@/lib/siteSettings';
 
 interface FooterProps {
   setActiveTab: (tab: string) => void;
@@ -156,14 +156,10 @@ export default function Footer({ setActiveTab }: FooterProps) {
                 ✕
               </button>
             </div>
-            <div className="text-xs text-neutral-600 space-y-2 leading-relaxed max-h-80 overflow-y-auto font-sans">
-              <p>
-                Křesťanský sbor Brno zpracovává osobní údaje v souladu s Nařízením Evropského parlamentu a Rady (EU) 2016/679 (GDPR).
-              </p>
-              <p><strong>1. Účel zpracování:</strong> Osobní údaje z kontaktních formulářů nebo e-mailové komunikace využíváme výhradně k odpovědi na vaše dotazy nebo k organizaci sborových akcí.</p>
-              <p><strong>2. Doba uchování:</strong> Údaje uchováváme pouze po dobu nezbytnou k vyřízení požadavku.</p>
-              <p><strong>3. Vaše práva:</strong> Máte právo požadovat přístup k osobním údajům, jejich opravu, výmaz nebo omezení zpracování zasláním žádosti na info@krsbrno.cz.</p>
-            </div>
+            <div
+              className="text-xs text-neutral-600 space-y-2 leading-relaxed max-h-80 overflow-y-auto font-sans [&_a]:text-[#c93838] [&_a]:underline [&_ul]:list-disc [&_ul]:pl-5 [&_ol]:list-decimal [&_ol]:pl-5 [&_p]:mb-2 last:[&_p]:mb-0"
+              dangerouslySetInnerHTML={{ __html: siteSettings?.gdprText || DEFAULT_GDPR_TEXT }}
+            />
             <button
               onClick={() => setGdprOpen(false)}
               className="w-full py-2.5 rounded-xl bg-neutral-900 text-white font-bold text-xs hover:bg-neutral-800 transition-colors shadow-xs"

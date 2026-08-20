@@ -121,9 +121,12 @@ export interface TextSection {
   notes?: TextSectionNote[];
 }
 
+export type PhotoAspectRatio = 'square' | 'landscape' | 'portrait';
+
 export interface TextSectionsData {
   photos?: BlockPhoto[];
   photosPosition?: 'left' | 'right';
+  photoAspectRatio?: PhotoAspectRatio;
   sections: TextSection[];
 }
 
@@ -183,6 +186,7 @@ export interface SocialCardData {
   text?: string;
   links: SocialLink[];
   photo?: BlockPhoto;
+  photoAspectRatio?: PhotoAspectRatio;
   embed?: MapEmbedData;
 }
 

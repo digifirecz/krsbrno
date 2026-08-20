@@ -293,6 +293,13 @@ export interface BlockInstance {
   visible: boolean;
   order: number;
   data: BlockData;
+  // When set, this block's data comes from a shared, reusable Section (see /admin/sekce)
+  // instead of being page-specific — `data` is resolved from it and shouldn't be edited here.
+  sectionId?: string;
+  // Page-specific override: caps how many items/cards a shared section shows on THIS page
+  // only (e.g. a homepage preview showing the first 3 of a 6-item list) — the section's own
+  // data is untouched, and other pages using it are unaffected. Undefined/0 = show all.
+  itemLimit?: number;
 }
 
 export interface PageDoc {

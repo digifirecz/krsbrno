@@ -9,9 +9,11 @@ interface AddBlockModalProps {
   open: boolean;
   onClose: () => void;
   onPick: (type: BlockType) => void;
+  excludeTypes?: BlockType[];
 }
 
-export default function AddBlockModal({ open, onClose, onPick }: AddBlockModalProps) {
+export default function AddBlockModal({ open, onClose, onPick, excludeTypes }: AddBlockModalProps) {
+  const options = excludeTypes ? BLOCK_TYPE_REGISTRY.filter((b) => !excludeTypes.includes(b.type)) : BLOCK_TYPE_REGISTRY;
   useEffect(() => {
     if (!open) return;
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -49,7 +51,7 @@ export default function AddBlockModal({ open, onClose, onPick }: AddBlockModalPr
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-4 overflow-y-auto">
-          {BLOCK_TYPE_REGISTRY.map((blockType) => (
+          {options.map((blockType) => (
             <button
               key={blockType.type}
               type="button"

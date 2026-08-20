@@ -1,5 +1,7 @@
+'use client';
+
 import Image from 'next/image';
-import { ArrowRight, Sparkles } from 'lucide-react';
+import { ArrowRight, ChevronDown, Sparkles } from 'lucide-react';
 import { getPathForTab } from '@/lib/routes';
 import type { HomeHeroData } from '@/lib/blocks/types';
 
@@ -22,13 +24,13 @@ export default function HomeHeroBlock({ data }: { data: HomeHeroData }) {
   const paragraphs = (data.text || '').split('\n\n').filter(Boolean);
 
   return (
-    <section className="relative overflow-hidden py-14 sm:py-20 md:py-24 bg-gradient-to-b from-neutral-50/80 via-white to-neutral-50/60 border-b border-neutral-200/60">
+    <section className="relative overflow-hidden flex flex-col min-h-[calc(82svh-5rem)] pt-14 sm:pt-20 pb-6 sm:pb-8 bg-gradient-to-b from-neutral-50/80 via-white to-neutral-50/60 border-b border-neutral-200/60">
 
       <div className="absolute -top-24 -left-24 w-96 h-96 bg-red-100/40 rounded-full blur-3xl pointer-events-none" />
       <div className="absolute top-1/2 -right-24 w-96 h-96 bg-amber-100/30 rounded-full blur-3xl pointer-events-none" />
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-8 items-center">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 flex-1 flex items-center w-full">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-8 items-center w-full">
 
           <div className="lg:col-span-6 space-y-6">
             {data.pillText && (
@@ -99,6 +101,25 @@ export default function HomeHeroBlock({ data }: { data: HomeHeroData }) {
 
         </div>
       </div>
+
+      <button
+        type="button"
+        onClick={(e) => {
+          // The block sits inside BlockRenderer's ScrollReveal wrapper div, so the next
+          // block on the page is that wrapper's sibling, not the <section>'s own sibling.
+          const wrapper = e.currentTarget.closest('section')?.parentElement;
+          const target = wrapper?.nextElementSibling;
+          if (!target) return;
+          // scrollIntoView aligns to the very top of the viewport, which tucks the target
+          // under the sticky h-20 (5rem) navbar — offset manually instead.
+          const targetTop = target.getBoundingClientRect().top + window.scrollY;
+          window.scrollTo({ top: targetTop - 80, behavior: 'smooth' });
+        }}
+        aria-label="Posunout na další obsah"
+        className="relative z-10 mx-auto mt-12 flex items-center justify-center text-neutral-400 hover:text-[#c93838] transition-colors cursor-pointer"
+      >
+        <ChevronDown className="w-6 h-6" />
+      </button>
     </section>
   );
 }

@@ -4,8 +4,8 @@ import { getPathForTab } from '@/lib/routes';
 import { Clock, ChevronRight } from 'lucide-react';
 import type { PhotoCardGridData } from '@/lib/blocks/types';
 
-export default function PhotoCardGridBlock({ data }: { data: PhotoCardGridData }) {
-  const cards = data.cards || [];
+export default function PhotoCardGridBlock({ data, limit }: { data: PhotoCardGridData; limit?: number }) {
+  const cards = limit ? (data.cards || []).slice(0, limit) : data.cards || [];
 
   return (
     <section className="py-14 sm:py-18 bg-white border-b border-neutral-200/70">

@@ -34,12 +34,34 @@ export function slugify(value: string): string {
     .replace(/^-+|-+$/g, '');
 }
 
+// Blocks that reference a shared Section (/admin/sekce) only store {id, type, sectionId,
+// visible, order} on the page — their actual `data` (and current `type`, in case the
+// section's own type ever changes) is resolved here from the Section doc on every read,
+// so editing a section updates it everywhere it's used.
+async function resolveSectionBlocks(blocks: BlockInstance[]): Promise<BlockInstance[]> {
+  const sectionIds = [...new Set(blocks.filter((b) => b.sectionId).map((b) => b.sectionId as string))];
+  if (sectionIds.length === 0) return blocks;
+
+  const sectionDocs = await Promise.all(sectionIds.map((id) => getDoc(doc(db, 'sections', id))));
+  const sectionsById = new Map(
+    sectionDocs.filter((s) => s.exists()).map((s) => [s.id, s.data()])
+  );
+
+  return blocks.map((block) => {
+    if (!block.sectionId) return block;
+    const section = sectionsById.get(block.sectionId);
+    if (!section) return block;
+    return { ...block, type: section.type, data: section.data };
+  });
+}
+
 export async function getPageBlocks(pageId: string): Promise<BlockInstance[] | null> {
   const snap = await getDoc(doc(db, 'pages', pageId));
   if (!snap.exists()) return null;
   const data = snap.data() as PageDoc;
   if (!data.blocks || data.blocks.length === 0) return null;
-  return [...data.blocks].sort((a, b) => a.order - b.order);
+  const sorted = [...data.blocks].sort((a, b) => a.order - b.order);
+  return resolveSectionBlocks(sorted);
 }
 
 export async function getPageDoc(pageId: string): Promise<PageDoc | null> {

@@ -38,7 +38,7 @@ function renderBlockContent(block: BlockInstance): React.ReactNode {
     case 'infoCard':
       return <InfoCardBlock data={block.data as InfoCardData} />;
     case 'photoCardGrid':
-      return <PhotoCardGridBlock data={block.data as PhotoCardGridData} />;
+      return <PhotoCardGridBlock data={block.data as PhotoCardGridData} limit={block.itemLimit} />;
     case 'scheduleCard':
       return <ScheduleCardBlock data={block.data as ScheduleCardData} />;
     case 'checklistCard':

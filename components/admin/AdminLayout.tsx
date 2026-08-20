@@ -5,7 +5,7 @@ import { usePathname } from 'next/navigation';
 import Link from 'next/link';
 import { auth } from '@/lib/firebase';
 import { signOut } from 'firebase/auth';
-import { LogOut, LayoutDashboard, FileText, Users, Settings, LayoutTemplate, Newspaper } from 'lucide-react';
+import { LogOut, LayoutDashboard, FileText, Users, Settings, LayoutTemplate, Newspaper, Layers } from 'lucide-react';
 import { getPathForTab } from '@/lib/routes';
 import { getRole, type Role } from '@/lib/roles';
 
@@ -112,6 +112,18 @@ export default function AdminLayout({ children, setActiveTab }: AdminLayoutProps
                 <span>Uživatelé</span>
               </Link>
             )}
+
+            <Link
+              href="/admin/sekce"
+              className={`flex items-center space-x-3 w-full px-4 py-3 rounded-xl text-sm font-semibold transition-colors cursor-pointer ${
+                isActive('/admin/sekce', false)
+                  ? 'bg-red-50 text-[#c93838]'
+                  : 'text-neutral-600 font-medium hover:bg-neutral-50 hover:text-neutral-900'
+              }`}
+            >
+              <Layers className="w-5 h-5" />
+              <span>Sekce</span>
+            </Link>
 
             <Link
               href="/admin/pages"

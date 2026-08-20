@@ -25,18 +25,18 @@ import SupportOptionsEditor from '@/components/admin/blocks/SupportOptionsEditor
 import SocialCardEditor from '@/components/admin/blocks/SocialCardEditor';
 import PeopleListEditor from '@/components/admin/blocks/PeopleListEditor';
 import ArticlesBlockEditor from '@/components/admin/blocks/ArticlesBlockEditor';
-import AddBlockModal from '@/components/admin/blocks/AddBlockModal';
+import AddPageModal from '@/components/admin/AddPageModal';
 import ConfirmModal from '@/components/admin/blocks/ConfirmModal';
 import { useToast } from '@/components/admin/ToastProvider';
 import { getPageDoc, savePageBlocks, deletePage, slugify, getNavGroups, type NavGroup } from '@/lib/pages';
+import { getSections, type Section } from '@/lib/sections';
 import { getRole, type Role } from '@/lib/roles';
 import { auth } from '@/lib/firebase';
 import { onAuthStateChanged } from 'firebase/auth';
-import { emptyBlockData } from '@/lib/blocks/defaults';
 import { MANAGEABLE_PAGES } from '@/lib/blocks/pageRegistry';
 import { getBlockTypeLabel } from '@/lib/blocks/registry';
-import type { BlockInstance, BlockType, PageHeroData, HomeHeroData, IconGridData, QuoteData, CtaBlockData, TimelineData, InfoCardData, PhotoCardGridData, ScheduleCardData, ChecklistCardData, ListCardData, CardGridData, BadgeCardData, TextSectionsData, MapEmbedData, TagGroupsData, SupportOptionsData, SocialCardData, PeopleListData, ArticlesBlockData } from '@/lib/blocks/types';
-import { ArrowLeft, ArrowUp, ArrowDown, Eye, EyeOff, Trash2, Lock, Plus, Save, CheckCircle2, AlertCircle, CalendarPlus, History } from 'lucide-react';
+import type { BlockInstance, PageHeroData, HomeHeroData, IconGridData, QuoteData, CtaBlockData, TimelineData, InfoCardData, PhotoCardGridData, ScheduleCardData, ChecklistCardData, ListCardData, CardGridData, BadgeCardData, TextSectionsData, MapEmbedData, TagGroupsData, SupportOptionsData, SocialCardData, PeopleListData, ArticlesBlockData } from '@/lib/blocks/types';
+import { ArrowLeft, ArrowRight, ArrowUp, ArrowDown, Eye, EyeOff, Trash2, Lock, Save, CheckCircle2, AlertCircle, CalendarPlus, History, Layers } from 'lucide-react';
 
 function reorder(blocks: BlockInstance[]): BlockInstance[] {
   return blocks.map((b, idx) => ({ ...b, order: idx }));
@@ -65,7 +65,8 @@ export default function AdminPageBlocksEditor() {
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
   const [errors, setErrors] = useState<string[]>([]);
-  const [addModalOpen, setAddModalOpen] = useState(false);
+  const [sectionPickerOpen, setSectionPickerOpen] = useState(false);
+  const [sections, setSections] = useState<Section[]>([]);
   const [pendingDeleteId, setPendingDeleteId] = useState<string | null>(null);
   const [deletePageConfirmOpen, setDeletePageConfirmOpen] = useState(false);
   const [role, setRole] = useState<Role | null>(null);
@@ -86,6 +87,12 @@ export default function AdminPageBlocksEditor() {
   useEffect(() => {
     getNavGroups().then(setNavGroups).catch(() => {});
   }, []);
+
+  useEffect(() => {
+    getSections().then(setSections).catch(() => {});
+  }, []);
+
+  const sectionsById = new Map(sections.map((s) => [s.id, s]));
 
   useEffect(() => {
     let active = true;
@@ -124,6 +131,10 @@ export default function AdminPageBlocksEditor() {
     setBlocks((prev) => prev.map((b) => (b.id === id ? { ...b, data } : b)));
   };
 
+  const updateBlockLimit = (id: string, itemLimit: number | undefined) => {
+    setBlocks((prev) => prev.map((b) => (b.id === id ? { ...b, itemLimit } : b)));
+  };
+
   const toggleVisible = (id: string) => {
     setBlocks((prev) => prev.map((b) => (b.id === id ? { ...b, visible: !b.visible } : b)));
   };
@@ -143,19 +154,22 @@ export default function AdminPageBlocksEditor() {
     setBlocks((prev) => reorder(prev.filter((b) => b.id !== id)));
   };
 
-  const addBlock = (type: BlockType) => {
+  const addSection = (sectionId: string) => {
+    const section = sections.find((s) => s.id === sectionId);
+    setSectionPickerOpen(false);
+    if (!section) return;
     setBlocks((prev) =>
       reorder([
         ...prev,
-        { id: crypto.randomUUID(), type, visible: true, order: prev.length, data: emptyBlockData(type) },
+        { id: crypto.randomUUID(), type: section.type, sectionId: section.id, visible: true, order: prev.length, data: section.data },
       ])
     );
-    setAddModalOpen(false);
   };
 
   const handleSave = async (updatedBy?: string | null) => {
     const newErrors: string[] = [];
     blocks.forEach((block, idx) => {
+      if (block.sectionId) return;
       if (block.type === 'pageHero') {
         const data = block.data as PageHeroData;
         if (!data.title.trim()) newErrors.push(`Blok ${idx + 1} (úvod): titulek je povinný.`);
@@ -515,6 +529,51 @@ export default function AdminPageBlocksEditor() {
                     </div>
                   </div>
 
+                  {block.sectionId && (
+                    <div className="flex items-center justify-between gap-3 bg-neutral-50 border border-neutral-200 rounded-xl p-4 flex-wrap">
+                      <div className="flex items-center space-x-2.5 min-w-0">
+                        <div className="w-8 h-8 rounded-lg bg-red-50 text-[#c93838] flex items-center justify-center shrink-0">
+                          <Layers className="w-4 h-4" />
+                        </div>
+                        <div className="min-w-0">
+                          <p className="text-sm font-bold text-neutral-900 truncate">
+                            {sectionsById.get(block.sectionId)?.name || 'Sekce'}
+                          </p>
+                          <p className="text-xs text-neutral-500">
+                            {sectionsById.get(block.sectionId)
+                              ? getBlockTypeLabel(sectionsById.get(block.sectionId)!.type)
+                              : 'Sdílená sekce'}
+                          </p>
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-3 shrink-0">
+                        {sectionsById.get(block.sectionId)?.type === 'photoCardGrid' && (
+                          <label className="inline-flex items-center space-x-1.5 text-xs text-neutral-600">
+                            <span>Zobrazit</span>
+                            <input
+                              type="number"
+                              min={1}
+                              value={block.itemLimit ?? ''}
+                              onChange={(e) => updateBlockLimit(block.id, e.target.value ? Number(e.target.value) : undefined)}
+                              placeholder="vše"
+                              className="w-16 px-2 py-1 rounded-lg border border-neutral-200 text-xs text-center focus:outline-none focus:ring-2 focus:ring-[#c93838]/30 focus:border-[#c93838]"
+                            />
+                            <span>z položek</span>
+                          </label>
+                        )}
+                        <Link
+                          href={`/admin/sekce/${block.sectionId}`}
+                          className="inline-flex items-center space-x-1 text-xs font-bold text-[#c93838] hover:underline"
+                        >
+                          <span>Upravit sekci</span>
+                          <ArrowRight className="w-3.5 h-3.5" />
+                        </Link>
+                      </div>
+                    </div>
+                  )}
+
+                  {!block.sectionId && (
+                  <>
                   {block.type === 'pageHero' && (
                     <PageHeroEditor
                       data={block.data as PageHeroData}
@@ -645,26 +704,30 @@ export default function AdminPageBlocksEditor() {
                       onChange={(data) => updateBlockData(block.id, data)}
                     />
                   )}
+                  </>
+                  )}
                 </div>
               ))}
 
               <div className="flex items-center justify-center pt-2">
                 <button
                   type="button"
-                  onClick={() => setAddModalOpen(true)}
+                  onClick={() => setSectionPickerOpen(true)}
                   className="inline-flex items-center space-x-2 px-5 py-2.5 rounded-xl border border-dashed border-neutral-300 text-neutral-600 hover:border-[#c93838] hover:text-[#c93838] text-sm font-semibold transition-colors cursor-pointer"
                 >
-                  <Plus className="w-4 h-4" />
-                  <span>Přidat blok</span>
+                  <Layers className="w-4 h-4" />
+                  <span>Přidat sekci</span>
                 </button>
               </div>
             </div>
           )}
 
-          <AddBlockModal
-            open={addModalOpen}
-            onClose={() => setAddModalOpen(false)}
-            onPick={addBlock}
+          <AddPageModal
+            open={sectionPickerOpen}
+            title="Přidat sekci"
+            pages={sections.map((s) => ({ id: s.id, label: `${s.name || 'Bez názvu'} — ${getBlockTypeLabel(s.type)}` }))}
+            onClose={() => setSectionPickerOpen(false)}
+            onPick={addSection}
           />
 
           <ConfirmModal

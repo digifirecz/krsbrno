@@ -18,42 +18,68 @@ import ManagementSection from '@/components/ManagementSection';
 import LeadershipSection from '@/components/LeadershipSection';
 import ConfessionSection from '@/components/ConfessionSection';
 import LoginSection from '@/components/LoginSection';
-import AdminSection from '@/components/AdminSection';
-import AskAiModal from '@/components/AskAiModal';
+import CustomPageSection from '@/components/CustomPageSection';
 import QuoteBanner from '@/components/QuoteBanner';
 import Footer from '@/components/Footer';
-import { getPathForTab, getTabFromPath, getTitleForTab } from '@/lib/routes';
+import { getPathForTab, getTabFromPath, getTitleForTab, preloadPageSlugs, resolveDynamicSlug } from '@/lib/routes';
+import { useHomePageId } from '@/lib/useHomePageId';
+
+const KNOWN_TABS = new Set([
+  'home', 'about', 'beliefs', 'confession', 'history', 'management', 'leadership',
+  'groups', 'kids', 'youth', 'teens', 'meetings', 'library', 'sermons', 'contact',
+  'support', 'events', 'login',
+]);
 
 interface ChurchAppProps {
   initialTab?: string;
 }
 
+async function resolvePathToTab(pathname: string): Promise<string> {
+  const dynamic = await resolveDynamicSlug(pathname).catch(() => null);
+  if (dynamic) return dynamic.tab;
+  return getTabFromPath(pathname);
+}
+
 export default function ChurchApp({ initialTab = 'home' }: ChurchAppProps) {
   const [activeTab, setActiveTabState] = useState<string>(initialTab);
-  const [aiModalOpen, setAiModalOpen] = useState<boolean>(false);
+  const homePageId = useHomePageId();
+
+  // Warm the dynamic-page slug cache used by getPathForTab() for managed pages.
+  useEffect(() => {
+    preloadPageSlugs().catch(() => {});
+  }, []);
 
   // Sync state from URL pathname on client load and browser Back/Forward (popstate)
   useEffect(() => {
+    let active = true;
+
     // If browser URL has a pathname, initialize tab from current URL
     if (typeof window !== 'undefined') {
       const currentPath = window.location.pathname;
-      const currentTab = getTabFromPath(currentPath);
-      if (currentTab && currentTab !== activeTab) {
-        setActiveTabState(currentTab);
-        document.title = getTitleForTab(currentTab);
-      }
+      resolvePathToTab(currentPath).then((currentTab) => {
+        if (!active) return;
+        if (currentTab && currentTab !== activeTab) {
+          setActiveTabState(currentTab);
+          document.title = getTitleForTab(currentTab);
+        }
+      });
     }
 
     const handlePopState = () => {
       const currentPath = window.location.pathname;
-      const resolvedTab = getTabFromPath(currentPath);
-      setActiveTabState(resolvedTab);
-      document.title = getTitleForTab(resolvedTab);
-      window.scrollTo({ top: 0, behavior: 'instant' });
+      resolvePathToTab(currentPath).then((resolvedTab) => {
+        if (!active) return;
+        setActiveTabState(resolvedTab);
+        document.title = getTitleForTab(resolvedTab);
+        window.scrollTo({ top: 0, behavior: 'instant' });
+      });
     };
 
     window.addEventListener('popstate', handlePopState);
-    return () => window.removeEventListener('popstate', handlePopState);
+    return () => {
+      active = false;
+      window.removeEventListener('popstate', handlePopState);
+    };
   }, []);
 
   // Update browser URL and document title when activeTab changes
@@ -72,60 +98,69 @@ export default function ChurchApp({ initialTab = 'home' }: ChurchAppProps) {
 
   return (
     <div className="min-h-screen bg-neutral-50 text-neutral-900 flex flex-col font-sans">
-      
+
       {/* Sticky Top Header with live URL synchronization */}
       <Navbar
         activeTab={activeTab}
         setActiveTab={setActiveTab}
-        openAiModal={() => setAiModalOpen(true)}
       />
 
       {/* Main Page Body depending on selection */}
       <main className="flex-grow">
-        
+
         {/* 1. Úvod (Home Page) */}
         {activeTab === 'home' && (
           <div>
-            <Hero setActiveTab={setActiveTab} />
-            <Meetings isHomePage={true} setActiveTab={setActiveTab} />
-            <EventsSection />
-            
-            {/* Bible Verse Full-Width Banner */}
-            <QuoteBanner 
-              quote="„Z jednoho člověka učinil celé lidstvo, aby žilo na celém zemském povrchu. Vyměřil jim určená období a hranice jejich života, aby hledali Boha, zda by se ho snad mohli dotknout a nalézt ho – ačkoli není daleko od žádného z nás.“"
-              citation="Skutky 17:26-27 (Bible)"
-            />
+            {homePageId ? (
+              <CustomPageSection pageId={homePageId} />
+            ) : (
+              <>
+                <Hero setActiveTab={setActiveTab} />
+                <Meetings isHomePage={true} setActiveTab={setActiveTab} />
+              </>
+            )}
+
+            {/* Výchozí (needitovatelný) úvod nemá vlastní blok s články, tak se sem doplní natvrdo.
+                Vlastní stránka Úvod si "Seznam článků" přidává jako blok sama, aby nešlo o duplicitu. */}
+            {!homePageId && <EventsSection />}
+
+            {!homePageId && (
+              <QuoteBanner
+                quote="„Z jednoho člověka učinil celé lidstvo, aby žilo na celém zemském povrchu. Vyměřil jim určená období a hranice jejich života, aby hledali Boha, zda by se ho snad mohli dotknout a nalézt ho – ačkoli není daleko od žádného z nás.“"
+                citation="Skutky 17:26-27 (Bible)"
+              />
+            )}
           </div>
         )}
 
         {/* 2. Kdo jsme */}
         {activeTab === 'about' && (
-          <HistoryLeadershipSection setActiveTab={setActiveTab} />
+          <HistoryLeadershipSection />
         )}
 
         {/* 2.1 Čemu věříme */}
         {activeTab === 'beliefs' && (
-          <BeliefsSection setActiveTab={setActiveTab} />
+          <BeliefsSection />
         )}
 
         {/* 2.1b Naše vyznání */}
         {activeTab === 'confession' && (
-          <ConfessionSection setActiveTab={setActiveTab} />
+          <ConfessionSection />
         )}
 
         {/* 2.2 Naše historie */}
         {activeTab === 'history' && (
-          <HistoryLeadershipSection setActiveTab={setActiveTab} />
+          <HistoryLeadershipSection />
         )}
 
         {/* 2.3 Kdo spravuje sbor */}
         {activeTab === 'management' && (
-          <ManagementSection setActiveTab={setActiveTab} />
+          <ManagementSection />
         )}
 
         {/* 2.4 Kdo nás vede */}
         {activeTab === 'leadership' && (
-          <LeadershipSection setActiveTab={setActiveTab} />
+          <LeadershipSection />
         )}
 
         {/* 3. Co děláme / Program */}
@@ -138,12 +173,12 @@ export default function ChurchApp({ initialTab = 'home' }: ChurchAppProps) {
 
         {/* 3.1 Mládež - Elevate */}
         {activeTab === 'youth' && (
-          <YouthSection setActiveTab={setActiveTab} />
+          <YouthSection />
         )}
 
         {/* 3.2 Dorost - Poutníci */}
         {activeTab === 'teens' && (
-          <TeensSection setActiveTab={setActiveTab} />
+          <TeensSection />
         )}
 
         {/* 3.3 Společná setkávání */}
@@ -183,20 +218,14 @@ export default function ChurchApp({ initialTab = 'home' }: ChurchAppProps) {
           <LoginSection setActiveTab={setActiveTab} />
         )}
 
-        {/* 9. Administrace (Admin) */}
-        {activeTab === 'admin' && (
-          <AdminSection setActiveTab={setActiveTab} />
+        {/* 9. Vlastní stránka vytvořená v administraci */}
+        {!KNOWN_TABS.has(activeTab) && (
+          <CustomPageSection pageId={activeTab} />
         )}
       </main>
 
       {/* Footer with URL routing */}
       <Footer setActiveTab={setActiveTab} />
-
-      {/* AI Assistant Modal */}
-      <AskAiModal
-        isOpen={aiModalOpen}
-        onClose={() => setAiModalOpen(false)}
-      />
 
     </div>
   );

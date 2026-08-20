@@ -1,6 +1,7 @@
 import { initializeApp, getApps } from "firebase/app";
 import { getAuth } from "firebase/auth";
-import { getFirestore } from "firebase/firestore";
+import { initializeFirestore, getFirestore, type Firestore } from "firebase/firestore";
+import { getStorage } from "firebase/storage";
 
 const firebaseConfig = {
   apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY || "AIzaSyBzkHbuf8vVmkI9ZGXV31VJmGvKqY4Q6FY",
@@ -14,6 +15,20 @@ const firebaseConfig = {
 
 const app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApps()[0];
 const auth = getAuth(app);
-const db = getFirestore(app);
+// ignoreUndefinedProperties lets block editors leave optional fields empty
+// (React state uses `undefined` for "not set") without setDoc() rejecting the write.
+// initializeFirestore throws if called twice on the same app (e.g. dev hot-reload),
+// so fall back to the already-configured instance in that case.
+// "krsbrno" is a named Firestore database in europe-west3 (Frankfurt) — created to replace
+// the original "(default)" database, which was provisioned in a US multi-region and added
+// unnecessary latency for this Central European audience.
+const FIRESTORE_DATABASE_ID = 'krsbrno';
+let db: Firestore;
+try {
+  db = initializeFirestore(app, { ignoreUndefinedProperties: true }, FIRESTORE_DATABASE_ID);
+} catch {
+  db = getFirestore(app, FIRESTORE_DATABASE_ID);
+}
+const storage = getStorage(app);
 
-export { app, auth, db };
+export { app, auth, db, storage };

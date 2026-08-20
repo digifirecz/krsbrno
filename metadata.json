@@ -2,5 +2,5 @@
   "name": "Křesťanský sbor Brno",
   "description": "Moderní minimalistický web pro Křesťanský sbor Brno. Přehled setkání, kázání, skupin, historie, víry a kontaktů.",
   "requestFramePermissions": [],
-  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+  "majorCapabilities": []
 }

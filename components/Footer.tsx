@@ -2,8 +2,13 @@
 
 import { useState } from 'react';
 import Image from 'next/image';
-import { Youtube, Instagram, Facebook, MapPin, Mail } from 'lucide-react';
+import { MapPin, Mail, Share2 } from 'lucide-react';
 import { getPathForTab } from '@/lib/routes';
+import { PAGE_ID_TO_TAB } from '@/lib/blocks/pageRegistry';
+import { useNavConfig } from '@/lib/useNavConfig';
+import { useSocialLinks } from '@/lib/useSocialLinks';
+import { useSiteSettings } from '@/lib/useSiteSettings';
+import { DEFAULT_SITE_SETTINGS } from '@/lib/siteSettings';
 
 interface FooterProps {
   setActiveTab: (tab: string) => void;
@@ -11,6 +16,14 @@ interface FooterProps {
 
 export default function Footer({ setActiveTab }: FooterProps) {
   const [gdprOpen, setGdprOpen] = useState(false);
+  const navConfig = useNavConfig();
+  const footerEntries = navConfig ? [...navConfig.values()].filter((e) => e.showInFooter) : [];
+  const socialLinks = useSocialLinks();
+  const siteSettings = useSiteSettings();
+  const logo = siteSettings?.logo || DEFAULT_SITE_SETTINGS.logo;
+  const logoAlt = siteSettings?.logoAlt || DEFAULT_SITE_SETTINGS.logoAlt;
+  const address = siteSettings?.address || DEFAULT_SITE_SETTINGS.address;
+  const email = siteSettings?.email || DEFAULT_SITE_SETTINGS.email;
 
   const handleLink = (tab: string, e?: React.MouseEvent) => {
     if (e && (e.metaKey || e.ctrlKey || e.shiftKey || e.button === 1)) {
@@ -39,97 +52,82 @@ export default function Footer({ setActiveTab }: FooterProps) {
               title="Křesťanský sbor Brno - Úvod"
             >
               <div className="relative h-9 sm:h-11 w-48 sm:w-56">
-                <Image 
-                  src="/logo.png" 
-                  alt="Křesťanský sbor Brno" 
-                  fill 
-                  className="object-contain object-left brightness-0 invert hover:opacity-85 transition-opacity" 
+                <Image
+                  src={logo}
+                  alt={logoAlt}
+                  fill
+                  unoptimized
+                  className="object-contain object-left brightness-0 invert hover:opacity-85 transition-opacity"
                   referrerPolicy="no-referrer"
                 />
               </div>
             </a>
 
             {/* Horizontal Organizace Row right under logo */}
-            <div className="flex flex-wrap items-center gap-x-2.5 gap-y-1.5 text-xs text-neutral-400 pt-1">
-              <span className="font-bold text-neutral-300 uppercase tracking-wider">Organizace:</span>
-              <a 
-                href={getPathForTab('management')}
-                onClick={(e) => handleLink('management', e)} 
-                className="hover:text-white transition-colors cursor-pointer"
-              >
-                Kdo spravuje sbor
-              </a>
-              <span className="text-neutral-600">·</span>
-              <a 
-                href={getPathForTab('leadership')}
-                onClick={(e) => handleLink('leadership', e)} 
-                className="hover:text-white transition-colors cursor-pointer"
-              >
-                Kdo nás vede
-              </a>
-              <span className="text-neutral-600">·</span>
-              <a 
-                href={getPathForTab('confession')}
-                onClick={(e) => handleLink('confession', e)} 
-                className="hover:text-white transition-colors cursor-pointer"
-              >
-                Naše vyznání
-              </a>
-            </div>
+            {footerEntries.length > 0 && (
+              <div className="flex flex-wrap items-center gap-x-2.5 gap-y-1.5 text-xs text-neutral-400 pt-1">
+                <span className="font-bold text-neutral-300 uppercase tracking-wider">Organizace:</span>
+                {footerEntries.map((item, idx) => {
+                  const tab = PAGE_ID_TO_TAB[item.id] || item.id;
+                  return (
+                    <span key={item.id} className="flex items-center gap-x-2.5">
+                      {idx > 0 && <span className="text-neutral-600">·</span>}
+                      <a
+                        href={getPathForTab(tab)}
+                        onClick={(e) => handleLink(tab, e)}
+                        className="hover:text-white transition-colors cursor-pointer"
+                      >
+                        {item.label}
+                      </a>
+                    </span>
+                  );
+                })}
+              </div>
+            )}
 
             <div className="flex items-center space-x-4 text-xs text-neutral-400">
               <div className="flex items-center space-x-1.5">
                 <MapPin className="w-3.5 h-3.5 text-[#c93838]" />
-                <span>Šámalova 15a, Brno</span>
+                <span>{address}</span>
               </div>
               <span className="text-neutral-700">·</span>
               <div className="flex items-center space-x-1.5">
                 <Mail className="w-3.5 h-3.5 text-[#c93838]" />
-                <a href="mailto:info@krsbrno.cz" className="hover:text-white transition-colors underline underline-offset-2">info@krsbrno.cz</a>
+                <a href={`mailto:${email}`} className="hover:text-white transition-colors underline underline-offset-2">{email}</a>
               </div>
             </div>
           </div>
 
           {/* Social Networks Column */}
-          <div className="md:col-span-5 space-y-4 md:text-right">
-            <h4 className="text-xs font-bold uppercase tracking-wider text-neutral-400 font-sans">
-              Sledujte nás
-            </h4>
+          {(socialLinks === null || socialLinks.length > 0) && (
+            <div className="md:col-span-5 space-y-4 md:text-right">
+              <h4 className="text-xs font-bold uppercase tracking-wider text-neutral-400 font-sans">
+                Sledujte nás
+              </h4>
 
-            <div className="flex items-center md:justify-end space-x-2.5">
-              <a 
-                href="https://youtube.com" 
-                target="_blank" 
-                rel="noopener noreferrer" 
-                className="w-10 h-10 rounded-xl bg-neutral-900 border border-neutral-800 text-neutral-300 hover:text-white hover:bg-[#c93838] hover:border-[#c93838] flex items-center justify-center transition-all hover:-translate-y-0.5 shadow-2xs"
-                title="YouTube"
-              >
-                <Youtube className="w-4 h-4 fill-current" />
-              </a>
-              <a 
-                href="https://instagram.com" 
-                target="_blank" 
-                rel="noopener noreferrer" 
-                className="w-10 h-10 rounded-xl bg-neutral-900 border border-neutral-800 text-neutral-300 hover:text-white hover:bg-[#c93838] hover:border-[#c93838] flex items-center justify-center transition-all hover:-translate-y-0.5 shadow-2xs"
-                title="Instagram"
-              >
-                <Instagram className="w-4 h-4" />
-              </a>
-              <a 
-                href="https://facebook.com" 
-                target="_blank" 
-                rel="noopener noreferrer" 
-                className="w-10 h-10 rounded-xl bg-neutral-900 border border-neutral-800 text-neutral-300 hover:text-white hover:bg-[#c93838] hover:border-[#c93838] flex items-center justify-center transition-all hover:-translate-y-0.5 shadow-2xs"
-                title="Facebook"
-              >
-                <Facebook className="w-4 h-4 fill-current" />
-              </a>
+              <div className="flex items-center md:justify-end space-x-2.5">
+                {socialLinks?.map((link) => (
+                  <a
+                    key={link.id}
+                    href={link.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="w-10 h-10 rounded-xl bg-neutral-900 border border-neutral-800 text-neutral-300 hover:text-white hover:bg-[#c93838] hover:border-[#c93838] flex items-center justify-center transition-all hover:-translate-y-0.5 shadow-2xs overflow-hidden"
+                  >
+                    {link.icon ? (
+                      <Image src={link.icon} alt="" width={18} height={18} className="object-contain" unoptimized referrerPolicy="no-referrer" />
+                    ) : (
+                      <Share2 className="w-4 h-4" />
+                    )}
+                  </a>
+                ))}
+              </div>
+
+              <p className="text-xs text-neutral-400 max-w-[220px] md:ml-auto leading-relaxed">
+                Aktuality a fotky najdete také i na našich sociálních sítích.
+              </p>
             </div>
-
-            <p className="text-xs text-neutral-400 max-w-[220px] md:ml-auto leading-relaxed">
-              Aktuality a fotky najdete také i na našich sociálních sítích.
-            </p>
-          </div>
+          )}
 
         </div>
 
@@ -143,14 +141,6 @@ export default function Footer({ setActiveTab }: FooterProps) {
             >
               GDPR
             </button>
-            <span className="text-neutral-700">·</span>
-            <a
-              href={getPathForTab('login')}
-              onClick={(e) => handleLink('login', e)}
-              className="hover:text-white transition-colors uppercase tracking-wider font-semibold cursor-pointer"
-            >
-              Přihlášení
-            </a>
           </div>
         </div>
 

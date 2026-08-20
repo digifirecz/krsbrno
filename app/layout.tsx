@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import { PT_Serif, Open_Sans } from 'next/font/google';
+import ToastProvider from '@/components/admin/ToastProvider';
 import './globals.css';
 
 const ptSerif = PT_Serif({
@@ -26,7 +27,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="cs" className={`${ptSerif.variable} ${openSans.variable}`}>
       <body className={openSans.className} suppressHydrationWarning>
-        {children}
+        <ToastProvider>{children}</ToastProvider>
       </body>
     </html>
   );

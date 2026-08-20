@@ -2,52 +2,76 @@
 
 import { useState, useEffect, useRef } from 'react';
 import Image from 'next/image';
-import { 
-  Menu, 
-  X, 
-  ChevronDown, 
-  HeartHandshake, 
-  Calendar, 
-  BookOpen, 
-  Church
+import {
+  Menu,
+  X,
+  ChevronDown,
+  FileText,
+  ShieldCheck
 } from 'lucide-react';
 import { getPathForTab } from '@/lib/routes';
+import { auth } from '@/lib/firebase';
+import { PAGE_ID_TO_TAB } from '@/lib/blocks/pageRegistry';
+import { getIcon } from '@/lib/blocks/icons';
+import { useNavConfig } from '@/lib/useNavConfig';
+import { useSiteSettings } from '@/lib/useSiteSettings';
+import { DEFAULT_SITE_SETTINGS } from '@/lib/siteSettings';
+import type { PageNavEntry } from '@/lib/pages';
 
 interface NavbarProps {
   activeTab: string;
   setActiveTab: (tab: string) => void;
-  openAiModal?: () => void;
+}
+
+function tabFor(entry: PageNavEntry): string {
+  return PAGE_ID_TO_TAB[entry.id] || entry.id;
 }
 
 export default function Navbar({ activeTab, setActiveTab }: NavbarProps) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [kdoJsmeOpen, setKdoJsmeOpen] = useState(false);
-  const [coDelameOpen, setCoDelameOpen] = useState(false);
-  
-  // Mobile accordion states (default open or toggled for simple access)
-  const [mobileKdoJsmeOpen, setMobileKdoJsmeOpen] = useState(true);
-  const [mobileCoDelameOpen, setMobileCoDelameOpen] = useState(true);
+  const [openGroup, setOpenGroup] = useState<string | null>(null);
+  const [mobileOpenGroups, setMobileOpenGroups] = useState<Set<string>>(new Set());
 
   const [scrolled, setScrolled] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const navConfig = useNavConfig();
+  const siteSettings = useSiteSettings();
+  const logo = siteSettings?.logo || DEFAULT_SITE_SETTINGS.logo;
+  const logoAlt = siteSettings?.logoAlt || DEFAULT_SITE_SETTINGS.logoAlt;
+  const navRef = useRef<HTMLDivElement>(null);
 
-  const kdoJsmeRef = useRef<HTMLDivElement>(null);
-  const coDelameRef = useRef<HTMLDivElement>(null);
+  const headerEntries = navConfig ? [...navConfig.values()].filter((e) => e.showInHeader) : [];
+  const groupedEntries = new Map<string, { label: string; items: PageNavEntry[] }>();
+  const standaloneEntries: PageNavEntry[] = [];
+  headerEntries.forEach((entry) => {
+    if (entry.headerGroupId) {
+      const bucket = groupedEntries.get(entry.headerGroupId) || { label: entry.headerGroupLabel, items: [] };
+      bucket.items.push(entry);
+      groupedEntries.set(entry.headerGroupId, bucket);
+    } else {
+      standaloneEntries.push(entry);
+    }
+  });
+  const groups = [...groupedEntries.entries()];
+
+  useEffect(() => {
+    const unsubscribe = auth.onAuthStateChanged((user) => {
+      setIsLoggedIn(!!user);
+    });
+    return () => unsubscribe();
+  }, []);
 
   // Close dropdowns on click outside or escape key
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (kdoJsmeRef.current && !kdoJsmeRef.current.contains(event.target as Node)) {
-        setKdoJsmeOpen(false);
-      }
-      if (coDelameRef.current && !coDelameRef.current.contains(event.target as Node)) {
-        setCoDelameOpen(false);
+      if (navRef.current && !navRef.current.contains(event.target as Node)) {
+        setOpenGroup(null);
       }
     };
 
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.key === 'Escape') {
-        setKdoJsmeOpen(false);
-        setCoDelameOpen(false);
+        setOpenGroup(null);
         setMobileMenuOpen(false);
       }
     };
@@ -78,32 +102,38 @@ export default function Navbar({ activeTab, setActiveTab }: NavbarProps) {
     }
     setActiveTab(tab);
     setMobileMenuOpen(false);
-    setKdoJsmeOpen(false);
-    setCoDelameOpen(false);
+    setOpenGroup(null);
   };
 
-  const isKdoJsmeActive = ['about', 'beliefs', 'confession', 'history', 'management', 'leadership'].includes(activeTab);
-  const isCoDelameActive = ['meetings', 'library', 'youth', 'teens', 'kids', 'groups'].includes(activeTab);
+  const toggleMobileGroup = (group: string) => {
+    setMobileOpenGroups((prev) => {
+      const next = new Set(prev);
+      if (next.has(group)) next.delete(group);
+      else next.add(group);
+      return next;
+    });
+  };
 
   return (
     <header className={`sticky top-0 z-50 transition-all duration-200 ${scrolled ? 'bg-white/95 backdrop-blur-md shadow-sm border-b border-neutral-200/80' : 'bg-white border-b border-neutral-100'}`}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-20">
-          
+
           {/* Logo */}
-          <a 
+          <a
             href={getPathForTab('home')}
-            onClick={(e) => handleNavigate('home', e)} 
+            onClick={(e) => handleNavigate('home', e)}
             className="flex items-center text-left focus:outline-none group py-1 transition-transform duration-300 hover:scale-105 cursor-pointer"
             id="nav-logo"
             aria-label="Křesťanský sbor Brno - Domů"
           >
             <div className="relative h-9 sm:h-11 w-48 sm:w-56">
-              <Image 
-                src="/logo.png" 
-                alt="Křesťanský sbor Brno" 
-                fill 
-                className="object-contain object-left" 
+              <Image
+                src={logo}
+                alt={logoAlt}
+                fill
+                unoptimized
+                className="object-contain object-left"
                 priority
                 referrerPolicy="no-referrer"
               />
@@ -111,8 +141,8 @@ export default function Navbar({ activeTab, setActiveTab }: NavbarProps) {
           </a>
 
           {/* Desktop Navigation Links */}
-          <nav className="hidden md:flex items-center space-x-1 lg:space-x-2">
-            
+          <nav ref={navRef} className="hidden md:flex items-center space-x-1 lg:space-x-2">
+
             {/* Úvod */}
             <a
               href={getPathForTab('home')}
@@ -123,103 +153,53 @@ export default function Navbar({ activeTab, setActiveTab }: NavbarProps) {
               Úvod
             </a>
 
-            {/* Kdo jsme Dropdown (Pouze: Čemu věříme, O našem sboru) */}
-            <div 
-              ref={kdoJsmeRef}
-              className="relative"
-              onMouseEnter={() => {
-                setKdoJsmeOpen(true);
-                setCoDelameOpen(false);
-              }}
-              onMouseLeave={() => setKdoJsmeOpen(false)}
-            >
-              <button
-                onClick={(e) => {
-                  e.preventDefault();
-                  setKdoJsmeOpen((prev) => !prev);
-                  setCoDelameOpen(false);
-                }}
-                className={`flex items-center space-x-1.5 px-3 py-2 rounded-lg text-sm font-medium transition-colors cursor-pointer ${isKdoJsmeActive ? 'text-[#c93838] bg-red-50/90 font-semibold' : 'text-neutral-700 hover:text-[#c93838] hover:bg-neutral-50'}`}
-                id="nav-about-dropdown"
-                type="button"
-                aria-expanded={kdoJsmeOpen}
-              >
-                <span>Kdo jsme</span>
-                <ChevronDown className={`w-4 h-4 transition-transform duration-200 ${kdoJsmeOpen ? 'rotate-180 text-[#c93838]' : ''}`} />
-              </button>
+            {/* Dynamic dropdown groups */}
+            {groups.map(([groupId, { label: groupLabel, items }]) => {
+              const isActive = items.some((i) => tabFor(i) === activeTab);
+              const isOpen = openGroup === groupId;
+              return (
+                <div
+                  key={groupId}
+                  className="relative"
+                  onMouseEnter={() => setOpenGroup(groupId)}
+                  onMouseLeave={() => setOpenGroup(null)}
+                >
+                  <button
+                    onClick={(e) => {
+                      e.preventDefault();
+                      setOpenGroup((prev) => (prev === groupId ? null : groupId));
+                    }}
+                    className={`flex items-center space-x-1.5 px-3 py-2 rounded-lg text-sm font-medium transition-colors cursor-pointer ${isActive ? 'text-[#c93838] bg-red-50/90 font-semibold' : 'text-neutral-700 hover:text-[#c93838] hover:bg-neutral-50'}`}
+                    type="button"
+                    aria-expanded={isOpen}
+                  >
+                    <span>{groupLabel}</span>
+                    <ChevronDown className={`w-4 h-4 transition-transform duration-200 ${isOpen ? 'rotate-180 text-[#c93838]' : ''}`} />
+                  </button>
 
-              {kdoJsmeOpen && (
-                <div className="absolute left-0 top-full pt-1.5 w-52 z-50">
-                  <div className="bg-white rounded-xl shadow-xl border border-neutral-200/90 py-1.5 animate-in fade-in slide-in-from-top-1 duration-150">
-                    <a
-                      href={getPathForTab('beliefs')}
-                      onClick={(e) => handleNavigate('beliefs', e)}
-                      className={`w-full text-left px-4 py-2.5 text-sm hover:bg-red-50 hover:text-[#c93838] font-medium transition-colors flex items-center space-x-2.5 cursor-pointer ${activeTab === 'beliefs' ? 'text-[#c93838] bg-red-50/60 font-semibold' : 'text-neutral-700'}`}
-                    >
-                      <HeartHandshake className="w-4 h-4 text-[#c93838]" />
-                      <span>Čemu věříme</span>
-                    </a>
-                    <a
-                      href={getPathForTab('about')}
-                      onClick={(e) => handleNavigate('about', e)}
-                      className={`w-full text-left px-4 py-2.5 text-sm hover:bg-red-50 hover:text-[#c93838] font-medium transition-colors flex items-center space-x-2.5 cursor-pointer ${activeTab === 'about' ? 'text-[#c93838] bg-red-50/60 font-semibold' : 'text-neutral-700'}`}
-                    >
-                      <Church className="w-4 h-4 text-[#c93838]" />
-                      <span>O našem sboru</span>
-                    </a>
-                  </div>
+                  {isOpen && (
+                    <div className="absolute left-0 top-full pt-1.5 w-56 z-50">
+                      <div className="bg-white rounded-xl shadow-xl border border-neutral-200/90 py-1.5 animate-in fade-in slide-in-from-top-1 duration-150">
+                        {items.map((item) => {
+                          const ItemIcon = getIcon(item.headerIcon) || FileText;
+                          return (
+                            <a
+                              key={item.id}
+                              href={getPathForTab(tabFor(item))}
+                              onClick={(e) => handleNavigate(tabFor(item), e)}
+                              className={`w-full text-left px-4 py-2.5 text-sm hover:bg-red-50 hover:text-[#c93838] font-medium transition-colors flex items-center space-x-2.5 cursor-pointer ${activeTab === tabFor(item) ? 'text-[#c93838] bg-red-50/60 font-semibold' : 'text-neutral-700'}`}
+                            >
+                              <ItemIcon className="w-4 h-4 text-[#c93838]" />
+                              <span>{item.label}</span>
+                            </a>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  )}
                 </div>
-              )}
-            </div>
-
-            {/* Co děláme Dropdown (Pouze: Společná setkávání, Knihovna DEN) */}
-            <div 
-              ref={coDelameRef}
-              className="relative"
-              onMouseEnter={() => {
-                setCoDelameOpen(true);
-                setKdoJsmeOpen(false);
-              }}
-              onMouseLeave={() => setCoDelameOpen(false)}
-            >
-              <button
-                onClick={(e) => {
-                  e.preventDefault();
-                  setCoDelameOpen((prev) => !prev);
-                  setKdoJsmeOpen(false);
-                }}
-                className={`flex items-center space-x-1.5 px-3 py-2 rounded-lg text-sm font-medium transition-colors cursor-pointer ${isCoDelameActive ? 'text-[#c93838] bg-red-50/90 font-semibold' : 'text-neutral-700 hover:text-[#c93838] hover:bg-neutral-50'}`}
-                id="nav-groups-dropdown"
-                type="button"
-                aria-expanded={coDelameOpen}
-              >
-                <span>Co děláme</span>
-                <ChevronDown className={`w-4 h-4 transition-transform duration-200 ${coDelameOpen ? 'rotate-180 text-[#c93838]' : ''}`} />
-              </button>
-
-              {coDelameOpen && (
-                <div className="absolute left-0 top-full pt-1.5 w-56 z-50">
-                  <div className="bg-white rounded-xl shadow-xl border border-neutral-200/90 py-1.5 animate-in fade-in slide-in-from-top-1 duration-150">
-                    <a
-                      href={getPathForTab('meetings')}
-                      onClick={(e) => handleNavigate('meetings', e)}
-                      className={`w-full text-left px-4 py-2.5 text-sm hover:bg-red-50 hover:text-[#c93838] font-medium transition-colors flex items-center space-x-2.5 cursor-pointer ${activeTab === 'meetings' ? 'text-[#c93838] bg-red-50/60 font-semibold' : 'text-neutral-700'}`}
-                    >
-                      <Calendar className="w-4 h-4 text-[#c93838]" />
-                      <span>Společná setkávání</span>
-                    </a>
-                    <a
-                      href={getPathForTab('library')}
-                      onClick={(e) => handleNavigate('library', e)}
-                      className={`w-full text-left px-4 py-2.5 text-sm hover:bg-red-50 hover:text-[#c93838] font-medium transition-colors flex items-center space-x-2.5 cursor-pointer ${activeTab === 'library' ? 'text-[#c93838] bg-red-50/60 font-semibold' : 'text-neutral-700'}`}
-                    >
-                      <BookOpen className="w-4 h-4 text-[#c93838]" />
-                      <span>Knihovna DEN</span>
-                    </a>
-                  </div>
-                </div>
-              )}
-            </div>
+              );
+            })}
 
             {/* Kázání */}
             <a
@@ -231,25 +211,28 @@ export default function Navbar({ activeTab, setActiveTab }: NavbarProps) {
               Kázání
             </a>
 
-            {/* Kontakt */}
-            <a
-              href={getPathForTab('contact')}
-              onClick={(e) => handleNavigate('contact', e)}
-              className={`px-3 py-2 rounded-lg text-sm font-medium transition-colors cursor-pointer ${activeTab === 'contact' ? 'text-[#c93838] bg-red-50/90 font-semibold' : 'text-neutral-700 hover:text-[#c93838] hover:bg-neutral-50'}`}
-              id="nav-contact"
-            >
-              Kontakt
-            </a>
+            {/* Standalone (ungrouped) header items */}
+            {standaloneEntries.map((item) => (
+              <a
+                key={item.id}
+                href={getPathForTab(tabFor(item))}
+                onClick={(e) => handleNavigate(tabFor(item), e)}
+                className={`px-3 py-2 rounded-lg text-sm font-medium transition-colors cursor-pointer ${activeTab === tabFor(item) ? 'text-[#c93838] bg-red-50/90 font-semibold' : 'text-neutral-700 hover:text-[#c93838] hover:bg-neutral-50'}`}
+              >
+                {item.label}
+              </a>
+            ))}
 
-            {/* Podpora */}
-            <a
-              href={getPathForTab('support')}
-              onClick={(e) => handleNavigate('support', e)}
-              className={`px-3 py-2 rounded-lg text-sm font-medium transition-colors cursor-pointer ${activeTab === 'support' ? 'text-[#c93838] bg-red-50/90 font-semibold' : 'text-neutral-700 hover:text-[#c93838] hover:bg-neutral-50'}`}
-              id="nav-support"
-            >
-              Podpora
-            </a>
+            {isLoggedIn && (
+              <a
+                href="/admin"
+                className="ml-2 inline-flex items-center space-x-1.5 px-3 py-2 rounded-lg text-sm font-bold bg-[#c93838] text-white hover:bg-[#b02f2f] transition-colors cursor-pointer"
+                id="nav-admin"
+              >
+                <ShieldCheck className="w-4 h-4" />
+                <span>Administrace</span>
+              </a>
+            )}
           </nav>
 
           {/* Mobile Menu Button */}
@@ -277,100 +260,69 @@ export default function Navbar({ activeTab, setActiveTab }: NavbarProps) {
           >
             Úvod
           </a>
-          
-          {/* Mobile Accordion: Kdo jsme */}
-          <div className="border-t border-neutral-100 pt-1.5 pb-1">
-            <button 
-              onClick={() => setMobileKdoJsmeOpen(!mobileKdoJsmeOpen)}
-              className="w-full flex items-center justify-between px-3 py-2 rounded-lg text-sm font-bold text-neutral-800 hover:bg-neutral-50 cursor-pointer"
-            >
-              <span className="uppercase tracking-wider text-xs text-neutral-500">Kdo jsme</span>
-              <ChevronDown className={`w-4 h-4 text-neutral-500 transition-transform duration-200 ${mobileKdoJsmeOpen ? 'rotate-180 text-[#c93838]' : ''}`} />
-            </button>
 
-            {mobileKdoJsmeOpen && (
-              <div className="pl-3 pr-1 py-1 space-y-1 border-l-2 border-red-100 ml-3 mt-1">
-                <a 
-                  href={getPathForTab('beliefs')}
-                  onClick={(e) => handleNavigate('beliefs', e)} 
-                  className={`block w-full text-left px-3 py-2 rounded-lg text-sm font-medium transition-colors cursor-pointer flex items-center space-x-2 ${activeTab === 'beliefs' ? 'text-[#c93838] bg-red-50 font-bold' : 'text-neutral-700 hover:bg-neutral-50'}`}
+          {groups.map(([groupId, { label: groupLabel, items }]) => {
+            const isOpen = mobileOpenGroups.has(groupId);
+            return (
+              <div key={groupId} className="border-t border-neutral-100 pt-1.5 pb-1">
+                <button
+                  onClick={() => toggleMobileGroup(groupId)}
+                  className="w-full flex items-center justify-between px-3 py-2 rounded-lg text-sm font-bold text-neutral-800 hover:bg-neutral-50 cursor-pointer"
                 >
-                  <HeartHandshake className="w-4 h-4 text-[#c93838]" />
-                  <span>Čemu věříme</span>
-                </a>
-                <a 
-                  href={getPathForTab('about')}
-                  onClick={(e) => handleNavigate('about', e)} 
-                  className={`block w-full text-left px-3 py-2 rounded-lg text-sm font-medium transition-colors cursor-pointer flex items-center space-x-2 ${activeTab === 'about' ? 'text-[#c93838] bg-red-50 font-bold' : 'text-neutral-700 hover:bg-neutral-50'}`}
-                >
-                  <Church className="w-4 h-4 text-[#c93838]" />
-                  <span>O našem sboru</span>
-                </a>
+                  <span className="uppercase tracking-wider text-xs text-neutral-500">{groupLabel}</span>
+                  <ChevronDown className={`w-4 h-4 text-neutral-500 transition-transform duration-200 ${isOpen ? 'rotate-180 text-[#c93838]' : ''}`} />
+                </button>
+
+                {isOpen && (
+                  <div className="pl-3 pr-1 py-1 space-y-1 border-l-2 border-red-100 ml-3 mt-1">
+                    {items.map((item) => {
+                      const ItemIcon = getIcon(item.headerIcon) || FileText;
+                      return (
+                        <a
+                          key={item.id}
+                          href={getPathForTab(tabFor(item))}
+                          onClick={(e) => handleNavigate(tabFor(item), e)}
+                          className={`block w-full text-left px-3 py-2 rounded-lg text-sm font-medium transition-colors cursor-pointer flex items-center space-x-2 ${activeTab === tabFor(item) ? 'text-[#c93838] bg-red-50 font-bold' : 'text-neutral-700 hover:bg-neutral-50'}`}
+                        >
+                          <ItemIcon className="w-4 h-4 text-[#c93838]" />
+                          <span>{item.label}</span>
+                        </a>
+                      );
+                    })}
+                  </div>
+                )}
               </div>
-            )}
-          </div>
-
-          {/* Mobile Accordion: Co děláme */}
-          <div className="border-t border-neutral-100 pt-1.5 pb-1">
-            <button 
-              onClick={() => setMobileCoDelameOpen(!mobileCoDelameOpen)}
-              className="w-full flex items-center justify-between px-3 py-2 rounded-lg text-sm font-bold text-neutral-800 hover:bg-neutral-50 cursor-pointer"
-            >
-              <span className="uppercase tracking-wider text-xs text-neutral-500">Co děláme</span>
-              <ChevronDown className={`w-4 h-4 text-neutral-500 transition-transform duration-200 ${mobileCoDelameOpen ? 'rotate-180 text-[#c93838]' : ''}`} />
-            </button>
-
-            {mobileCoDelameOpen && (
-              <div className="pl-3 pr-1 py-1 space-y-1 border-l-2 border-red-100 ml-3 mt-1">
-                <a 
-                  href={getPathForTab('meetings')}
-                  onClick={(e) => handleNavigate('meetings', e)} 
-                  className={`block w-full text-left px-3 py-2 rounded-lg text-sm font-medium transition-colors cursor-pointer flex items-center space-x-2 ${activeTab === 'meetings' ? 'text-[#c93838] bg-red-50 font-bold' : 'text-neutral-700 hover:bg-neutral-50'}`}
-                >
-                  <Calendar className="w-4 h-4 text-[#c93838]" />
-                  <span>Společná setkávání</span>
-                </a>
-                <a 
-                  href={getPathForTab('library')}
-                  onClick={(e) => handleNavigate('library', e)} 
-                  className={`block w-full text-left px-3 py-2 rounded-lg text-sm font-medium transition-colors cursor-pointer flex items-center space-x-2 ${activeTab === 'library' ? 'text-[#c93838] bg-red-50 font-bold' : 'text-neutral-700 hover:bg-neutral-50'}`}
-                >
-                  <BookOpen className="w-4 h-4 text-[#c93838]" />
-                  <span>Knihovna DEN</span>
-                </a>
-              </div>
-            )}
-          </div>
+            );
+          })}
 
           <div className="border-t border-neutral-100 pt-1">
-            <a 
+            <a
               href={getPathForTab('sermons')}
-              onClick={(e) => handleNavigate('sermons', e)} 
+              onClick={(e) => handleNavigate('sermons', e)}
               className={`block w-full text-left px-3 py-2.5 rounded-lg text-base font-medium transition-colors cursor-pointer ${activeTab === 'sermons' ? 'text-[#c93838] bg-red-50 font-bold' : 'text-neutral-900 hover:bg-neutral-50'}`}
             >
               Kázání
             </a>
-            <a 
-              href={getPathForTab('contact')}
-              onClick={(e) => handleNavigate('contact', e)} 
-              className={`block w-full text-left px-3 py-2.5 rounded-lg text-base font-medium transition-colors cursor-pointer ${activeTab === 'contact' ? 'text-[#c93838] bg-red-50 font-bold' : 'text-neutral-900 hover:bg-neutral-50'}`}
-            >
-              Kontakt
-            </a>
-            <a 
-              href={getPathForTab('support')}
-              onClick={(e) => handleNavigate('support', e)} 
-              className={`block w-full text-left px-3 py-2.5 rounded-lg text-base font-medium transition-colors cursor-pointer ${activeTab === 'support' ? 'text-[#c93838] bg-red-50 font-bold' : 'text-neutral-900 hover:bg-neutral-50'}`}
-            >
-              Podpora
-            </a>
-            <a 
-              href={getPathForTab('login')}
-              onClick={(e) => handleNavigate('login', e)} 
-              className={`block w-full text-left px-3 py-2.5 rounded-lg text-base font-medium transition-colors cursor-pointer ${activeTab === 'login' ? 'text-[#c93838] bg-red-50 font-bold' : 'text-neutral-600 hover:bg-neutral-50'}`}
-            >
-              Přihlášení
-            </a>
+            {standaloneEntries.map((item) => (
+              <a
+                key={item.id}
+                href={getPathForTab(tabFor(item))}
+                onClick={(e) => handleNavigate(tabFor(item), e)}
+                className={`block w-full text-left px-3 py-2.5 rounded-lg text-base font-medium transition-colors cursor-pointer ${activeTab === tabFor(item) ? 'text-[#c93838] bg-red-50 font-bold' : 'text-neutral-900 hover:bg-neutral-50'}`}
+              >
+                {item.label}
+              </a>
+            ))}
+
+            {isLoggedIn && (
+              <a
+                href="/admin"
+                className="mt-2 flex items-center justify-center space-x-2 w-full px-3 py-2.5 rounded-lg text-sm font-bold bg-[#c93838] text-white hover:bg-[#b02f2f] transition-colors cursor-pointer"
+              >
+                <ShieldCheck className="w-4 h-4" />
+                <span>Administrace</span>
+              </a>
+            )}
           </div>
         </div>
       )}

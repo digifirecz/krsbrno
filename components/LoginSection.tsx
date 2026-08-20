@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { Lock, Mail, ArrowLeft, CheckCircle2, AlertCircle, Eye, EyeOff, ShieldCheck, UserCheck } from 'lucide-react';
 import { getPathForTab } from '@/lib/routes';
 import { signInWithEmailAndPassword, sendPasswordResetEmail } from 'firebase/auth';
@@ -11,6 +12,7 @@ interface LoginSectionProps {
 }
 
 export default function LoginSection({ setActiveTab }: LoginSectionProps) {
+  const router = useRouter();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
@@ -48,11 +50,7 @@ export default function LoginSection({ setActiveTab }: LoginSectionProps) {
     try {
       await signInWithEmailAndPassword(auth, email, password);
       setIsLoading(false);
-      if (setActiveTab) {
-        setActiveTab('admin');
-      } else if (typeof window !== 'undefined') {
-        window.location.href = '/admin';
-      }
+      router.push('/admin');
     } catch (error: any) {
       setIsLoading(false);
       // Basic error translation
@@ -88,7 +86,7 @@ export default function LoginSection({ setActiveTab }: LoginSectionProps) {
     <div className="py-12 px-4 sm:px-6 lg:px-8 bg-neutral-50 min-h-[75vh] flex flex-col justify-center items-center font-sans">
       
       {/* Back button link */}
-      <div className="w-full max-w-md mb-6 flex items-center justify-between">
+      <div className="w-full max-w-md mb-6 flex items-center">
         <a
           href={getPathForTab('home')}
           onClick={handleNavigateHome}
@@ -97,7 +95,6 @@ export default function LoginSection({ setActiveTab }: LoginSectionProps) {
           <ArrowLeft className="w-4 h-4" />
           <span>Zpět na hlavní stránku</span>
         </a>
-        <span className="text-xs text-neutral-400 font-medium">Členská zóna</span>
       </div>
 
       {/* Main Login Card */}
@@ -112,7 +109,7 @@ export default function LoginSection({ setActiveTab }: LoginSectionProps) {
             Přihlášení do sboru
           </h1>
           <p className="text-sm text-neutral-600">
-            Zadejte své přihlašovací údaje pro přístup do členského portálu
+            Zadejte své přihlašovací údaje
           </p>
         </div>
 
@@ -228,23 +225,6 @@ export default function LoginSection({ setActiveTab }: LoginSectionProps) {
                 </>
               )}
             </button>
-
-            {/* Hint for new members */}
-            <div className="pt-3 text-center border-t border-neutral-100">
-              <p className="text-xs text-neutral-500 leading-relaxed">
-                Nemáte ještě členský účet?{' '}
-                <a
-                  href={getPathForTab('contact')}
-                  onClick={(e) => {
-                    e.preventDefault();
-                    if (setActiveTab) setActiveTab('contact');
-                  }}
-                  className="text-[#c93838] font-semibold hover:underline cursor-pointer"
-                >
-                  Kontaktujte nás nebo přijďte na bohoslužbu
-                </a>
-              </p>
-            </div>
 
           </form>
         )}

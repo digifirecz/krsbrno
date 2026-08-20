@@ -1,6 +1,8 @@
 import { Metadata } from 'next';
+import { redirect } from 'next/navigation';
 import ChurchApp from '@/components/ChurchApp';
-import { getTabFromSlug, getTitleForTab } from '@/lib/routes';
+import { getTabFromSlug, getTitleForTab, resolveDynamicSlug } from '@/lib/routes';
+import { getPageDoc } from '@/lib/pages';
 
 interface SlugPageProps {
   params: Promise<{ slug: string }>;
@@ -48,8 +50,16 @@ export function generateStaticParams() {
 
 export async function generateMetadata({ params }: SlugPageProps): Promise<Metadata> {
   const { slug } = await params;
-  const tab = getTabFromSlug(slug);
-  const title = getTitleForTab(tab);
+
+  let tab = getTabFromSlug(slug);
+  let title = getTitleForTab(tab);
+
+  const dynamic = await resolveDynamicSlug(slug).catch(() => null);
+  if (dynamic) {
+    tab = dynamic.tab;
+    const pageDoc = await getPageDoc(dynamic.pageId).catch(() => null);
+    title = pageDoc?.title ? `${pageDoc.title} | Křesťanský sbor Brno` : getTitleForTab(tab);
+  }
 
   return {
     title,
@@ -63,7 +73,12 @@ export async function generateMetadata({ params }: SlugPageProps): Promise<Metad
 
 export default async function SlugPage({ params }: SlugPageProps) {
   const { slug } = await params;
-  const tab = getTabFromSlug(slug);
+
+  const dynamic = await resolveDynamicSlug(slug).catch(() => null);
+  if (dynamic?.redirectPath) {
+    redirect(dynamic.redirectPath);
+  }
+  const tab = dynamic?.tab || getTabFromSlug(slug);
 
   return <ChurchApp initialTab={tab} />;
 }

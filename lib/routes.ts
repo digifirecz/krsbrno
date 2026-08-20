@@ -1,3 +1,5 @@
+import { PAGE_IDS, PAGE_ID_TO_TAB } from '@/lib/blocks/pageRegistry';
+
 export interface RouteInfo {
   tab: string;
   path: string;
@@ -8,7 +10,7 @@ export interface RouteInfo {
 export const TAB_TO_PATH: Record<string, string> = {
   home: '/',
   beliefs: '/cemu-verime',
-  about: '/o-nas',
+  about: '/o-nasem-sboru',
   confession: '/nase-vyznani',
   history: '/historie',
   management: '/sprava-sboru',
@@ -134,20 +136,63 @@ export const PAGE_TITLES: Record<string, string> = {
   admin: 'Administrace | Křesťanský sbor Brno',
 };
 
+// Any slug not found in PATH_TO_TAB is treated as a custom page id (see CustomPageSection),
+// rather than silently falling back to the home page.
 export function getTabFromSlug(slug: string): string {
   const normalized = (slug || '').toLowerCase().replace(/^\/+|\/+$/g, '');
-  return PATH_TO_TAB[normalized] || 'home';
+  return PATH_TO_TAB[normalized] || normalized || 'home';
 }
 
 export function getTabFromPath(pathname: string): string {
   const normalized = (pathname || '').toLowerCase().replace(/^\/+|\/+$/g, '');
-  return PATH_TO_TAB[normalized] || 'home';
+  return PATH_TO_TAB[normalized] || normalized || 'home';
 }
 
 export function getPathForTab(tab: string): string {
-  return TAB_TO_PATH[tab] || '/';
+  const pageId = PAGE_IDS[tab as keyof typeof PAGE_IDS] ?? tab;
+  if (pageIdToSlugCache[pageId]) return `/${pageIdToSlugCache[pageId]}`;
+  if (TAB_TO_PATH[tab]) return TAB_TO_PATH[tab];
+  return tab && tab !== 'home' ? `/${tab}` : '/';
 }
 
 export function getTitleForTab(tab: string): string {
   return PAGE_TITLES[tab] || PAGE_TITLES.home;
+}
+
+// Managed pages ("Správa stránek") get a dynamic, DB-driven URL slug derived from their
+// editable title, instead of a hardcoded path — this cache backs the sync getPathForTab()
+// above, and resolveDynamicSlug() below handles incoming requests for those slugs.
+let pageIdToSlugCache: Record<string, string> = {};
+
+export async function preloadPageSlugs(): Promise<void> {
+  const { getAllPageSlugs } = await import('@/lib/pages');
+  const entries = await getAllPageSlugs();
+  const next: Record<string, string> = {};
+  entries.forEach((e) => {
+    next[e.id] = e.slug;
+  });
+  pageIdToSlugCache = next;
+}
+
+export interface DynamicSlugResolution {
+  tab: string;
+  pageId: string;
+  redirectPath?: string;
+}
+
+/**
+ * Resolves an incoming URL slug against DB-managed pages (current or historical slug).
+ * Falls back to null when the slug isn't a managed page at all.
+ */
+export async function resolveDynamicSlug(slug: string): Promise<DynamicSlugResolution | null> {
+  const normalized = (slug || '').toLowerCase().replace(/^\/+|\/+$/g, '');
+  if (!normalized) return null;
+  const { resolvePageBySlug } = await import('@/lib/pages');
+  const match = await resolvePageBySlug(normalized);
+  if (!match) return null;
+  const tab = PAGE_ID_TO_TAB[match.pageId] || match.pageId;
+  if (match.redirectSlug && match.redirectSlug !== normalized) {
+    return { tab, pageId: match.pageId, redirectPath: `/${match.redirectSlug}` };
+  }
+  return { tab, pageId: match.pageId };
 }

@@ -5,7 +5,6 @@ import { ArrowRight, Sparkles } from 'lucide-react';
 
 interface HeroProps {
   setActiveTab: (tab: string) => void;
-  openAiModal?: () => void;
 }
 
 export default function Hero({ setActiveTab }: HeroProps) {

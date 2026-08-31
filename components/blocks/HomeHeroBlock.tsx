@@ -82,9 +82,12 @@ export default function HomeHeroBlock({ data }: { data: HomeHeroData }) {
 
           {data.photo?.src && (
             <div className="lg:col-span-6 relative flex justify-center lg:justify-end">
-              <div className="relative w-full max-w-lg">
-                <div className="absolute -inset-2.5 bg-gradient-to-tr from-red-100 to-amber-100 rounded-3xl transform rotate-2 opacity-80 blur-xs" />
-                <div className="relative rounded-2xl overflow-hidden shadow-xl border-4 border-white bg-neutral-900 aspect-[4/3] group">
+              <div className="relative w-full max-w-xl aspect-[4/3]">
+                <div
+                  className="absolute inset-0 bg-red-100 -translate-x-7 -translate-y-6 -rotate-6 [clip-path:url(#hero-hex-clip)]"
+                  aria-hidden="true"
+                />
+                <div className="absolute inset-0 shadow-xl bg-neutral-900 overflow-hidden group [clip-path:url(#hero-hex-clip)]">
                   <Image
                     src={data.photo.src}
                     alt={data.photo.caption || ''}
@@ -96,6 +99,14 @@ export default function HomeHeroBlock({ data }: { data: HomeHeroData }) {
                   />
                 </div>
               </div>
+
+              <svg width="0" height="0" className="absolute">
+                <defs>
+                  <clipPath id="hero-hex-clip" clipPathUnits="objectBoundingBox">
+                    <path d="M0.0203,0.454 L0.1871,0.0748 Q0.22,0 0.285,0 L0.715,0 Q0.78,0 0.8129,0.0748 L0.9798,0.454 Q1,0.5 0.9798,0.546 L0.8129,0.9252 Q0.78,1 0.715,1 L0.285,1 Q0.22,1 0.1871,0.9252 L0.0203,0.546 Q0,0.5 0.0203,0.454 Z" />
+                  </clipPath>
+                </defs>
+              </svg>
             </div>
           )}
 

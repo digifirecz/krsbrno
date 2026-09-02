@@ -4,6 +4,7 @@ import type { PageHeroData } from '@/lib/blocks/types';
 
 export default function PageHeroBlock({ data }: { data: PageHeroData }) {
   const Icon = getIcon(data.icon);
+  const photos = (data.photos || []).filter((p) => p.src);
 
   return (
     <section className="py-12 sm:py-16 bg-neutral-50/90 border-b border-neutral-200/70">
@@ -35,10 +36,10 @@ export default function PageHeroBlock({ data }: { data: PageHeroData }) {
           )}
         </div>
 
-        {data.photos && data.photos.length > 0 && (
+        {photos.length > 0 && (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-5 sm:gap-6 pt-2 max-w-3xl mx-auto">
-            {data.photos.map((photo, idx) => (
-              <ImageCard key={idx} src={photo.src} alt={photo.caption || ''} caption={photo.caption} aspectRatio="aspect-[4/3]" fixedWidth={false} focalX={photo.focalX} focalY={photo.focalY} />
+            {photos.map((photo, idx) => (
+              <ImageCard key={idx} src={photo.src} alt={photo.caption || ''} caption={photo.caption} aspectRatio="aspect-[4/3]" fixedWidth={false} focalX={photo.focalX} focalY={photo.focalY} zoom={photo.zoom} />
             ))}
           </div>
         )}

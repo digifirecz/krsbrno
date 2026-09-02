@@ -9,7 +9,7 @@ const ASPECT_CLASSES = {
 };
 
 export default function TextSectionsBlock({ data }: { data: TextSectionsData }) {
-  const photos = data.photos || [];
+  const photos = (data.photos || []).filter((p) => p.src);
   const sections = data.sections || [];
   const photosRight = data.photosPosition === 'right';
   const aspectClass = ASPECT_CLASSES[data.photoAspectRatio || 'square'];
@@ -21,7 +21,7 @@ export default function TextSectionsBlock({ data }: { data: TextSectionsData }) 
           {photos.length > 0 && (
             <div className={`lg:col-span-4 space-y-4 ${photosRight ? 'lg:order-2' : ''}`}>
               {photos.map((photo, idx) => (
-                <ImageCard key={idx} src={photo.src} alt={photo.caption || ''} aspectRatio={aspectClass} fixedWidth caption={photo.caption} focalX={photo.focalX} focalY={photo.focalY} />
+                <ImageCard key={idx} src={photo.src} alt={photo.caption || ''} aspectRatio={aspectClass} fixedWidth caption={photo.caption} focalX={photo.focalX} focalY={photo.focalY} zoom={photo.zoom} />
               ))}
             </div>
           )}

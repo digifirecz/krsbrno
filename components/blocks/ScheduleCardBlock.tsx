@@ -9,9 +9,9 @@ export default function ScheduleCardBlock({ data }: { data: ScheduleCardData }) 
     <section className="py-14 sm:py-18 bg-white border-b border-neutral-200/70">
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 sm:gap-12 items-center">
-          {data.photo && (
+          {data.photo?.src && (
             <div className="space-y-3">
-              <ImageCard src={data.photo.src} alt={data.photo.caption || ''} aspectRatio="aspect-[4/3]" caption={data.photo.caption} focalX={data.photo.focalX} focalY={data.photo.focalY} />
+              <ImageCard src={data.photo.src} alt={data.photo.caption || ''} aspectRatio="aspect-[4/3]" caption={data.photo.caption} focalX={data.photo.focalX} focalY={data.photo.focalY} zoom={data.photo.zoom} />
             </div>
           )}
 

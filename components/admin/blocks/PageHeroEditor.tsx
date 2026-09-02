@@ -91,10 +91,10 @@ export default function PageHeroEditor({ data, onChange, pageId }: PageHeroEdito
               value={photo.src}
               pageId={pageId}
               aspectRatio={4 / 3}
-              focal={photo.focalX !== undefined ? { x: photo.focalX, y: photo.focalY ?? 50 } : undefined}
+              focal={photo.focalX !== undefined ? { x: photo.focalX, y: photo.focalY ?? 50, zoom: photo.zoom } : undefined}
               onFocalChange={(f) => {
                 const next = [...photos];
-                next[idx] = { ...next[idx], focalX: f.x, focalY: f.y };
+                next[idx] = { ...next[idx], focalX: f.x, focalY: f.y, zoom: f.zoom };
                 onChange({ ...data, photos: next });
               }}
               onChange={(src) => {

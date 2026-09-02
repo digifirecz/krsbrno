@@ -1,11 +1,14 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
-import { RotateCcw, X } from 'lucide-react';
+import { RotateCcw, X, ZoomIn } from 'lucide-react';
 
 export interface FocalPoint {
   x: number;
   y: number;
+  // Extra zoom (>=1) anchored at (x, y), cropping further into the axis
+  // that would otherwise show the photo uncropped. 1 = no extra zoom.
+  zoom?: number;
 }
 
 interface FocalPointPickerProps {
@@ -21,6 +24,7 @@ interface FocalPointPickerProps {
 
 const MAX_W = 480;
 const MAX_H = 420;
+const MAX_ZOOM = 3;
 
 export default function FocalPointPicker({ open, src, aspectRatio, value, onChange, onClose }: FocalPointPickerProps) {
   const [natural, setNatural] = useState<{ w: number; h: number } | null>(null);
@@ -50,35 +54,37 @@ export default function FocalPointPicker({ open, src, aspectRatio, value, onChan
 
   if (!open) return null;
 
+  const zoom = point.zoom || 1;
   const scale = natural ? Math.min(MAX_W / natural.w, MAX_H / natural.h, 1) : 1;
   const displayW = natural ? Math.round(natural.w * scale) : MAX_W;
   const displayH = natural ? Math.round(natural.h * scale) : MAX_H;
 
-  // Mirrors what CSS object-fit:cover + object-position do, so the highlighted
-  // window shows exactly what will stay visible on the frontend.
+  // Mirrors what CSS object-fit:cover + object-position (+ a zoom transform
+  // anchored at the same point) do, so the highlighted window shows exactly
+  // what will stay visible on the frontend.
   let winW = displayW;
   let winH = displayH;
-  let winX = 0;
-  let winY = 0;
   if (natural) {
     const imgRatio = natural.w / natural.h;
     if (imgRatio > aspectRatio) {
       winH = displayH;
       winW = displayH * aspectRatio;
-      winX = (displayW - winW) * (point.x / 100);
     } else {
       winW = displayW;
       winH = displayW / aspectRatio;
-      winY = (displayH - winH) * (point.y / 100);
     }
   }
+  winW /= zoom;
+  winH /= zoom;
+  const winX = (displayW - winW) * (point.x / 100);
+  const winY = (displayH - winH) * (point.y / 100);
 
   const updateFromPoint = (clientX: number, clientY: number) => {
     const rect = boxRef.current?.getBoundingClientRect();
     if (!rect) return;
     const x = Math.min(100, Math.max(0, ((clientX - rect.left) / rect.width) * 100));
     const y = Math.min(100, Math.max(0, ((clientY - rect.top) / rect.height) * 100));
-    setPoint({ x: Math.round(x), y: Math.round(y) });
+    setPoint((prev) => ({ ...prev, x: Math.round(x), y: Math.round(y) }));
   };
 
   return (
@@ -96,7 +102,7 @@ export default function FocalPointPicker({ open, src, aspectRatio, value, onChan
         </div>
 
         <p className="text-xs text-neutral-500 leading-relaxed">
-          Klikni nebo přetáhni bod na místo, které se má na webu vždy zobrazit. Zvýrazněný rámeček ukazuje výřez tak, jak bude fotka vidět na stránce — samotný soubor zůstane celý.
+          Klikni nebo přetáhni bod na místo, které se má na webu vždy zobrazit, a přiblížením ořízni i to, co nechceš mít po stranách. Zvýrazněný rámeček ukazuje výřez tak, jak bude fotka vidět na stránce — samotný soubor zůstane celý.
         </p>
 
         <div
@@ -135,14 +141,28 @@ export default function FocalPointPicker({ open, src, aspectRatio, value, onChan
           />
         </div>
 
+        <div className="flex items-center space-x-3">
+          <ZoomIn className="w-4 h-4 text-neutral-400 shrink-0" />
+          <input
+            type="range"
+            min={1}
+            max={MAX_ZOOM}
+            step={0.05}
+            value={zoom}
+            onChange={(e) => setPoint((prev) => ({ ...prev, zoom: Number(e.target.value) }))}
+            className="flex-1 accent-[#c93838] cursor-pointer"
+          />
+          <span className="text-xs font-bold text-neutral-500 w-9 text-right shrink-0">{zoom.toFixed(2)}×</span>
+        </div>
+
         <div className="flex items-center justify-between pt-1">
           <button
             type="button"
-            onClick={() => setPoint({ x: 50, y: 50 })}
+            onClick={() => setPoint({ x: 50, y: 50, zoom: 1 })}
             className="inline-flex items-center space-x-1.5 text-xs font-bold text-neutral-500 hover:text-[#c93838] cursor-pointer"
           >
             <RotateCcw className="w-3.5 h-3.5" />
-            <span>Na střed</span>
+            <span>Resetovat</span>
           </button>
           <div className="flex items-center space-x-2">
             <button

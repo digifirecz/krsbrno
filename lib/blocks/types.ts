@@ -9,6 +9,10 @@ export interface BlockPhoto {
   // Undefined means "center" (the CSS/browser default).
   focalX?: number;
   focalY?: number;
+  // Extra zoom (>=1) applied around the focal point, cropping further into
+  // the axis that would otherwise show the full, uncropped photo. 1 or
+  // undefined means "no extra zoom" — identical to the previous behavior.
+  zoom?: number;
 }
 
 export interface PageHeroData {
@@ -75,6 +79,10 @@ export interface PhotoCardItem {
   photo?: BlockPhoto;
   icon?: string;
   badge?: string;
+  // Icon shown inside the badge pill and the color it's styled with.
+  // Undefined keeps the original look (clock icon, red).
+  badgeIcon?: string;
+  badgeColor?: string;
   title: string;
   text?: string;
   linkLabel?: string;

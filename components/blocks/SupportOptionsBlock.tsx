@@ -140,7 +140,7 @@ export default function SupportOptionsBlock({ data }: { data: SupportOptionsData
               </p>
             )}
 
-            {data.involvement.photo && (
+            {data.involvement.photo?.src && (
               <div className="pt-2">
                 <ImageCard
                   src={data.involvement.photo.src}
@@ -149,6 +149,7 @@ export default function SupportOptionsBlock({ data }: { data: SupportOptionsData
                   caption={data.involvement.photo.caption}
                   focalX={data.involvement.photo.focalX}
                   focalY={data.involvement.photo.focalY}
+                  zoom={data.involvement.photo.zoom}
                 />
               </div>
             )}

@@ -82,7 +82,16 @@ export default function PhotoUpload({
             alt=""
             fill
             className={fit === 'contain' ? 'object-contain p-3' : 'object-cover'}
-            style={fit === 'contain' ? undefined : { objectPosition: focal ? `${focal.x}% ${focal.y}%` : undefined }}
+            style={
+              fit === 'contain' || !focal
+                ? undefined
+                : {
+                    objectPosition: `${focal.x}% ${focal.y}%`,
+                    ...(focal.zoom && focal.zoom > 1
+                      ? { transform: `scale(${focal.zoom})`, transformOrigin: `${focal.x}% ${focal.y}%` }
+                      : {}),
+                  }
+            }
             unoptimized
           />
           {onFocalChange && fit !== 'contain' && (

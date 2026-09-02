@@ -172,16 +172,16 @@ export default function SupportOptionsEditor({ data, onChange, pageId }: Support
           value={data.involvement.photo?.src || ''}
           pageId={pageId}
           aspectRatio={16 / 10}
-          focal={data.involvement.photo?.focalX !== undefined ? { x: data.involvement.photo.focalX, y: data.involvement.photo.focalY ?? 50 } : undefined}
+          focal={data.involvement.photo?.focalX !== undefined ? { x: data.involvement.photo.focalX, y: data.involvement.photo.focalY ?? 50, zoom: data.involvement.photo.zoom } : undefined}
           onFocalChange={(f) =>
             onChange({
               ...data,
-              involvement: { ...data.involvement, photo: { ...data.involvement.photo, src: data.involvement.photo?.src || '', focalX: f.x, focalY: f.y } },
+              involvement: { ...data.involvement, photo: { ...data.involvement.photo, src: data.involvement.photo?.src || '', focalX: f.x, focalY: f.y, zoom: f.zoom } },
             })
           }
-          onChange={(src) => onChange({ ...data, involvement: { ...data.involvement, photo: { ...data.involvement.photo, src } } })}
+          onChange={(src) => onChange({ ...data, involvement: { ...data.involvement, photo: src ? { ...data.involvement.photo, src } : undefined } })}
         />
-        {data.involvement.photo && (
+        {data.involvement.photo?.src && (
           <input
             type="text"
             value={data.involvement.photo.caption || ''}

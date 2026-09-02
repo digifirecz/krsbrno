@@ -1,7 +1,8 @@
 import Image from 'next/image';
 import { getIcon } from '@/lib/blocks/icons';
 import { getPathForTab } from '@/lib/routes';
-import { focalObjectPosition } from '@/lib/blocks/photoFocal';
+import { focalCropStyle } from '@/lib/blocks/photoFocal';
+import { getBadgeColorClasses } from '@/lib/blocks/badgeColors';
 import { Clock, ChevronRight } from 'lucide-react';
 import type { PhotoCardGridData } from '@/lib/blocks/types';
 
@@ -34,16 +35,18 @@ export default function PhotoCardGridBlock({ data, limit }: { data: PhotoCardGri
         <div className="grid grid-cols-1 md:grid-cols-3 gap-5 sm:gap-6">
           {cards.map((card, idx) => {
             const Icon = getIcon(card.icon);
+            const BadgeIcon = getIcon(card.badgeIcon) || Clock;
+            const badgeColors = getBadgeColorClasses(card.badgeColor);
             return (
               <div key={idx} className="bg-white rounded-2xl border border-neutral-200/80 hover:border-[#c93838]/30 transition-all duration-300 shadow-2xs hover:shadow-md hover:-translate-y-0.5 overflow-hidden flex flex-col group">
-                {card.photo && (
+                {card.photo?.src && (
                   <div className="relative h-40 w-full overflow-hidden bg-neutral-100">
                     <Image
                       src={card.photo.src}
                       alt={card.photo.caption || card.title}
                       fill
                       className="object-cover group-hover:scale-105 transition-transform duration-500"
-                      style={focalObjectPosition(card.photo) ? { objectPosition: focalObjectPosition(card.photo) } : undefined}
+                      style={focalCropStyle(card.photo)}
                       referrerPolicy="no-referrer"
                     />
                   </div>
@@ -55,8 +58,8 @@ export default function PhotoCardGridBlock({ data, limit }: { data: PhotoCardGri
                         <Icon className="w-4 h-4" />
                       </div>
                     ) : card.badge ? (
-                      <span className="inline-flex items-center space-x-1 px-2.5 py-1 rounded-full bg-red-100/80 text-[#c93838] font-bold text-xs">
-                        <Clock className="w-3 h-3" />
+                      <span className={`inline-flex items-center space-x-1 px-2.5 py-1 rounded-full font-bold text-xs ${badgeColors.bg} ${badgeColors.text}`}>
+                        <BadgeIcon className="w-3 h-3" />
                         <span>{card.badge}</span>
                       </span>
                     ) : null}

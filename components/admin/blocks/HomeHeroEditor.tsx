@@ -169,8 +169,8 @@ export default function HomeHeroEditor({ data, onChange, pageId }: HomeHeroEdito
           value={data.photo?.src || ''}
           pageId={pageId}
           aspectRatio={4 / 3}
-          focal={data.photo?.focalX !== undefined ? { x: data.photo.focalX, y: data.photo.focalY ?? 50 } : undefined}
-          onFocalChange={(f) => onChange({ ...data, photo: { ...data.photo, src: data.photo?.src || '', focalX: f.x, focalY: f.y } })}
+          focal={data.photo?.focalX !== undefined ? { x: data.photo.focalX, y: data.photo.focalY ?? 50, zoom: data.photo.zoom } : undefined}
+          onFocalChange={(f) => onChange({ ...data, photo: { ...data.photo, src: data.photo?.src || '', focalX: f.x, focalY: f.y, zoom: f.zoom } })}
           onChange={(src) => onChange({ ...data, photo: src ? { ...data.photo, src } : undefined })}
         />
         {data.photo?.src && (

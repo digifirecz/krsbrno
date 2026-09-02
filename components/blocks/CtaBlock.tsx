@@ -8,6 +8,7 @@ export default function CtaBlock({ data }: { data: CtaBlockData }) {
   const Icon = getIcon(data.icon);
   const href = data.buttonUrl || (data.buttonTarget ? getPathForTab(data.buttonTarget) : undefined);
   const isExternal = !!data.buttonUrl;
+  const photos = (data.photos || []).filter((p) => p.src);
 
   return (
     <section className="py-12 sm:py-16 bg-white">
@@ -52,10 +53,10 @@ export default function CtaBlock({ data }: { data: CtaBlockData }) {
           )}
         </div>
 
-        {data.photos && data.photos.length > 0 && (
+        {photos.length > 0 && (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-5 sm:gap-6 pt-4 max-w-3xl mx-auto">
-            {data.photos.map((photo, idx) => (
-              <ImageCard key={idx} src={photo.src} alt={photo.caption || ''} caption={photo.caption} aspectRatio="aspect-[4/3]" fixedWidth={false} focalX={photo.focalX} focalY={photo.focalY} />
+            {photos.map((photo, idx) => (
+              <ImageCard key={idx} src={photo.src} alt={photo.caption || ''} caption={photo.caption} aspectRatio="aspect-[4/3]" fixedWidth={false} focalX={photo.focalX} focalY={photo.focalY} zoom={photo.zoom} />
             ))}
           </div>
         )}

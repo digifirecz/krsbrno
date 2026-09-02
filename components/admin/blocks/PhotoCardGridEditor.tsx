@@ -6,7 +6,8 @@ import PhotoUpload from '@/components/admin/blocks/PhotoUpload';
 import ConfirmModal from '@/components/admin/blocks/ConfirmModal';
 import { TAB_TO_PATH, PAGE_TITLES } from '@/lib/routes';
 import type { PhotoCardGridData, PhotoCardItem } from '@/lib/blocks/types';
-import { Plus, Trash2 } from 'lucide-react';
+import { BADGE_COLOR_NAMES, BADGE_COLORS } from '@/lib/blocks/badgeColors';
+import { Plus, Trash2, Check } from 'lucide-react';
 
 interface PhotoCardGridEditorProps {
   data: PhotoCardGridData;
@@ -100,15 +101,15 @@ export default function PhotoCardGridEditor({ data, onChange, pageId }: PhotoCar
               value={card.photo?.src || ''}
               pageId={pageId}
               aspectRatio={2}
-              focal={card.photo?.focalX !== undefined ? { x: card.photo.focalX, y: card.photo.focalY ?? 50 } : undefined}
+              focal={card.photo?.focalX !== undefined ? { x: card.photo.focalX, y: card.photo.focalY ?? 50, zoom: card.photo.zoom } : undefined}
               onFocalChange={(f) => {
                 const next = [...cards];
-                next[idx] = { ...next[idx], photo: { ...next[idx].photo, src: next[idx].photo?.src || '', focalX: f.x, focalY: f.y } };
+                next[idx] = { ...next[idx], photo: { ...next[idx].photo, src: next[idx].photo?.src || '', focalX: f.x, focalY: f.y, zoom: f.zoom } };
                 onChange({ ...data, cards: next });
               }}
               onChange={(src) => {
                 const next = [...cards];
-                next[idx] = { ...next[idx], photo: { ...next[idx].photo, src } };
+                next[idx] = { ...next[idx], photo: src ? { ...next[idx].photo, src } : undefined };
                 onChange({ ...data, cards: next });
               }}
             />
@@ -145,17 +146,48 @@ export default function PhotoCardGridEditor({ data, onChange, pageId }: PhotoCar
                 />
               )}
               {(modeOverride[idx] ?? getBadgeMode(card)) === 'badge' && (
-                <input
-                  type="text"
-                  value={card.badge || ''}
-                  onChange={(e) => {
-                    const next = [...cards];
-                    next[idx] = { ...next[idx], badge: e.target.value || undefined };
-                    onChange({ ...data, cards: next });
-                  }}
-                  placeholder="Štítek (např. 9:30 – 11:00)"
-                  className={fieldClass}
-                />
+                <div className="space-y-2">
+                  <input
+                    type="text"
+                    value={card.badge || ''}
+                    onChange={(e) => {
+                      const next = [...cards];
+                      next[idx] = { ...next[idx], badge: e.target.value || undefined };
+                      onChange({ ...data, cards: next });
+                    }}
+                    placeholder="Štítek (např. 9:30 – 11:00)"
+                    className={fieldClass}
+                  />
+                  <IconPicker
+                    value={card.badgeIcon}
+                    onChange={(badgeIcon) => {
+                      const next = [...cards];
+                      next[idx] = { ...next[idx], badgeIcon };
+                      onChange({ ...data, cards: next });
+                    }}
+                  />
+                  <div className="flex items-center space-x-1.5">
+                    {BADGE_COLOR_NAMES.map((color) => {
+                      const selected = (card.badgeColor || 'red') === color;
+                      return (
+                        <button
+                          key={color}
+                          type="button"
+                          onClick={() => {
+                            const next = [...cards];
+                            next[idx] = { ...next[idx], badgeColor: color };
+                            onChange({ ...data, cards: next });
+                          }}
+                          title={BADGE_COLORS[color].label}
+                          className="w-6 h-6 rounded-full flex items-center justify-center cursor-pointer ring-1 ring-inset ring-black/10"
+                          style={{ backgroundColor: BADGE_COLORS[color].swatch }}
+                        >
+                          {selected && <Check className="w-3.5 h-3.5 text-white" />}
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
               )}
             </div>
 

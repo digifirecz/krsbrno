@@ -56,9 +56,9 @@ export default function ChecklistCardBlock({ data }: { data: ChecklistCardData }
             )}
           </div>
 
-          {data.photo && (
+          {data.photo?.src && (
             <div className="space-y-3">
-              <ImageCard src={data.photo.src} alt={data.photo.caption || ''} aspectRatio="aspect-[4/3]" caption={data.photo.caption} focalX={data.photo.focalX} focalY={data.photo.focalY} />
+              <ImageCard src={data.photo.src} alt={data.photo.caption || ''} aspectRatio="aspect-[4/3]" caption={data.photo.caption} focalX={data.photo.focalX} focalY={data.photo.focalY} zoom={data.photo.zoom} />
             </div>
           )}
         </div>

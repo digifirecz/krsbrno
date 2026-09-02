@@ -132,8 +132,8 @@ export default function SocialCardEditor({ data, onChange, pageId }: SocialCardE
             value={data.photo.src}
             pageId={pageId}
             aspectRatio={ASPECT_RATIOS[data.photoAspectRatio || 'square']}
-            focal={data.photo.focalX !== undefined ? { x: data.photo.focalX, y: data.photo.focalY ?? 50 } : undefined}
-            onFocalChange={(f) => onChange({ ...data, photo: { ...data.photo!, focalX: f.x, focalY: f.y } })}
+            focal={data.photo.focalX !== undefined ? { x: data.photo.focalX, y: data.photo.focalY ?? 50, zoom: data.photo.zoom } : undefined}
+            onFocalChange={(f) => onChange({ ...data, photo: { ...data.photo!, focalX: f.x, focalY: f.y, zoom: f.zoom } })}
             onChange={(src) => onChange({ ...data, photo: { ...data.photo, src } })}
           />
           <input

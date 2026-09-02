@@ -21,6 +21,9 @@ interface ImageCardProps {
   // the full-size lightbox view below always shows the photo uncropped.
   focalX?: number;
   focalY?: number;
+  // Extra zoom (>=1) anchored at the focal point, cropping further into the
+  // axis that would otherwise show the photo uncropped.
+  zoom?: number;
 }
 
 export default function ImageCard({
@@ -32,7 +35,11 @@ export default function ImageCard({
   fixedWidth = false,
   focalX,
   focalY,
+  zoom,
 }: ImageCardProps) {
+  const hasFocal = focalX !== undefined && focalY !== undefined;
+  const objectPosition = hasFocal ? `${focalX}% ${focalY}%` : undefined;
+  const extraZoom = hasFocal && zoom && zoom > 1 ? zoom : undefined;
   const [isOpen, setIsOpen] = useState(false);
 
   useEffect(() => {
@@ -65,7 +72,11 @@ export default function ImageCard({
           alt={alt}
           fill
           className="object-cover group-hover:scale-105 transition-transform duration-500"
-          style={focalX !== undefined && focalY !== undefined ? { objectPosition: `${focalX}% ${focalY}%` } : undefined}
+          style={
+            objectPosition
+              ? { objectPosition, ...(extraZoom ? { transform: `scale(${extraZoom})`, transformOrigin: objectPosition } : {}) }
+              : undefined
+          }
           referrerPolicy="no-referrer"
         />
         <div className="absolute top-3 right-3 w-8 h-8 rounded-full bg-black/40 backdrop-blur-md text-white opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center shadow-md">

@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
-import Link from 'next/link';
 import RequireAuth from '@/components/admin/RequireAuth';
 import ConfirmModal from '@/components/admin/blocks/ConfirmModal';
 import { useToast } from '@/components/admin/ToastProvider';
@@ -112,13 +111,14 @@ export default function AdminSectionEditor() {
         return (
           <div className="max-w-3xl">
             <div className="flex items-center justify-between flex-wrap gap-3 mb-6">
-              <Link
-                href="/admin/sekce"
-                className="inline-flex items-center space-x-2 text-sm font-medium text-neutral-600 hover:text-[#c93838] transition-colors"
+              <button
+                type="button"
+                onClick={() => router.back()}
+                className="inline-flex items-center space-x-2 text-sm font-medium text-neutral-600 hover:text-[#c93838] transition-colors cursor-pointer"
               >
                 <ArrowLeft className="w-4 h-4" />
-                <span>Zpět na seznam sekcí</span>
-              </Link>
+                <span>Zpět</span>
+              </button>
 
               {!loading && (
                 <div className="flex items-center space-x-2 shrink-0">
@@ -206,7 +206,7 @@ export default function AdminSectionEditor() {
                     <HomeHeroEditor data={data as HomeHeroData} onChange={setData} pageId={sectionId} />
                   )}
                   {section.type === 'iconGrid' && (
-                    <IconGridEditor data={data as IconGridData} onChange={setData} />
+                    <IconGridEditor data={data as IconGridData} onChange={setData} pageId={sectionId} />
                   )}
                   {section.type === 'quote' && (
                     <QuoteEditor data={data as QuoteData} onChange={setData} />

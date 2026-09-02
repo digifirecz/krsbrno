@@ -37,7 +37,7 @@ export default function InfoCardBlock({ data }: { data: InfoCardData }) {
           </div>
 
           {data.photo && (
-            <ImageCard src={data.photo.src} alt={data.photo.caption || ''} caption={data.photo.caption} />
+            <ImageCard src={data.photo.src} alt={data.photo.caption || ''} caption={data.photo.caption} focalX={data.photo.focalX} focalY={data.photo.focalY} />
           )}
         </div>
       </div>

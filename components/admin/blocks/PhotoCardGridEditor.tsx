@@ -5,7 +5,7 @@ import IconPicker from '@/components/admin/blocks/IconPicker';
 import PhotoUpload from '@/components/admin/blocks/PhotoUpload';
 import ConfirmModal from '@/components/admin/blocks/ConfirmModal';
 import { TAB_TO_PATH, PAGE_TITLES } from '@/lib/routes';
-import type { PhotoCardGridData } from '@/lib/blocks/types';
+import type { PhotoCardGridData, PhotoCardItem } from '@/lib/blocks/types';
 import { Plus, Trash2 } from 'lucide-react';
 
 interface PhotoCardGridEditorProps {
@@ -17,6 +17,14 @@ interface PhotoCardGridEditorProps {
 const fieldClass = 'w-full px-3.5 py-2.5 rounded-xl border border-neutral-200 text-sm focus:outline-none focus:ring-2 focus:ring-[#c93838]/30 focus:border-[#c93838]';
 const labelClass = 'block text-xs font-bold text-neutral-600 mb-1';
 
+type BadgeMode = 'none' | 'icon' | 'badge';
+
+function getBadgeMode(card: PhotoCardItem): BadgeMode {
+  if (card.icon) return 'icon';
+  if (card.badge) return 'badge';
+  return 'none';
+}
+
 const TARGET_OPTIONS = Object.keys(TAB_TO_PATH).map((tab) => ({
   tab,
   label: (PAGE_TITLES[tab] || tab).split(' | ')[0],
@@ -25,6 +33,10 @@ const TARGET_OPTIONS = Object.keys(TAB_TO_PATH).map((tab) => ({
 export default function PhotoCardGridEditor({ data, onChange, pageId }: PhotoCardGridEditorProps) {
   const cards = data.cards || [];
   const [deleteIdx, setDeleteIdx] = useState<number | null>(null);
+  // Overrides the data-derived mode so clicking "Ikona"/"Štítek" shows that
+  // control immediately, even before a value has been picked in it (at which
+  // point card.icon/card.badge are both still empty and would read as "none").
+  const [modeOverride, setModeOverride] = useState<Record<number, BadgeMode>>({});
 
   return (
     <div className="space-y-4">
@@ -87,6 +99,13 @@ export default function PhotoCardGridEditor({ data, onChange, pageId }: PhotoCar
             <PhotoUpload
               value={card.photo?.src || ''}
               pageId={pageId}
+              aspectRatio={2}
+              focal={card.photo?.focalX !== undefined ? { x: card.photo.focalX, y: card.photo.focalY ?? 50 } : undefined}
+              onFocalChange={(f) => {
+                const next = [...cards];
+                next[idx] = { ...next[idx], photo: { ...next[idx].photo, src: next[idx].photo?.src || '', focalX: f.x, focalY: f.y } };
+                onChange({ ...data, cards: next });
+              }}
               onChange={(src) => {
                 const next = [...cards];
                 next[idx] = { ...next[idx], photo: { ...next[idx].photo, src } };
@@ -94,26 +113,51 @@ export default function PhotoCardGridEditor({ data, onChange, pageId }: PhotoCar
               }}
             />
 
-            <IconPicker
-              value={card.icon}
-              onChange={(icon) => {
-                const next = [...cards];
-                next[idx] = { ...next[idx], icon };
-                onChange({ ...data, cards: next });
-              }}
-            />
-
-            <input
-              type="text"
-              value={card.badge || ''}
-              onChange={(e) => {
-                const next = [...cards];
-                next[idx] = { ...next[idx], badge: e.target.value || undefined };
-                onChange({ ...data, cards: next });
-              }}
-              placeholder="Štítek (např. 9:30 – 11:00)"
-              className={fieldClass}
-            />
+            <div>
+              <label className={labelClass}>Ikona nebo štítek</label>
+              <div className="inline-flex rounded-lg border border-neutral-200 overflow-hidden mb-2">
+                {(['none', 'icon', 'badge'] as const).map((mode) => (
+                  <button
+                    key={mode}
+                    type="button"
+                    onClick={() => {
+                      setModeOverride((prev) => ({ ...prev, [idx]: mode }));
+                      const next = [...cards];
+                      next[idx] = { ...next[idx], icon: mode === 'icon' ? next[idx].icon : undefined, badge: mode === 'badge' ? next[idx].badge : undefined };
+                      onChange({ ...data, cards: next });
+                    }}
+                    className={`px-3 py-1.5 text-xs font-bold cursor-pointer transition-colors ${
+                      (modeOverride[idx] ?? getBadgeMode(card)) === mode ? 'bg-[#c93838] text-white' : 'bg-white text-neutral-600 hover:bg-neutral-50'
+                    }`}
+                  >
+                    {mode === 'none' ? 'Žádný' : mode === 'icon' ? 'Ikona' : 'Štítek'}
+                  </button>
+                ))}
+              </div>
+              {(modeOverride[idx] ?? getBadgeMode(card)) === 'icon' && (
+                <IconPicker
+                  value={card.icon}
+                  onChange={(icon) => {
+                    const next = [...cards];
+                    next[idx] = { ...next[idx], icon };
+                    onChange({ ...data, cards: next });
+                  }}
+                />
+              )}
+              {(modeOverride[idx] ?? getBadgeMode(card)) === 'badge' && (
+                <input
+                  type="text"
+                  value={card.badge || ''}
+                  onChange={(e) => {
+                    const next = [...cards];
+                    next[idx] = { ...next[idx], badge: e.target.value || undefined };
+                    onChange({ ...data, cards: next });
+                  }}
+                  placeholder="Štítek (např. 9:30 – 11:00)"
+                  className={fieldClass}
+                />
+              )}
+            </div>
 
             <input
               type="text"

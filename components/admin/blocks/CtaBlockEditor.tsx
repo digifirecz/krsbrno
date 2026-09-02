@@ -139,6 +139,13 @@ export default function CtaBlockEditor({ data, onChange, pageId }: CtaBlockEdito
             <PhotoUpload
               value={photo.src}
               pageId={pageId}
+              aspectRatio={4 / 3}
+              focal={photo.focalX !== undefined ? { x: photo.focalX, y: photo.focalY ?? 50 } : undefined}
+              onFocalChange={(f) => {
+                const next = [...photos];
+                next[idx] = { ...next[idx], focalX: f.x, focalY: f.y };
+                onChange({ ...data, photos: next });
+              }}
               onChange={(src) => {
                 const next = [...photos];
                 next[idx] = { ...next[idx], src };

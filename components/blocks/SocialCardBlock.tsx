@@ -50,7 +50,7 @@ export default function SocialCardBlock({ data }: { data: SocialCardData }) {
   );
 
   const side = data.embed ? <EmbedContent data={data.embed} /> : data.photo ? (
-    <ImageCard src={data.photo.src} alt={data.photo.caption || ''} aspectRatio={aspectClass} fixedWidth caption={data.photo.caption} />
+    <ImageCard src={data.photo.src} alt={data.photo.caption || ''} aspectRatio={aspectClass} fixedWidth caption={data.photo.caption} focalX={data.photo.focalX} focalY={data.photo.focalY} />
   ) : null;
 
   return (

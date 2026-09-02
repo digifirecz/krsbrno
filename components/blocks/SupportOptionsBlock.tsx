@@ -147,6 +147,8 @@ export default function SupportOptionsBlock({ data }: { data: SupportOptionsData
                   alt={data.involvement.photo.caption || ''}
                   aspectRatio="aspect-[16/10]"
                   caption={data.involvement.photo.caption}
+                  focalX={data.involvement.photo.focalX}
+                  focalY={data.involvement.photo.focalY}
                 />
               </div>
             )}

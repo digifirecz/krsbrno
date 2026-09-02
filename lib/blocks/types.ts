@@ -3,6 +3,12 @@ export type BlockType = 'pageHero' | 'homeHero' | 'iconGrid' | 'quote' | 'ctaBlo
 export interface BlockPhoto {
   src: string;
   caption?: string;
+  // Where the photo should be framed when it's cropped to fit a fixed shape
+  // on the frontend (object-position, as a 0-100 percentage). The uploaded
+  // photo itself is never cropped — only its on-screen framing changes.
+  // Undefined means "center" (the CSS/browser default).
+  focalX?: number;
+  focalY?: number;
 }
 
 export interface PageHeroData {
@@ -24,6 +30,8 @@ export interface IconGridData {
   heading?: string;
   subheading?: string;
   cards: IconGridCard[];
+  // Optional photo gallery shown below the cards.
+  photos?: BlockPhoto[];
 }
 
 export interface QuoteData {

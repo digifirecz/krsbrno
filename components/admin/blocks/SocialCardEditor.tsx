@@ -8,6 +8,8 @@ import ConfirmModal from '@/components/admin/blocks/ConfirmModal';
 import type { SocialCardData } from '@/lib/blocks/types';
 import { Plus, Trash2 } from 'lucide-react';
 
+const ASPECT_RATIOS = { square: 1, landscape: 4 / 3, portrait: 3 / 4 };
+
 type SideMode = 'none' | 'photo' | 'embed';
 
 function getSideMode(data: SocialCardData): SideMode {
@@ -129,6 +131,9 @@ export default function SocialCardEditor({ data, onChange, pageId }: SocialCardE
           <PhotoUpload
             value={data.photo.src}
             pageId={pageId}
+            aspectRatio={ASPECT_RATIOS[data.photoAspectRatio || 'square']}
+            focal={data.photo.focalX !== undefined ? { x: data.photo.focalX, y: data.photo.focalY ?? 50 } : undefined}
+            onFocalChange={(f) => onChange({ ...data, photo: { ...data.photo!, focalX: f.x, focalY: f.y } })}
             onChange={(src) => onChange({ ...data, photo: { ...data.photo, src } })}
           />
           <input

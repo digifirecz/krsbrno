@@ -592,6 +592,7 @@ export default function AdminPageBlocksEditor() {
                     <IconGridEditor
                       data={block.data as IconGridData}
                       onChange={(data) => updateBlockData(block.id, data)}
+                      pageId={pageId}
                     />
                   )}
                   {block.type === 'quote' && (

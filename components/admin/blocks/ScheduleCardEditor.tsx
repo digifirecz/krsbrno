@@ -26,6 +26,9 @@ export default function ScheduleCardEditor({ data, onChange, pageId }: ScheduleC
         <PhotoUpload
           value={data.photo?.src || ''}
           pageId={pageId}
+          aspectRatio={4 / 3}
+          focal={data.photo?.focalX !== undefined ? { x: data.photo.focalX, y: data.photo.focalY ?? 50 } : undefined}
+          onFocalChange={(f) => onChange({ ...data, photo: { ...data.photo, src: data.photo?.src || '', focalX: f.x, focalY: f.y } })}
           onChange={(src) => onChange({ ...data, photo: { ...data.photo, src } })}
         />
       </div>

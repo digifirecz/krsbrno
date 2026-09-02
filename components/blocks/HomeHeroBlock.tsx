@@ -3,6 +3,7 @@
 import Image from 'next/image';
 import { ArrowRight, ChevronDown, Sparkles } from 'lucide-react';
 import { getPathForTab } from '@/lib/routes';
+import { focalObjectPosition } from '@/lib/blocks/photoFocal';
 import type { HomeHeroData } from '@/lib/blocks/types';
 
 function renderTitle(title: string, highlightWord?: string) {
@@ -94,6 +95,7 @@ export default function HomeHeroBlock({ data }: { data: HomeHeroData }) {
                     fill
                     unoptimized
                     className="object-cover group-hover:scale-105 transition-transform duration-500 ease-out"
+                    style={focalObjectPosition(data.photo) ? { objectPosition: focalObjectPosition(data.photo) } : undefined}
                     priority
                     referrerPolicy="no-referrer"
                   />

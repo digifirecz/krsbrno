@@ -1,3 +1,4 @@
+import ImageCard from '@/components/ImageCard';
 import { getIcon } from '@/lib/blocks/icons';
 import { CheckCircle2 } from 'lucide-react';
 import type { IconGridData } from '@/lib/blocks/types';
@@ -55,6 +56,14 @@ export default function IconGridBlock({ data }: { data: IconGridData }) {
             );
           })}
         </div>
+
+        {data.photos && data.photos.length > 0 && (
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-5 sm:gap-6 max-w-3xl mx-auto">
+            {data.photos.map((photo, idx) => (
+              <ImageCard key={idx} src={photo.src} alt={photo.caption || ''} caption={photo.caption} aspectRatio="aspect-[4/3]" fixedWidth={false} focalX={photo.focalX} focalY={photo.focalY} />
+            ))}
+          </div>
+        )}
       </div>
     </section>
   );

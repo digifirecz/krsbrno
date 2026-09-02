@@ -1,6 +1,7 @@
 import Image from 'next/image';
 import { getIcon } from '@/lib/blocks/icons';
 import { getPathForTab } from '@/lib/routes';
+import { focalObjectPosition } from '@/lib/blocks/photoFocal';
 import { Clock, ChevronRight } from 'lucide-react';
 import type { PhotoCardGridData } from '@/lib/blocks/types';
 
@@ -42,25 +43,23 @@ export default function PhotoCardGridBlock({ data, limit }: { data: PhotoCardGri
                       alt={card.photo.caption || card.title}
                       fill
                       className="object-cover group-hover:scale-105 transition-transform duration-500"
+                      style={focalObjectPosition(card.photo) ? { objectPosition: focalObjectPosition(card.photo) } : undefined}
                       referrerPolicy="no-referrer"
                     />
                   </div>
                 )}
                 <div className="p-6 space-y-3 flex-grow flex flex-col justify-between">
                   <div className="space-y-2">
-                    <div className="flex items-center justify-between">
-                      {Icon && (
-                        <div className="w-9 h-9 rounded-lg bg-red-50 text-[#c93838] flex items-center justify-center border border-red-100">
-                          <Icon className="w-4 h-4" />
-                        </div>
-                      )}
-                      {card.badge && (
-                        <span className="inline-flex items-center space-x-1 px-2.5 py-1 rounded-full bg-red-100/80 text-[#c93838] font-bold text-xs">
-                          <Clock className="w-3 h-3" />
-                          <span>{card.badge}</span>
-                        </span>
-                      )}
-                    </div>
+                    {Icon ? (
+                      <div className="w-9 h-9 rounded-lg bg-red-50 text-[#c93838] flex items-center justify-center border border-red-100">
+                        <Icon className="w-4 h-4" />
+                      </div>
+                    ) : card.badge ? (
+                      <span className="inline-flex items-center space-x-1 px-2.5 py-1 rounded-full bg-red-100/80 text-[#c93838] font-bold text-xs">
+                        <Clock className="w-3 h-3" />
+                        <span>{card.badge}</span>
+                      </span>
+                    ) : null}
                     <h3 className="text-lg font-extrabold text-neutral-900 font-serif group-hover:text-[#c93838] transition-colors">
                       {card.title}
                     </h3>

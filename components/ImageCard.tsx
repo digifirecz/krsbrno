@@ -16,6 +16,11 @@ interface ImageCardProps {
   // cell instead, so set this false there — otherwise it just centers a
   // small fixed box inside a wider cell, leaving a big gap next to it.
   fixedWidth?: boolean;
+  // Focal point (0-100%) admins set for this photo, used as object-position
+  // when it's cropped to aspectRatio. Only affects the cropped thumbnail —
+  // the full-size lightbox view below always shows the photo uncropped.
+  focalX?: number;
+  focalY?: number;
 }
 
 export default function ImageCard({
@@ -25,6 +30,8 @@ export default function ImageCard({
   aspectRatio = 'aspect-[16/10]',
   className = '',
   fixedWidth = false,
+  focalX,
+  focalY,
 }: ImageCardProps) {
   const [isOpen, setIsOpen] = useState(false);
 
@@ -58,6 +65,7 @@ export default function ImageCard({
           alt={alt}
           fill
           className="object-cover group-hover:scale-105 transition-transform duration-500"
+          style={focalX !== undefined && focalY !== undefined ? { objectPosition: `${focalX}% ${focalY}%` } : undefined}
           referrerPolicy="no-referrer"
         />
         <div className="absolute top-3 right-3 w-8 h-8 rounded-full bg-black/40 backdrop-blur-md text-white opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center shadow-md">

@@ -171,6 +171,14 @@ export default function SupportOptionsEditor({ data, onChange, pageId }: Support
         <PhotoUpload
           value={data.involvement.photo?.src || ''}
           pageId={pageId}
+          aspectRatio={16 / 10}
+          focal={data.involvement.photo?.focalX !== undefined ? { x: data.involvement.photo.focalX, y: data.involvement.photo.focalY ?? 50 } : undefined}
+          onFocalChange={(f) =>
+            onChange({
+              ...data,
+              involvement: { ...data.involvement, photo: { ...data.involvement.photo, src: data.involvement.photo?.src || '', focalX: f.x, focalY: f.y } },
+            })
+          }
           onChange={(src) => onChange({ ...data, involvement: { ...data.involvement, photo: { ...data.involvement.photo, src } } })}
         />
         {data.involvement.photo && (

@@ -21,6 +21,8 @@ function emptySection(): TextSection {
   return { heading: '' };
 }
 
+const ASPECT_RATIOS = { square: 1, landscape: 4 / 3, portrait: 3 / 4 };
+
 export default function TextSectionsEditor({ data, onChange, pageId }: TextSectionsEditorProps) {
   const photos = data.photos || [];
   const sections = data.sections || [];
@@ -84,6 +86,13 @@ export default function TextSectionsEditor({ data, onChange, pageId }: TextSecti
             <PhotoUpload
               value={photo.src}
               pageId={pageId}
+              aspectRatio={ASPECT_RATIOS[data.photoAspectRatio || 'square']}
+              focal={photo.focalX !== undefined ? { x: photo.focalX, y: photo.focalY ?? 50 } : undefined}
+              onFocalChange={(f) => {
+                const next = [...photos];
+                next[idx] = { ...next[idx], focalX: f.x, focalY: f.y };
+                onChange({ ...data, photos: next });
+              }}
               onChange={(src) => {
                 const next = [...photos];
                 next[idx] = { ...next[idx], src };

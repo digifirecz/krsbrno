@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import BlockRenderer from '@/components/blocks/BlockRenderer';
-import { getPageBlocks } from '@/lib/pages';
+import { getPageBlocks } from '@/lib/actions/pages';
 import { PAGE_IDS } from '@/lib/blocks/pageRegistry';
 import type { BlockInstance } from '@/lib/blocks/types';
 import {

@@ -5,7 +5,8 @@ import { useParams, useRouter } from 'next/navigation';
 import RequireAuth from '@/components/admin/RequireAuth';
 import ConfirmModal from '@/components/admin/blocks/ConfirmModal';
 import { useToast } from '@/components/admin/ToastProvider';
-import { getSection, updateSection, deleteSection, type Section } from '@/lib/sections';
+import { getSection, updateSection, deleteSection } from '@/lib/actions/sections';
+import type { Section } from '@/lib/sections';
 import { getBlockTypeLabel } from '@/lib/blocks/registry';
 
 import PageHeroEditor from '@/components/admin/blocks/PageHeroEditor';

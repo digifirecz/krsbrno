@@ -8,7 +8,8 @@ import ConfirmModal from '@/components/admin/blocks/ConfirmModal';
 import PhotoUpload from '@/components/admin/blocks/PhotoUpload';
 import RichTextEditor from '@/components/admin/blocks/RichTextEditor';
 import { useToast } from '@/components/admin/ToastProvider';
-import { getArticle, updateArticle, deleteArticle, type Article } from '@/lib/articles';
+import { getArticle, updateArticle, deleteArticle } from '@/lib/actions/articles';
+import type { Article } from '@/lib/articles';
 import { ArrowLeft, Trash2, Save, CheckCircle2, Eye, EyeOff, CalendarPlus, History } from 'lucide-react';
 
 const fieldClass = 'w-full px-3.5 py-2.5 rounded-xl border border-neutral-200 text-sm focus:outline-none focus:ring-2 focus:ring-[#c93838]/30 focus:border-[#c93838]';

@@ -2,8 +2,6 @@
 
 import { useRef, useState } from 'react';
 import Image from 'next/image';
-import { ref, uploadBytes, getDownloadURL, deleteObject } from 'firebase/storage';
-import { storage } from '@/lib/firebase';
 import { Loader2, Upload, X, Crop, Link2 } from 'lucide-react';
 import FocalPointPicker, { type FocalPoint } from '@/components/admin/blocks/FocalPointPicker';
 
@@ -22,11 +20,15 @@ interface PhotoUploadProps {
 }
 
 // Only ever try to delete our own uploaded files — never the static default
-// logo path ("/logo.png") or anything else that isn't a real Storage file.
-async function deleteIfStorageFile(url: string) {
-  if (!url || !url.includes('firebasestorage.googleapis.com')) return;
+// logo path ("/logo.png") or a pasted external URL.
+async function deleteIfLocalImage(url: string) {
+  if (!url || !url.startsWith('/image/')) return;
   try {
-    await deleteObject(ref(storage, url));
+    await fetch('/api/upload', {
+      method: 'DELETE',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ url }),
+    });
   } catch {
     // Already deleted or never existed — nothing to clean up.
   }
@@ -53,15 +55,18 @@ export default function PhotoUpload({
     setUploading(true);
     setError('');
     try {
-      const path = `${folder}/${pageId}/${crypto.randomUUID()}-${file.name}`;
-      const storageRef = ref(storage, path);
-      await uploadBytes(storageRef, file);
-      const url = await getDownloadURL(storageRef);
+      const body = new FormData();
+      body.append('file', file);
+      body.append('folder', folder);
+      body.append('pageId', pageId);
+      const res = await fetch('/api/upload', { method: 'POST', body });
+      const json = (await res.json()) as { url?: string; error?: string };
+      if (!res.ok || !json.url) throw new Error(json.error || 'upload failed');
       const previousValue = value;
-      onChange(url);
-      await deleteIfStorageFile(previousValue);
-    } catch {
-      setError('Nahrání fotky se nezdařilo. Zkuste to prosím znovu.');
+      onChange(json.url);
+      await deleteIfLocalImage(previousValue);
+    } catch (err) {
+      setError(err instanceof Error && err.message !== 'upload failed' ? err.message : 'Nahrání fotky se nezdařilo. Zkuste to prosím znovu.');
     } finally {
       setUploading(false);
     }
@@ -70,7 +75,7 @@ export default function PhotoUpload({
   const handleRemove = async () => {
     const previousValue = value;
     onChange('');
-    await deleteIfStorageFile(previousValue);
+    await deleteIfLocalImage(previousValue);
   };
 
   return (

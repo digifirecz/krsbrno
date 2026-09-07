@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import type { User } from 'firebase/auth';
 import RequireAuth from '@/components/admin/RequireAuth';
-import { getRole } from '@/lib/roles';
+import { getRole } from '@/lib/actions/roles';
 import { ShieldAlert } from 'lucide-react';
 
 interface RequireAdminProps {
@@ -15,7 +15,7 @@ function AdminGate({ user, children }: { user: User; children: (user: User) => R
 
   useEffect(() => {
     let active = true;
-    getRole(user.uid)
+    getRole(user.email ?? "")
       .then((role) => {
         if (active) setAllowed(role === 'admin');
       })
@@ -25,7 +25,7 @@ function AdminGate({ user, children }: { user: User; children: (user: User) => R
     return () => {
       active = false;
     };
-  }, [user.uid]);
+  }, [user.email]);
 
   if (allowed === null) {
     return (

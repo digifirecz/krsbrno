@@ -28,9 +28,13 @@ import ArticlesBlockEditor from '@/components/admin/blocks/ArticlesBlockEditor';
 import AddPageModal from '@/components/admin/AddPageModal';
 import ConfirmModal from '@/components/admin/blocks/ConfirmModal';
 import { useToast } from '@/components/admin/ToastProvider';
-import { getPageDoc, savePageBlocks, deletePage, slugify, getNavGroups, type NavGroup } from '@/lib/pages';
-import { getSections, type Section } from '@/lib/sections';
-import { getRole, type Role } from '@/lib/roles';
+import { getPageDoc, savePageBlocks, deletePage, getNavGroups } from '@/lib/actions/pages';
+import { slugify } from '@/lib/pages';
+import type { NavGroup } from '@/lib/pages';
+import { getSections } from '@/lib/actions/sections';
+import type { Section } from '@/lib/sections';
+import { getRole } from '@/lib/actions/roles';
+import type { Role } from '@/lib/roles';
 import { auth } from '@/lib/firebase';
 import { onAuthStateChanged } from 'firebase/auth';
 import { MANAGEABLE_PAGES } from '@/lib/blocks/pageRegistry';
@@ -79,7 +83,7 @@ export default function AdminPageBlocksEditor() {
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (u) => {
-      if (u) getRole(u.uid).then(setRole).catch(() => setRole('sprava'));
+      if (u) getRole(u.email ?? "").then(setRole).catch(() => setRole('sprava'));
     });
     return () => unsubscribe();
   }, []);
@@ -376,13 +380,13 @@ export default function AdminPageBlocksEditor() {
 
                 <div className="flex items-center flex-wrap gap-x-4 gap-y-2 mt-3">
                   <div className="flex items-center space-x-2">
-                    <label className="text-xs font-bold text-neutral-500 shrink-0">Skupina</label>
+                    <label className="text-xs font-bold text-neutral-500 shrink-0">Kategorie</label>
                     <select
                       value={headerGroupId}
                       onChange={(e) => handleGroupChange(e.target.value)}
                       className="px-2.5 py-1.5 rounded-lg border border-neutral-200 text-xs bg-white focus:outline-none focus:ring-2 focus:ring-[#c93838]/30 focus:border-[#c93838]"
                     >
-                      <option value="">Bez skupiny</option>
+                      <option value="">Bez kategorie</option>
                       {navGroups.map((g) => (
                         <option key={g.id} value={g.id}>{g.label}</option>
                       ))}
@@ -461,7 +465,7 @@ export default function AdminPageBlocksEditor() {
 
           {navDirty && (
             <p className="text-xs font-medium text-amber-700 bg-amber-50 border border-amber-200 rounded-lg px-3 py-2 mb-6">
-              Máte neuloženou změnu skupiny nebo ikony. Projeví se až po kliknutí na „Uložit změny“.
+              Máte neuloženou změnu kategorie nebo ikony. Projeví se až po kliknutí na „Uložit změny“.
             </p>
           )}
 

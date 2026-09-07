@@ -1,7 +1,8 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { getSiteSettings, type SiteSettings } from '@/lib/siteSettings';
+import { getSiteSettings } from '@/lib/actions/siteSettings';
+import type { SiteSettings } from '@/lib/siteSettings';
 
 /**
  * Site-wide branding/contact info (logo, address, email) managed in /admin/nastaveni.

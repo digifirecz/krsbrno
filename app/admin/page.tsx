@@ -4,10 +4,11 @@ import { useState, useEffect } from 'react';
 import { auth } from '@/lib/firebase';
 import { onAuthStateChanged } from 'firebase/auth';
 import { Files, Users, LayoutTemplate, Newspaper, Layers } from 'lucide-react';
-import { getRole, getAllRoles, type Role } from '@/lib/roles';
-import { getNavConfig } from '@/lib/pages';
-import { getArticles } from '@/lib/articles';
-import { getSections } from '@/lib/sections';
+import { getRole, getAllRoles } from '@/lib/actions/roles';
+import type { Role } from '@/lib/roles';
+import { getNavConfig } from '@/lib/actions/pages';
+import { getArticles } from '@/lib/actions/articles';
+import { getSections } from '@/lib/actions/sections';
 import { MANAGEABLE_PAGES } from '@/lib/blocks/pageRegistry';
 
 interface DashboardStats {
@@ -24,7 +25,7 @@ export default function AdminDashboardPage() {
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
-      if (user) getRole(user.uid).then(setRole).catch(() => setRole('sprava'));
+      if (user) getRole(user.email ?? "").then(setRole).catch(() => setRole('sprava'));
     });
     return () => unsubscribe();
   }, []);

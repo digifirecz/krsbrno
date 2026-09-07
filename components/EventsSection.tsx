@@ -3,7 +3,8 @@
 import { useState, useEffect, useRef } from 'react';
 import Image from 'next/image';
 import { Calendar, ChevronLeft, ChevronRight, Sparkles } from 'lucide-react';
-import { getArticles, type Article } from '@/lib/articles';
+import { getArticles } from '@/lib/actions/articles';
+import type { Article } from '@/lib/articles';
 import { getIcon } from '@/lib/blocks/icons';
 
 interface EventsSectionProps {

@@ -4,7 +4,8 @@ import { useEffect, useState } from 'react';
 import RequireAuth from '@/components/admin/RequireAuth';
 import AddPageModal from '@/components/admin/AddPageModal';
 import { useToast } from '@/components/admin/ToastProvider';
-import { getNavConfig, setNavVisibility, getHomePageId, setHomePageId, type PageNavEntry } from '@/lib/pages';
+import { getNavConfig, setNavVisibility, getHomePageId, setHomePageId } from '@/lib/actions/pages';
+import type { PageNavEntry } from '@/lib/pages';
 import { getIcon } from '@/lib/blocks/icons';
 import { LayoutTemplate, Home, PanelTop, PanelBottom, Plus, X, Save, CheckCircle2 } from 'lucide-react';
 
@@ -233,7 +234,7 @@ export default function AdminNavigationPage() {
                 </div>
 
                 <p className="text-xs text-neutral-400 mt-3 px-1">
-                  Skupinu i ikonu ke stránce přiřadíte v editoru dané stránky. Skupiny se zakládají ve "Správě stránek". Stránky se stejnou skupinou se v menu sloučí pod jedno rozbalovací menu.
+                  Kategorii i ikonu ke stránce přiřadíte v editoru dané stránky. Kategorie se zakládají v sekci Kategorie stránek. Stránky se stejnou kategorií se v menu sloučí pod jedno rozbalovací menu.
                 </p>
               </div>
 

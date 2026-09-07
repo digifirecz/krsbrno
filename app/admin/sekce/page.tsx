@@ -1,15 +1,38 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-import Link from 'next/link';
+import { useEffect, useMemo, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import RequireAuth from '@/components/admin/RequireAuth';
 import AddBlockModal from '@/components/admin/blocks/AddBlockModal';
+import SearchSelect from '@/components/admin/blocks/SearchSelect';
+import ConfirmModal from '@/components/admin/blocks/ConfirmModal';
 import { useToast } from '@/components/admin/ToastProvider';
-import { getSections, createSection, type Section } from '@/lib/sections';
+import { getSections, createSection, deleteSection } from '@/lib/actions/sections';
+import type { Section } from '@/lib/sections';
 import { getBlockTypeLabel } from '@/lib/blocks/registry';
 import type { BlockType } from '@/lib/blocks/types';
-import { ChevronRight, Layers, Plus } from 'lucide-react';
+import Badge from '@/components/admin/blocks/Badge';
+import { Layers, Plus, Pencil, Trash2 } from 'lucide-react';
+
+const filterInput =
+  'w-full px-2 py-1 rounded-lg border border-neutral-200 text-xs font-normal text-neutral-700 bg-white focus:outline-none focus:ring-1 focus:ring-[#c93838]/40 focus:border-[#c93838]';
+
+function fmtDate(v: Date | null | undefined): string {
+  if (!v) return '';
+  const d = v instanceof Date ? v : new Date(v);
+  if (Number.isNaN(d.getTime())) return '';
+  return d.toLocaleDateString('cs-CZ', { day: 'numeric', month: 'numeric', year: 'numeric' });
+}
+
+function Author({ by, at }: { by?: string | null; at?: Date | null }) {
+  if (!by && !at) return <span className="text-neutral-300">—</span>;
+  return (
+    <div className="leading-tight">
+      <div className="text-neutral-800 truncate">{by || '—'}</div>
+      <div className="text-xs text-neutral-400">{fmtDate(at)}</div>
+    </div>
+  );
+}
 
 export default function AdminSectionsListPage() {
   const router = useRouter();
@@ -17,6 +40,10 @@ export default function AdminSectionsListPage() {
   const [sections, setSections] = useState<Section[]>([]);
   const [loading, setLoading] = useState(true);
   const [addOpen, setAddOpen] = useState(false);
+  const [deleteTarget, setDeleteTarget] = useState<Section | null>(null);
+
+  const [fName, setFName] = useState('');
+  const [fType, setFType] = useState('');
 
   useEffect(() => {
     getSections()
@@ -24,6 +51,23 @@ export default function AdminSectionsListPage() {
       .catch(() => setSections([]))
       .finally(() => setLoading(false));
   }, []);
+
+  const typeOptions = useMemo(
+    () =>
+      [...new Set(sections.map((s) => s.type))]
+        .map((t) => ({ value: t, label: getBlockTypeLabel(t) }))
+        .sort((a, b) => a.label.localeCompare(b.label, 'cs')),
+    [sections],
+  );
+
+  const filtered = useMemo(() => {
+    const q = fName.trim().toLowerCase();
+    return sections.filter((s) => {
+      if (fType && s.type !== fType) return false;
+      if (q && !(s.name || '').toLowerCase().includes(q)) return false;
+      return true;
+    });
+  }, [sections, fName, fType]);
 
   return (
     <RequireAuth>
@@ -39,21 +83,28 @@ export default function AdminSectionsListPage() {
           }
         };
 
+        const handleDelete = async () => {
+          if (!deleteTarget) return;
+          const { id } = deleteTarget;
+          try {
+            await deleteSection(id);
+            setSections((prev) => prev.filter((s) => s.id !== id));
+            showToast('Sekce byla smazána.');
+          } catch (err) {
+            showToast(`Sekci se nepodařilo smazat${err instanceof Error ? `: ${err.message}` : '.'}`, 'error');
+          } finally {
+            setDeleteTarget(null);
+          }
+        };
+
         return (
-          <div className="max-w-3xl">
+          <div className="max-w-4xl">
             <div className="mb-8 flex items-start justify-between gap-4 flex-wrap">
               <div className="flex items-center space-x-3.5">
                 <div className="w-11 h-11 rounded-2xl bg-red-50 text-[#c93838] border border-red-100/90 flex items-center justify-center shrink-0 shadow-2xs">
                   <Layers className="w-5 h-5" />
                 </div>
-                <div>
-                  <h1 className="text-2xl sm:text-3xl font-extrabold text-neutral-900 font-serif">
-                    Sekce
-                  </h1>
-                  <p className="text-sm text-neutral-600 mt-0.5">
-                    Znovupoužitelný obsah — vytvoříte jednou, přidáte na libovolné stránky přes „Přidat sekci“.
-                  </p>
-                </div>
+                <h1 className="text-2xl sm:text-3xl font-extrabold text-neutral-900 font-serif">Sekce</h1>
               </div>
               <button
                 type="button"
@@ -67,36 +118,104 @@ export default function AdminSectionsListPage() {
 
             {loading ? (
               <div className="py-16 flex justify-center">
-                <div className="w-8 h-8 border-4 border-[#c93838] border-t-transparent rounded-full animate-spin"></div>
+                <div className="w-8 h-8 border-4 border-[#c93838] border-t-transparent rounded-full animate-spin" />
               </div>
+            ) : sections.length === 0 ? (
+              <p className="text-sm text-neutral-400 px-1">Zatím žádné sekce. Přidejte první tlačítkem výše.</p>
             ) : (
-              <div className="space-y-3">
-                {sections.map((section) => (
-                  <Link
-                    key={section.id}
-                    href={`/admin/sekce/${section.id}`}
-                    className="group flex items-center justify-between p-4 sm:p-5 bg-white border border-neutral-200 rounded-2xl hover:border-[#c93838]/50 hover:shadow-sm transition-all gap-3"
-                  >
-                    <div className="flex items-center space-x-3 min-w-0">
-                      <div className="w-10 h-10 rounded-xl bg-red-50 text-[#c93838] flex items-center justify-center shrink-0 transition-colors group-hover:bg-[#c93838] group-hover:text-white">
-                        <Layers className="w-5 h-5" />
-                      </div>
-                      <div className="min-w-0">
-                        <span className="font-semibold text-neutral-900 truncate block">{section.name || 'Bez názvu'}</span>
-                        <span className="text-xs text-neutral-400">{getBlockTypeLabel(section.type)}</span>
-                      </div>
-                    </div>
-                    <ChevronRight className="w-4 h-4 text-neutral-400 shrink-0 transition-transform group-hover:translate-x-0.5" />
-                  </Link>
-                ))}
-
-                {sections.length === 0 && (
-                  <p className="text-sm text-neutral-400 px-1">Zatím žádné sekce. Přidejte první tlačítkem výše.</p>
-                )}
+              <div className="overflow-x-auto rounded-2xl border border-neutral-200">
+                <table className="w-full min-w-[720px] text-sm">
+                  <thead>
+                    <tr className="text-left text-xs font-bold uppercase tracking-wider text-neutral-400 border-b border-neutral-200">
+                      <th className="px-4 pt-3 pb-1.5">Název</th>
+                      <th className="px-4 pt-3 pb-1.5 w-48">Typ</th>
+                      <th className="px-4 pt-3 pb-1.5 w-44">Přidal</th>
+                      <th className="px-4 pt-3 pb-1.5 w-44">Upravil</th>
+                      <th className="px-4 pt-3 pb-1.5 w-20" />
+                    </tr>
+                    <tr className="border-b border-neutral-200 bg-neutral-50/60">
+                      <td className="px-4 py-2">
+                        <input
+                          type="text"
+                          value={fName}
+                          onChange={(e) => setFName(e.target.value)}
+                          placeholder="filtrovat název…"
+                          className={filterInput}
+                        />
+                      </td>
+                      <td className="px-4 py-2">
+                        <SearchSelect
+                          size="sm"
+                          value={fType}
+                          onChange={setFType}
+                          options={typeOptions}
+                          emptyLabel="vše"
+                          searchPlaceholder="Hledat typ…"
+                        />
+                      </td>
+                      <td className="px-4 py-2" />
+                      <td className="px-4 py-2" />
+                      <td className="px-4 py-2" />
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {filtered.map((s) => (
+                      <tr key={s.id} className="border-b border-neutral-100 last:border-0 hover:bg-neutral-50/60">
+                        <td className="px-4 py-3 align-top">
+                          <span className="font-semibold text-neutral-900">{s.name || 'Bez názvu'}</span>
+                        </td>
+                        <td className="px-4 py-3 align-top"><Badge>{getBlockTypeLabel(s.type)}</Badge></td>
+                        <td className="px-4 py-3 align-top">
+                          <Author by={s.createdBy} at={s.createdAt} />
+                        </td>
+                        <td className="px-4 py-3 align-top">
+                          <Author by={s.updatedBy} at={s.updatedAt} />
+                        </td>
+                        <td className="px-4 py-3 align-top">
+                          <div className="flex items-center justify-end space-x-1">
+                            <button
+                              type="button"
+                              onClick={() => router.push(`/admin/sekce/${s.id}`)}
+                              className="p-1.5 rounded-lg text-neutral-400 hover:text-neutral-700 hover:bg-neutral-100 cursor-pointer"
+                              aria-label="Upravit"
+                              title="Upravit"
+                            >
+                              <Pencil className="w-4 h-4" />
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => setDeleteTarget(s)}
+                              className="p-1.5 rounded-lg text-neutral-400 hover:text-[#c93838] hover:bg-red-50 cursor-pointer"
+                              aria-label="Smazat"
+                              title="Smazat"
+                            >
+                              <Trash2 className="w-4 h-4" />
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    ))}
+                    {filtered.length === 0 && (
+                      <tr>
+                        <td colSpan={5} className="px-4 py-8 text-center text-sm text-neutral-400">
+                          Žádné sekce neodpovídají filtru.
+                        </td>
+                      </tr>
+                    )}
+                  </tbody>
+                </table>
               </div>
             )}
 
             <AddBlockModal open={addOpen} onClose={() => setAddOpen(false)} onPick={handlePick} />
+
+            <ConfirmModal
+              open={!!deleteTarget}
+              title="Smazat sekci"
+              message={`Opravdu chcete sekci „${deleteTarget?.name || 'bez názvu'}“ smazat? Pokud je použitá na některé stránce, blok tam přestane fungovat.`}
+              onCancel={() => setDeleteTarget(null)}
+              onConfirm={handleDelete}
+            />
           </div>
         );
       }}

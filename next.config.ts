@@ -8,7 +8,8 @@ const nextConfig: NextConfig = {
   typescript: {
     ignoreBuildErrors: false,
   },
-  // Allow access to remote image placeholder.
+  // Photos are served locally from /public/image. Only a couple of remote
+  // hosts remain for seed placeholders / generated QR codes.
   images: {
     remotePatterns: [
       {
@@ -20,12 +21,6 @@ const nextConfig: NextConfig = {
       {
         protocol: 'https',
         hostname: 'api.qrserver.com',
-        port: '',
-        pathname: '/**',
-      },
-      {
-        protocol: 'https',
-        hostname: 'firebasestorage.googleapis.com',
         port: '',
         pathname: '/**',
       },

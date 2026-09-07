@@ -1,7 +1,8 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { getSocialLinks, type SocialLink } from '@/lib/socialLinks';
+import { getSocialLinks } from '@/lib/actions/socialLinks';
+import type { SocialLink } from '@/lib/socialLinks';
 
 /**
  * Social network icons/links shown in the footer, managed in /admin/nastaveni.

@@ -1,0 +1,146 @@
+[
+  {
+    "id": "1",
+    "title": "Kyberdítě a jeho sítě",
+    "image": "https://picsum.photos/seed/kyberdite/600/400",
+    "order": 0,
+    "dateText": "7. 2. 2026",
+    "subtitle": "Odolný dospělý, odolné dítě – přednáška a diskuze",
+    "visible": true
+  },
+  {
+    "id": "10",
+    "image": "https://picsum.photos/seed/prayerroom/600/400",
+    "title": "Den půstu a modliteb",
+    "visible": true,
+    "subtitle": "Společné ztišení a hledání Božího vedení pro nový rok",
+    "dateText": "10. 1. 2026",
+    "order": 9
+  },
+  {
+    "id": "11",
+    "image": "https://picsum.photos/seed/summercampkid/600/400",
+    "visible": true,
+    "title": "Letní dětský tábor",
+    "subtitle": "Týden plný dobrodružství, přátelství a biblických příběhů",
+    "dateText": "12. 7. 2026",
+    "order": 10
+  },
+  {
+    "id": "12",
+    "order": 11,
+    "image": "https://picsum.photos/seed/womenconf/600/400",
+    "visible": true,
+    "title": "Setkání a konference žen",
+    "subtitle": "Inspirace, vzájemné sdílení a duchovní povzbuzení",
+    "dateText": "9. 5. 2026"
+  },
+  {
+    "id": "13",
+    "order": 12,
+    "image": "https://picsum.photos/seed/menbreakfast/600/400",
+    "title": "Pánská snídaně",
+    "visible": true,
+    "dateText": "21. 3. 2026",
+    "subtitle": "Témata ze života mužů, otevřená diskuze a dobrá snídaně"
+  },
+  {
+    "id": "14",
+    "title": "Akustický koncert chval",
+    "dateText": "25. 4. 2026",
+    "subtitle": "Hudební večer otevřený všem zájemcům z Brna a okolí",
+    "image": "https://picsum.photos/seed/acousticconcert/600/400",
+    "visible": true,
+    "order": 13
+  },
+  {
+    "id": "15",
+    "subtitle": "Společná péče o sborový dům, zahradu a klubovny",
+    "dateText": "17. 10. 2025",
+    "visible": true,
+    "order": 14,
+    "image": "https://picsum.photos/seed/autumnwork/600/400",
+    "title": "Brigáda na Šámalke"
+  },
+  {
+    "id": "16",
+    "order": 15,
+    "title": "Novoroční ztišení",
+    "image": "https://picsum.photos/seed/newyearhope/600/400",
+    "visible": true,
+    "dateText": "1. 1. 2026",
+    "subtitle": "Přivítání nového roku s modlitbou a Božím slovem"
+  },
+  {
+    "id": "2",
+    "order": 1,
+    "title": "Vánoční besídka",
+    "subtitle": "Divadelní představení dětí, hudba a vánoční atmosféra",
+    "dateText": "14. 12. 2025",
+    "image": "https://picsum.photos/seed/vanocnibesidka/600/400",
+    "visible": true
+  },
+  {
+    "id": "3",
+    "order": 2,
+    "title": "Vyrábění adventních věnců",
+    "visible": true,
+    "image": "https://picsum.photos/seed/adventnivence/600/400",
+    "subtitle": "Tradiční tvoření pro rodiny i jednotlivce s občerstvením",
+    "dateText": "29. 11. 2025"
+  },
+  {
+    "id": "4",
+    "visible": true,
+    "title": "Večer chval - light",
+    "image": "https://picsum.photos/seed/vecerchval/600/400",
+    "order": 3,
+    "subtitle": "Akustická hudba, společné modlitby & prostor ke ztišení",
+    "dateText": "27. 11. 2025"
+  },
+  {
+    "id": "5",
+    "order": 4,
+    "subtitle": "Praktické podněty pro upevnění vztahu v příjemném prostředí",
+    "dateText": "15. 1. 2026",
+    "image": "https://picsum.photos/seed/couplesdinner/600/400",
+    "visible": true,
+    "title": "Manželské večery"
+  },
+  {
+    "id": "6",
+    "title": "Biblický seminář",
+    "image": "https://picsum.photos/seed/bibleseminar/600/400",
+    "order": 5,
+    "dateText": "22. 2. 2026",
+    "subtitle": "Hlubší studium Písma a praktické aplikace do dnešního života",
+    "visible": true
+  },
+  {
+    "id": "7",
+    "order": 6,
+    "visible": true,
+    "image": "https://picsum.photos/seed/eastermorning/600/400",
+    "subtitle": "Oslava Kristova vzkříšení a naděje pro každého člověka",
+    "dateText": "5. 4. 2026",
+    "title": "Velikonoční bohoslužba"
+  },
+  {
+    "id": "8",
+    "title": "Víkendovka mládeže",
+    "subtitle": "Společný čas mimo město, hry, rozhovory a hledání víry",
+    "dateText": "18. 3. 2026",
+    "image": "https://picsum.photos/seed/youthgathering/600/400",
+    "visible": true,
+    "order": 7
+  },
+  {
+    "id": "9",
+    "title": "Sborový den na zahradě",
+    "subtitle": "Grilování, aktivity pro děti a otevřené setkání pro všechny",
+    "dateText": "14. 6. 2026",
+    "visible": true,
+    "image": "https://picsum.photos/seed/gardengrill/600/400",
+    "order": 8
+  }
+]

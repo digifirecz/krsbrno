@@ -7,8 +7,11 @@ import ConfirmModal from '@/components/admin/blocks/ConfirmModal';
 import PhotoUpload from '@/components/admin/blocks/PhotoUpload';
 import RichTextEditor from '@/components/admin/blocks/RichTextEditor';
 import { useToast } from '@/components/admin/ToastProvider';
-import { getSocialLinks, createSocialLink, updateSocialLink, deleteSocialLink, type SocialLink } from '@/lib/socialLinks';
-import { getSiteSettings, setSiteSettings, DEFAULT_SITE_SETTINGS, type SiteSettings } from '@/lib/siteSettings';
+import { getSocialLinks, createSocialLink, updateSocialLink, deleteSocialLink } from '@/lib/actions/socialLinks';
+import type { SocialLink } from '@/lib/socialLinks';
+import { getSiteSettings, setSiteSettings } from '@/lib/actions/siteSettings';
+import { DEFAULT_SITE_SETTINGS } from '@/lib/siteSettings';
+import type { SiteSettings } from '@/lib/siteSettings';
 import { Settings, Share2, Plus, Save, CheckCircle2, X, Link2, Image as ImageIcon, MapPin, Mail, ShieldCheck } from 'lucide-react';
 
 interface Draft {

@@ -1,4 +1,4 @@
-import Image from 'next/image';
+import SafeImage from '@/components/SafeImage';
 import { getIcon } from '@/lib/blocks/icons';
 import { getPathForTab } from '@/lib/routes';
 import { focalCropStyle } from '@/lib/blocks/photoFocal';
@@ -41,7 +41,7 @@ export default function PhotoCardGridBlock({ data, limit }: { data: PhotoCardGri
               <div key={idx} className="bg-white rounded-2xl border border-neutral-200/80 hover:border-[#c93838]/30 transition-all duration-300 shadow-2xs hover:shadow-md hover:-translate-y-0.5 overflow-hidden flex flex-col group">
                 {card.photo?.src && (
                   <div className="relative h-40 w-full overflow-hidden bg-neutral-100">
-                    <Image
+                    <SafeImage
                       src={card.photo.src}
                       alt={card.photo.caption || card.title}
                       fill

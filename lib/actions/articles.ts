@@ -15,6 +15,10 @@ export async function getArticle(id: string): Promise<Article | null> {
   return data.getArticle(id);
 }
 
+export async function getArticleLocations(): Promise<string[]> {
+  return data.getArticleLocations();
+}
+
 export async function createArticle(order: number, createdBy?: string | null): Promise<string> {
   return data.createArticle(order, createdBy);
 }

@@ -18,7 +18,7 @@ export default function IconGridBlock({ data }: { data: IconGridData }) {
               </h2>
             )}
             {data.subheading && (
-              <p className="text-sm text-neutral-500 font-sans max-w-xl mx-auto">
+              <p className="text-sm sm:text-base text-neutral-500 font-sans max-w-xl mx-auto">
                 {data.subheading}
               </p>
             )}
@@ -39,7 +39,7 @@ export default function IconGridBlock({ data }: { data: IconGridData }) {
                   {card.title}
                 </h3>
                 {card.text && (
-                  <p className="text-sm text-neutral-600 leading-relaxed font-sans whitespace-pre-line">
+                  <p className="text-sm sm:text-base text-neutral-600 leading-relaxed font-sans whitespace-pre-line">
                     {card.text}
                   </p>
                 )}

@@ -71,7 +71,7 @@ export default function TimelineBlock({ data }: { data: TimelineData }) {
                       >
                         <div className="overflow-hidden">
                           {item.text && (
-                            <div className="mt-2.5 pt-2.5 border-t border-neutral-100 text-sm text-neutral-600 leading-relaxed font-sans whitespace-pre-line">
+                            <div className="mt-2.5 pt-2.5 border-t border-neutral-100 text-sm sm:text-base text-neutral-600 leading-relaxed font-sans whitespace-pre-line">
                               {item.text}
                             </div>
                           )}

@@ -1,4 +1,4 @@
-import { mysqlTable, varchar, boolean, int, json, text, datetime as datetimeCol } from 'drizzle-orm/mysql-core';
+import { mysqlTable, varchar, boolean, int, float, json, text, datetime as datetimeCol } from 'drizzle-orm/mysql-core';
 
 const datetime = (name: string) => datetimeCol(name, { mode: 'date' });
 import type { BlockInstance, BlockType, BlockData } from '../blocks/types';
@@ -39,9 +39,15 @@ export const sections = mysqlTable('sections', {
 export const articles = mysqlTable('articles', {
   id: varchar('id', { length: 64 }).primaryKey(),
   title: varchar('title', { length: 255 }).notNull().default(''),
-  subtitle: varchar('subtitle', { length: 512 }),
+  subtitle: text('subtitle'),
   dateText: varchar('date_text', { length: 64 }).notNull().default(''),
+  timeText: varchar('time_text', { length: 16 }),
+  location: varchar('location', { length: 255 }),
+  badgeColor: varchar('badge_color', { length: 32 }),
   image: varchar('image', { length: 1024 }),
+  focalX: float('focal_x'),
+  focalY: float('focal_y'),
+  zoom: float('zoom'),
   visible: boolean('visible').notNull().default(true),
   order: int('sort_order').notNull().default(0),
   createdAt: datetime('created_at'),

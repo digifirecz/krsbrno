@@ -40,6 +40,31 @@ export default function ArticlesBlockEditor({ data, onChange }: ArticlesBlockEdi
         />
       </div>
 
+      <div className="flex gap-3">
+        <div className="flex-1">
+          <label className={labelClass}>Řadit podle</label>
+          <select
+            value={data.sortBy || 'eventDate'}
+            onChange={(e) => onChange({ ...data, sortBy: e.target.value as 'eventDate' | 'created' })}
+            className={fieldClass}
+          >
+            <option value="eventDate">Data akce</option>
+            <option value="created">Data přidání</option>
+          </select>
+        </div>
+        <div className="flex-1">
+          <label className={labelClass}>Směr</label>
+          <select
+            value={data.sortDir || 'asc'}
+            onChange={(e) => onChange({ ...data, sortDir: e.target.value as 'asc' | 'desc' })}
+            className={fieldClass}
+          >
+            <option value="asc">Od nejnižší</option>
+            <option value="desc">Od nejvyšší</option>
+          </select>
+        </div>
+      </div>
+
       <div className="flex items-start space-x-2.5 bg-neutral-50 border border-neutral-200 rounded-xl p-3.5">
         <Newspaper className="w-4 h-4 text-neutral-400 shrink-0 mt-0.5" />
         <p className="text-xs text-neutral-500 leading-relaxed">

@@ -8,7 +8,10 @@ import ConfirmModal from '@/components/admin/blocks/ConfirmModal';
 import { useToast } from '@/components/admin/ToastProvider';
 import { getArticles, createArticle, deleteArticle } from '@/lib/actions/articles';
 import type { Article } from '@/lib/articles';
-import { Newspaper, Plus, Pencil, Trash2, ChevronDown, Eye, EyeOff } from 'lucide-react';
+import { eventDateSortKey } from '@/lib/eventDate';
+import { Newspaper, Plus, Pencil, Trash2, ChevronDown, ChevronUp, Eye, EyeOff } from 'lucide-react';
+
+type SortKey = 'title' | 'date' | 'created' | 'updated';
 
 const PAGE_SIZE = 15;
 
@@ -26,7 +29,7 @@ function Author({ by, at }: { by?: string | null; at?: Date | null }) {
   if (!by && !at) return <span className="text-neutral-300">—</span>;
   return (
     <div className="leading-tight">
-      <div className="text-neutral-800 truncate">{by || '—'}</div>
+      <div className="text-neutral-800 truncate" title={by || undefined}>{by || '—'}</div>
       <div className="text-xs text-neutral-400">{fmtDate(at)}</div>
     </div>
   );
@@ -42,6 +45,8 @@ export default function AdminArticlesListPage() {
 
   const [fTitle, setFTitle] = useState('');
   const [fState, setFState] = useState<'' | 'visible' | 'hidden'>('');
+  const [sortKey, setSortKey] = useState<SortKey | null>(null);
+  const [sortDir, setSortDir] = useState<'asc' | 'desc'>('asc');
 
   useEffect(() => {
     getArticles()
@@ -59,7 +64,51 @@ export default function AdminArticlesListPage() {
     });
   }, [articles, fTitle, fState]);
 
-  const shown = filtered.slice(0, limit);
+  const sorted = useMemo(() => {
+    if (!sortKey) return filtered;
+    const dir = sortDir === 'asc' ? 1 : -1;
+    // Chybějící hodnota (bez data/bez autora) vždy až na konec, ať netříští řazení podle zbytku.
+    const keyOf = (a: Article): number | string | null => {
+      if (sortKey === 'title') return (a.title || '').toLowerCase();
+      if (sortKey === 'date') return eventDateSortKey(a.dateText)?.getTime() ?? null;
+      if (sortKey === 'created') return a.createdAt ? new Date(a.createdAt).getTime() : null;
+      return a.updatedAt ? new Date(a.updatedAt).getTime() : null;
+    };
+    return [...filtered].sort((a, b) => {
+      const ka = keyOf(a);
+      const kb = keyOf(b);
+      if (ka === null && kb === null) return 0;
+      if (ka === null) return 1;
+      if (kb === null) return -1;
+      if (ka < kb) return -1 * dir;
+      if (ka > kb) return 1 * dir;
+      return 0;
+    });
+  }, [filtered, sortKey, sortDir]);
+
+  const shown = sorted.slice(0, limit);
+
+  const handleSort = (key: SortKey) => {
+    if (sortKey === key) {
+      setSortDir((d) => (d === 'asc' ? 'desc' : 'asc'));
+    } else {
+      setSortKey(key);
+      setSortDir('asc');
+    }
+    setLimit(PAGE_SIZE);
+  };
+
+  const sortHeader = (key: SortKey, label: string) => (
+    <button
+      type="button"
+      onClick={() => handleSort(key)}
+      className="inline-flex items-center gap-1 uppercase tracking-wider cursor-pointer hover:text-neutral-700"
+    >
+      <span>{label}</span>
+      {sortKey === key &&
+        (sortDir === 'asc' ? <ChevronUp className="w-3 h-3" /> : <ChevronDown className="w-3 h-3" />)}
+    </button>
+  );
 
   return (
     <RequireAuth>
@@ -115,15 +164,15 @@ export default function AdminArticlesListPage() {
               <p className="text-sm text-neutral-400 px-1">Zatím žádné články. Přidejte první tlačítkem výše.</p>
             ) : (
               <>
-                <div className="overflow-x-auto rounded-2xl border border-neutral-200">
-                  <table className="w-full min-w-[720px] text-sm">
+                <div className="rounded-2xl border border-neutral-200">
+                  <table className="w-full table-fixed text-sm">
                     <thead>
                       <tr className="text-left text-xs font-bold uppercase tracking-wider text-neutral-400 border-b border-neutral-200">
                         <th className="px-4 pt-3 pb-1.5 w-14" />
-                        <th className="px-4 pt-3 pb-1.5">Titulek</th>
-                        <th className="px-4 pt-3 pb-1.5 w-28">Datum</th>
-                        <th className="px-4 pt-3 pb-1.5 w-44">Přidal</th>
-                        <th className="px-4 pt-3 pb-1.5 w-44">Upravil</th>
+                        <th className="px-4 pt-3 pb-1.5">{sortHeader('title', 'Titulek')}</th>
+                        <th className="px-4 pt-3 pb-1.5 w-24">{sortHeader('date', 'Datum')}</th>
+                        <th className="px-4 pt-3 pb-1.5 w-32">{sortHeader('created', 'Přidal')}</th>
+                        <th className="px-4 pt-3 pb-1.5 w-32">{sortHeader('updated', 'Upravil')}</th>
                         <th className="px-4 pt-3 pb-1.5 w-32">Stav</th>
                         <th className="px-4 pt-3 pb-1.5 w-20" />
                       </tr>
@@ -176,7 +225,10 @@ export default function AdminArticlesListPage() {
                           <td className="px-4 py-3 align-top">
                             <span className="font-semibold text-neutral-900">{a.title || 'Bez titulku'}</span>
                           </td>
-                          <td className="px-4 py-3 align-top text-neutral-500 whitespace-nowrap">{a.dateText || '—'}</td>
+                          <td className="px-4 py-3 align-top text-neutral-500 whitespace-nowrap leading-tight">
+                            <div>{a.dateText || '—'}</div>
+                            {a.timeText && <div className="text-xs text-neutral-400">{a.timeText}</div>}
+                          </td>
                           <td className="px-4 py-3 align-top">
                             <Author by={a.createdBy} at={a.createdAt} />
                           </td>

@@ -92,7 +92,7 @@ export default function CookieConsent() {
               </button>
             </div>
             <div
-              className="text-xs text-neutral-600 space-y-2 leading-relaxed max-h-80 overflow-y-auto font-sans [&_a]:text-[#c93838] [&_a]:underline [&_ul]:list-disc [&_ul]:pl-5 [&_ol]:list-decimal [&_ol]:pl-5 [&_p]:mb-2 last:[&_p]:mb-0"
+              className="text-sm sm:text-base text-neutral-600 space-y-2 leading-relaxed max-h-80 overflow-y-auto font-sans [&_a]:text-[#c93838] [&_a]:underline [&_ul]:list-disc [&_ul]:pl-5 [&_ol]:list-decimal [&_ol]:pl-5 [&_p]:mb-2 last:[&_p]:mb-0"
               dangerouslySetInnerHTML={{ __html: siteSettings?.gdprText || DEFAULT_GDPR_TEXT }}
             />
             <button

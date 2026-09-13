@@ -269,6 +269,11 @@ export interface ArticlesBlockData {
   icon?: string;
   heading?: string;
   description?: string;
+  // Podle čeho se seznam na webu řadí — datum konání akce (výchozí), nebo
+  // datum, kdy byl článek přidán do administrace.
+  sortBy?: 'eventDate' | 'created';
+  // Směr řazení — od nejnižší hodnoty (výchozí), nebo od nejvyšší.
+  sortDir?: 'asc' | 'desc';
 }
 
 export interface HomeHeroData {

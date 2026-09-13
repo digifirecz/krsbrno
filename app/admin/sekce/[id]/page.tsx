@@ -28,11 +28,13 @@ import TagGroupsEditor from '@/components/admin/blocks/TagGroupsEditor';
 import SupportOptionsEditor from '@/components/admin/blocks/SupportOptionsEditor';
 import SocialCardEditor from '@/components/admin/blocks/SocialCardEditor';
 import PeopleListEditor from '@/components/admin/blocks/PeopleListEditor';
+import ArticlesBlockEditor from '@/components/admin/blocks/ArticlesBlockEditor';
 
 import type {
   BlockData, PageHeroData, HomeHeroData, IconGridData, QuoteData, CtaBlockData, TimelineData,
   InfoCardData, PhotoCardGridData, ScheduleCardData, ChecklistCardData, ListCardData, CardGridData,
   BadgeCardData, TextSectionsData, MapEmbedData, TagGroupsData, SupportOptionsData, SocialCardData, PeopleListData,
+  ArticlesBlockData,
 } from '@/lib/blocks/types';
 import { ArrowLeft, Trash2, Save, CheckCircle2, CalendarPlus, History, Layers } from 'lucide-react';
 
@@ -256,6 +258,9 @@ export default function AdminSectionEditor() {
                   )}
                   {section.type === 'peopleList' && (
                     <PeopleListEditor data={data as PeopleListData} onChange={setData} />
+                  )}
+                  {section.type === 'articlesBlock' && (
+                    <ArticlesBlockEditor data={data as ArticlesBlockData} onChange={setData} />
                   )}
                 </div>
               </>

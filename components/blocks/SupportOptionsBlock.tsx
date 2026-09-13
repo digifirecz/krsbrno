@@ -44,7 +44,7 @@ export default function SupportOptionsBlock({ data }: { data: SupportOptionsData
               </h2>
             )}
             {data.description && (
-              <p className="text-xs sm:text-sm text-neutral-600 font-sans leading-relaxed max-w-2xl mx-auto whitespace-pre-line">
+              <p className="text-sm sm:text-base text-neutral-600 font-sans leading-relaxed max-w-2xl mx-auto whitespace-pre-line">
                 {data.description}
               </p>
             )}

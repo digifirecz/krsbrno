@@ -93,7 +93,7 @@ export default function SermonsSection() {
           <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-neutral-900 font-serif tracking-tight leading-tight">
             {activeCat ? catName(activeCat) : 'Záznamy'}
           </h1>
-          <p className="text-sm text-neutral-700 font-sans leading-relaxed max-w-2xl mx-auto">
+          <p className="text-sm sm:text-base text-neutral-700 font-sans leading-relaxed max-w-2xl mx-auto">
             Poslechněte si nahrávky ze setkání a bohoslužeb, nebo si je stáhněte.
           </p>
         </div>

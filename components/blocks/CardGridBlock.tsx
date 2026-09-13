@@ -13,7 +13,7 @@ function CardHeader({ icon, heading, subheading }: { icon?: string; heading?: st
       )}
       <div>
         {heading && <h3 className="text-lg font-bold font-serif text-neutral-900">{heading}</h3>}
-        {subheading && <p className="text-sm text-neutral-500 font-sans">{subheading}</p>}
+        {subheading && <p className="text-sm sm:text-base text-neutral-500 font-sans">{subheading}</p>}
       </div>
     </div>
   );
@@ -31,7 +31,7 @@ function CardGridCard({ card }: { card: CardGridItem }) {
         )}
         <h3 className="text-lg font-bold font-serif text-neutral-900">{card.title}</h3>
         {card.text && (
-          <p className="text-sm text-neutral-600 leading-relaxed font-sans whitespace-pre-line">{card.text}</p>
+          <p className="text-sm sm:text-base text-neutral-600 leading-relaxed font-sans whitespace-pre-line">{card.text}</p>
         )}
       </div>
     );
@@ -87,7 +87,7 @@ export default function CardGridBlock({ data }: { data: CardGridData }) {
               <h2 className="text-2xl sm:text-3xl font-extrabold text-neutral-900 font-serif">{data.heading}</h2>
             )}
             {data.subheading && (
-              <p className="text-sm text-neutral-500 font-sans max-w-xl mx-auto">{data.subheading}</p>
+              <p className="text-sm sm:text-base text-neutral-500 font-sans max-w-xl mx-auto">{data.subheading}</p>
             )}
           </div>
         )}

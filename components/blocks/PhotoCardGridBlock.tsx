@@ -20,14 +20,14 @@ export default function PhotoCardGridBlock({ data, limit }: { data: PhotoCardGri
               </h2>
             )}
             {data.subheading && (
-              <p className="text-sm text-neutral-600 leading-relaxed font-sans max-w-2xl mx-auto whitespace-pre-line">
+              <p className="text-sm sm:text-base text-neutral-600 leading-relaxed font-sans max-w-2xl mx-auto whitespace-pre-line">
                 {data.subheading}
               </p>
             )}
             {data.highlight && (
-              <div className="inline-block bg-red-50/80 border border-red-100/90 rounded-xl px-4 py-2.5 text-sm text-neutral-700 font-sans shadow-2xs whitespace-pre-line">
+              <p className="italic font-serif text-sm sm:text-base text-[#c93838] leading-relaxed max-w-2xl mx-auto whitespace-pre-line">
                 {data.highlight}
-              </div>
+              </p>
             )}
           </div>
         )}

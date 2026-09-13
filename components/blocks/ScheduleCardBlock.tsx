@@ -48,7 +48,7 @@ export default function ScheduleCardBlock({ data }: { data: ScheduleCardData }) 
             )}
 
             {(data.text || data.highlight) && (
-              <div className="space-y-3 font-sans text-xs sm:text-sm text-neutral-600 leading-relaxed">
+              <div className="space-y-3 font-sans text-sm sm:text-base text-neutral-600 leading-relaxed">
                 {data.text && <p className="whitespace-pre-line">{data.text}</p>}
                 {data.highlight && <p className="font-semibold text-neutral-900 whitespace-pre-line">{data.highlight}</p>}
               </div>

@@ -46,7 +46,7 @@ export default function RichTextEditor({ value, onChange, placeholder }: RichTex
       StarterKit.configure({ heading: false }),
       Underline,
       Link.configure({ openOnClick: false, autolink: true }),
-      Placeholder.configure({ placeholder: placeholder || 'Napište text…' }),
+      Placeholder.configure({ placeholder: placeholder ?? 'Napište text…' }),
     ],
     content: value || '',
     immediatelyRender: false,

@@ -21,7 +21,7 @@ export default function TagGroupsBlock({ data }: { data: TagGroupsData }) {
               </h2>
             )}
             {data.subheading && (
-              <p className="text-xs sm:text-sm text-neutral-600 font-sans leading-relaxed max-w-2xl mx-auto">
+              <p className="text-sm sm:text-base text-neutral-600 font-sans leading-relaxed max-w-2xl mx-auto">
                 {data.subheading}
               </p>
             )}

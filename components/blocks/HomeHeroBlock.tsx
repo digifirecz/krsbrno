@@ -31,9 +31,9 @@ export default function HomeHeroBlock({ data }: { data: HomeHeroData }) {
       <div className="absolute top-1/2 -right-24 w-96 h-96 bg-amber-100/30 rounded-full blur-3xl pointer-events-none" />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 flex-1 flex items-center w-full">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-8 items-center w-full">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center w-full">
 
-          <div className="lg:col-span-6 space-y-6">
+          <div className="lg:col-span-6 space-y-6 max-w-xl">
             {data.pillText && (
               <div className="inline-flex items-center space-x-2 px-3.5 py-1.5 rounded-full bg-red-50 text-[#c93838] border border-red-100/80 text-xs font-bold tracking-wide shadow-2xs">
                 <Sparkles className="w-3.5 h-3.5 text-[#c93838]" />
@@ -46,7 +46,7 @@ export default function HomeHeroBlock({ data }: { data: HomeHeroData }) {
             </h1>
 
             {paragraphs.length > 0 && (
-              <div className="space-y-3.5 text-sm text-neutral-600 leading-relaxed font-sans">
+              <div className="space-y-3.5 text-sm sm:text-base text-neutral-600 leading-relaxed font-sans">
                 {paragraphs.map((p, idx) => (
                   <p key={idx}>{p}</p>
                 ))}

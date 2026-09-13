@@ -27,7 +27,7 @@ export default function GroupsSection({ initialGroupId = 'besidka' }: GroupsSect
           <h2 className="text-3xl sm:text-4xl font-extrabold text-neutral-900 font-serif tracking-tight">
             Program pro děti, mládež a čtenáře
           </h2>
-          <p className="text-sm text-neutral-700 font-sans leading-relaxed max-w-2xl sm:max-w-3xl mx-auto">
+          <p className="text-sm sm:text-base text-neutral-700 font-sans leading-relaxed max-w-2xl sm:max-w-3xl mx-auto">
             Vytváříme věkově přizpůsobené prostory pro rozvoj víry, přátelství i aktivní odpočinek.
           </p>
         </div>
@@ -73,7 +73,7 @@ export default function GroupsSection({ initialGroupId = 'besidka' }: GroupsSect
               </p>
             </div>
 
-            <p className="text-neutral-600 text-base leading-relaxed font-sans">
+            <p className="text-neutral-600 text-sm sm:text-base leading-relaxed font-sans">
               {selectedGroup.description}
             </p>
 

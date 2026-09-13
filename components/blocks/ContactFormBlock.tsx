@@ -44,15 +44,17 @@ export default function ContactFormBlock({ data }: { data: ContactFormBlockData 
                 <div className="w-10 h-10 rounded-xl bg-[#c93838] text-white flex items-center justify-center shadow-xs">
                   <Mail className="w-5 h-5" />
                 </div>
-                <h2 className="text-2xl font-extrabold text-neutral-900 font-serif">
-                  {data.emailsHeading || 'E-mailové kontakty'}
-                </h2>
+                <div>
+                  <h2 className="text-2xl font-extrabold text-neutral-900 font-serif">
+                    {data.emailsHeading || 'E-mailové kontakty'}
+                  </h2>
+                  {data.emailsSubheading && (
+                    <p className="text-sm sm:text-base text-neutral-500 font-sans">
+                      {data.emailsSubheading}
+                    </p>
+                  )}
+                </div>
               </div>
-              {data.emailsSubheading && (
-                <p className="text-sm sm:text-base text-neutral-500 font-sans">
-                  {data.emailsSubheading}
-                </p>
-              )}
 
               {data.contacts.length > 0 && (
                 <ul className="space-y-3 font-sans pt-1">
@@ -75,17 +77,19 @@ export default function ContactFormBlock({ data }: { data: ContactFormBlockData 
 
           {/* Right: Message Form */}
           <div className="lg:col-span-7 bg-white p-6 sm:p-8 rounded-2xl border border-neutral-200/80 shadow-2xs">
-            <div className="flex items-center space-x-3 mb-2">
-              <div className="w-9 h-9 rounded-xl bg-red-50 text-[#c93838] flex items-center justify-center">
+            <div className="flex items-center space-x-3 mb-4">
+              <div className="w-10 h-10 rounded-xl bg-red-50 text-[#c93838] flex items-center justify-center">
                 <MessageSquare className="w-5 h-5" />
               </div>
-              <h2 className="text-2xl font-extrabold text-neutral-900 font-serif">{data.formHeading || 'Napište nám zprávu'}</h2>
+              <div>
+                <h2 className="text-2xl font-extrabold text-neutral-900 font-serif">{data.formHeading || 'Napište nám zprávu'}</h2>
+                {data.formText && (
+                  <p className="text-sm sm:text-base text-neutral-600 font-sans">
+                    {data.formText}
+                  </p>
+                )}
+              </div>
             </div>
-            {data.formText && (
-              <p className="text-sm sm:text-base text-neutral-600 mb-4 font-sans">
-                {data.formText}
-              </p>
-            )}
 
             <div className="border-t border-neutral-100 mb-6" />
 

@@ -158,8 +158,14 @@ export default function SupportOptionsBlock({ data }: { data: SupportOptionsData
       </div>
 
       {showQrModal && (
-        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4">
-          <div className="bg-white rounded-2xl p-6 sm:p-8 max-w-md w-full shadow-2xl space-y-6 animate-in zoom-in-95 duration-150 border border-neutral-200">
+        <div
+          className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4 cursor-pointer"
+          onClick={() => setShowQrModal(false)}
+        >
+          <div
+            className="bg-white rounded-2xl p-6 sm:p-8 max-w-md w-full shadow-2xl space-y-6 animate-in zoom-in-95 duration-150 border border-neutral-200"
+            onClick={(e) => e.stopPropagation()}
+          >
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-2">
                 <QrCode className="w-5 h-5 text-[#c93838]" />

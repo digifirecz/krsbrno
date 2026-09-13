@@ -96,7 +96,7 @@ export default function ImageCard({
         typeof document !== 'undefined' &&
         createPortal(
           <div
-            className="fixed inset-0 z-[9999] bg-black/70 backdrop-blur-md flex items-center justify-center p-4 sm:p-8 animate-in fade-in duration-200"
+            className="fixed inset-0 z-[9999] bg-black/70 backdrop-blur-md flex items-center justify-center p-4 sm:p-8 animate-in fade-in duration-200 cursor-pointer"
             onClick={() => setIsOpen(false)}
           >
             <button

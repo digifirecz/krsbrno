@@ -82,8 +82,14 @@ export default function CookieConsent() {
       </div>
 
       {infoOpen && (
-        <div className="fixed inset-0 z-[80] bg-black/70 backdrop-blur-xs flex items-center justify-center p-4">
-          <div className="bg-white text-neutral-900 rounded-2xl p-6 sm:p-8 max-w-lg w-full shadow-2xl space-y-4 animate-in zoom-in-95 duration-150 border border-neutral-200">
+        <div
+          className="fixed inset-0 z-[80] bg-black/70 backdrop-blur-xs flex items-center justify-center p-4 cursor-pointer"
+          onClick={() => setInfoOpen(false)}
+        >
+          <div
+            className="bg-white text-neutral-900 rounded-2xl p-6 sm:p-8 max-w-lg w-full shadow-2xl space-y-4 animate-in zoom-in-95 duration-150 border border-neutral-200"
+            onClick={(e) => e.stopPropagation()}
+          >
             <div className="flex items-center justify-between border-b pb-3">
               <h3 className="text-lg font-bold font-serif">Ochrana osobních údajů (GDPR)</h3>
               <button onClick={() => setInfoOpen(false)} className="text-neutral-400 hover:text-neutral-700 font-bold p-1 cursor-pointer">

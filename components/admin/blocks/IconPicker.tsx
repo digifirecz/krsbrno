@@ -47,7 +47,7 @@ export default function IconPicker({ value, onChange }: IconPickerProps) {
 
       {open && (
         <div
-          className="fixed inset-0 z-50 bg-black/70 backdrop-blur-xs flex items-center justify-center p-4"
+          className="fixed inset-0 z-50 bg-black/70 backdrop-blur-xs flex items-center justify-center p-4 cursor-pointer"
           onClick={() => setOpen(false)}
         >
           <div

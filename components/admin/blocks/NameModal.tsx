@@ -53,7 +53,7 @@ export default function NameModal({ open, title, label, submitLabel, placeholder
   };
 
   return (
-    <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-xs flex items-center justify-center p-4" onClick={onClose}>
+    <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-xs flex items-center justify-center p-4 cursor-pointer" onClick={onClose}>
       <div
         className="bg-white text-neutral-900 rounded-2xl p-6 max-w-md w-full shadow-2xl space-y-4 animate-in zoom-in-95 duration-150 border border-neutral-200"
         onClick={(e) => e.stopPropagation()}

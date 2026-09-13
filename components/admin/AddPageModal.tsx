@@ -29,7 +29,7 @@ export default function AddPageModal({ open, title, pages, onClose, onPick }: Ad
 
   return (
     <div
-      className="fixed inset-0 z-50 bg-black/70 backdrop-blur-xs flex items-center justify-center p-4"
+      className="fixed inset-0 z-50 bg-black/70 backdrop-blur-xs flex items-center justify-center p-4 cursor-pointer"
       onClick={onClose}
     >
       <div

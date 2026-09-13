@@ -2,12 +2,11 @@ import { NextResponse } from 'next/server';
 import { writeFile, mkdir, unlink } from 'node:fs/promises';
 import path from 'node:path';
 import { randomUUID } from 'node:crypto';
+import { getSession } from '@/lib/auth/session';
 
 // Local replacement for Firebase Storage uploads. Images land in
 // public/image/<folder>/<id>/, audio in public/audio/<folder>/<id>/, served at
 // /image/... or /audio/...
-// NOTE: not auth-gated yet — that lands with the auth migration. For now it's
-// admin-only by obscurity plus the type/size limits below.
 
 type Kind = { publicDir: 'image' | 'audio'; exts: Set<string>; max: number; label: string };
 
@@ -44,6 +43,9 @@ function safeName(original: string, fallback: string): string {
 }
 
 export async function POST(req: Request) {
+  const session = await getSession();
+  if (!session) return NextResponse.json({ error: 'Neautorizováno.' }, { status: 401 });
+
   const form = await req.formData();
   const file = form.get('file');
   const folder = safeSegment(String(form.get('folder') || 'pages')) || 'pages';
@@ -78,6 +80,9 @@ export async function POST(req: Request) {
 }
 
 export async function DELETE(req: Request) {
+  const session = await getSession();
+  if (!session) return NextResponse.json({ error: 'Neautorizováno.' }, { status: 401 });
+
   const { url } = (await req.json().catch(() => ({}))) as { url?: string };
   const root = url?.startsWith('/image/') ? IMAGE_ROOT : url?.startsWith('/audio/') ? AUDIO_ROOT : null;
   if (!url || !root) {

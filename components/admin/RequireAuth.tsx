@@ -1,27 +1,32 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { onAuthStateChanged, type User } from 'firebase/auth';
-import { auth } from '@/lib/firebase';
+import { useRouter } from 'next/navigation';
+import { getCurrentUser } from '@/lib/actions/auth';
+import { getPathForTab } from '@/lib/routes';
+import type { SessionUser } from '@/lib/auth/session';
 
 interface RequireAuthProps {
-  children: (user: User) => React.ReactNode;
+  children: (user: SessionUser) => React.ReactNode;
 }
 
 export default function RequireAuth({ children }: RequireAuthProps) {
-  const [user, setUser] = useState<User | null>(null);
+  const router = useRouter();
+  const [user, setUser] = useState<SessionUser | null>(null);
   const [checked, setChecked] = useState(false);
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
-      setUser(firebaseUser);
+    let active = true;
+    getCurrentUser().then((current) => {
+      if (!active) return;
+      setUser(current);
       setChecked(true);
-      if (!firebaseUser && typeof window !== 'undefined') {
-        window.location.href = '/login';
-      }
+      if (!current) router.push(getPathForTab('login'));
     });
-    return () => unsubscribe();
-  }, []);
+    return () => {
+      active = false;
+    };
+  }, [router]);
 
   if (!checked || !user) {
     return (

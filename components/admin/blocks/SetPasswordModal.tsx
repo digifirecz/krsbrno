@@ -2,25 +2,21 @@
 
 import { useEffect, useState } from 'react';
 import { X } from 'lucide-react';
-import type { RoleDefinition } from '@/lib/roles';
 
-interface NewUserModalProps {
-  open: boolean;
-  roleDefs: RoleDefinition[];
+interface SetPasswordModalProps {
+  email: string | null;
   onClose: () => void;
-  onCreate: (email: string, role: string) => Promise<void>;
+  onSubmit: (email: string, password: string) => Promise<void>;
 }
 
-export default function NewUserModal({ open, roleDefs, onClose, onCreate }: NewUserModalProps) {
-  const [email, setEmail] = useState('');
-  const [role, setRole] = useState('sprava');
+export default function SetPasswordModal({ email, onClose, onSubmit }: SetPasswordModalProps) {
+  const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [submitting, setSubmitting] = useState(false);
 
   useEffect(() => {
-    if (!open) return;
-    setEmail('');
-    setRole(roleDefs.find((d) => d.id === 'sprava')?.id ?? roleDefs[0]?.id ?? 'sprava');
+    if (!email) return;
+    setPassword('');
     setError('');
     setSubmitting(false);
     const onKey = (e: KeyboardEvent) => e.key === 'Escape' && onClose();
@@ -30,28 +26,24 @@ export default function NewUserModal({ open, roleDefs, onClose, onCreate }: NewU
       document.body.style.overflow = 'unset';
       window.removeEventListener('keydown', onKey);
     };
-  }, [open, roleDefs, onClose]);
+  }, [email, onClose]);
 
-  if (!open) return null;
+  if (!email) return null;
 
   const handleSubmit = async () => {
-    const e = email.trim().toLowerCase();
-    if (!e.includes('@')) {
-      setError('Zadejte platný e-mail.');
+    if (password.length < 8) {
+      setError('Heslo musí mít alespoň 8 znaků.');
       return;
     }
     setError('');
     setSubmitting(true);
     try {
-      await onCreate(e, role);
+      await onSubmit(email, password);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Uživatele se nepodařilo přidat.');
+      setError(err instanceof Error ? err.message : 'Heslo se nepodařilo nastavit.');
       setSubmitting(false);
     }
   };
-
-  const fieldClass =
-    'w-full px-3.5 py-2.5 rounded-xl border border-neutral-200 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-[#c93838]/30 focus:border-[#c93838]';
 
   return (
     <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-xs flex items-center justify-center p-4" onClick={onClose}>
@@ -60,7 +52,7 @@ export default function NewUserModal({ open, roleDefs, onClose, onCreate }: NewU
         onClick={(e) => e.stopPropagation()}
       >
         <div className="flex items-center justify-between border-b pb-3">
-          <h3 className="text-lg font-bold font-serif">Nový uživatel</h3>
+          <h3 className="text-lg font-bold font-serif">Nastavit heslo</h3>
           <button
             type="button"
             onClick={onClose}
@@ -71,33 +63,23 @@ export default function NewUserModal({ open, roleDefs, onClose, onCreate }: NewU
           </button>
         </div>
 
+        <p className="text-sm text-neutral-600">
+          Nové heslo pro <span className="font-semibold text-neutral-900">{email}</span>.
+        </p>
+
         <div>
-          <label className="block text-xs font-bold text-neutral-600 mb-1">E-mail</label>
+          <label className="block text-xs font-bold text-neutral-600 mb-1">Nové heslo</label>
           <input
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
+            type="text"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
             onKeyDown={(e) => e.key === 'Enter' && handleSubmit()}
-            placeholder="jan.novak@email.cz"
-            className={fieldClass}
+            placeholder="alespoň 8 znaků"
+            className="w-full px-3.5 py-2.5 rounded-xl border border-neutral-200 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-[#c93838]/30 focus:border-[#c93838]"
             autoFocus
           />
         </div>
 
-        <div>
-          <label className="block text-xs font-bold text-neutral-600 mb-1">Role</label>
-          <select value={role} onChange={(e) => setRole(e.target.value)} className={fieldClass}>
-            {roleDefs.map((d) => (
-              <option key={d.id} value={d.id}>
-                {d.label}
-              </option>
-            ))}
-          </select>
-        </div>
-
-        <p className="text-xs text-neutral-400">
-          Přiřadíte jen roli — účet si heslo nastaví sám přes „Zapomněli jste heslo?“ na přihlašovací stránce, nebo mu ho můžete rovnou nastavit v tabulce uživatelů.
-        </p>
         {error && <p className="text-xs font-medium text-[#c93838]">{error}</p>}
 
         <div className="flex justify-end space-x-2 pt-1">
@@ -114,7 +96,7 @@ export default function NewUserModal({ open, roleDefs, onClose, onCreate }: NewU
             disabled={submitting}
             className="px-4 py-2 rounded-xl text-sm font-bold text-white bg-[#c93838] hover:bg-[#b02f2f] disabled:opacity-60 cursor-pointer"
           >
-            {submitting ? 'Přidávám…' : 'Přidat uživatele'}
+            {submitting ? 'Ukládám…' : 'Nastavit heslo'}
           </button>
         </div>
       </div>

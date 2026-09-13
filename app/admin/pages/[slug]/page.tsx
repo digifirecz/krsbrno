@@ -33,10 +33,7 @@ import { slugify } from '@/lib/pages';
 import type { NavGroup } from '@/lib/pages';
 import { getSections } from '@/lib/actions/sections';
 import type { Section } from '@/lib/sections';
-import { getRole } from '@/lib/actions/roles';
 import type { Role } from '@/lib/roles';
-import { auth } from '@/lib/firebase';
-import { onAuthStateChanged } from 'firebase/auth';
 import { MANAGEABLE_PAGES } from '@/lib/blocks/pageRegistry';
 import { getBlockTypeLabel } from '@/lib/blocks/registry';
 import type { BlockInstance, PageHeroData, HomeHeroData, IconGridData, QuoteData, CtaBlockData, TimelineData, InfoCardData, PhotoCardGridData, ScheduleCardData, ChecklistCardData, ListCardData, CardGridData, BadgeCardData, TextSectionsData, MapEmbedData, TagGroupsData, SupportOptionsData, SocialCardData, PeopleListData, ArticlesBlockData } from '@/lib/blocks/types';
@@ -73,20 +70,12 @@ export default function AdminPageBlocksEditor() {
   const [sections, setSections] = useState<Section[]>([]);
   const [pendingDeleteId, setPendingDeleteId] = useState<string | null>(null);
   const [deletePageConfirmOpen, setDeletePageConfirmOpen] = useState(false);
-  const [role, setRole] = useState<Role | null>(null);
   const [headerGroupId, setHeaderGroupId] = useState('');
   const [headerIcon, setHeaderIcon] = useState<string | undefined>(undefined);
   const [savedHeaderGroupId, setSavedHeaderGroupId] = useState('');
   const [savedHeaderIcon, setSavedHeaderIcon] = useState<string | undefined>(undefined);
   const [navGroups, setNavGroups] = useState<NavGroup[]>([]);
   const [isProtected, setIsProtected] = useState(false);
-
-  useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (u) => {
-      if (u) getRole(u.email ?? "").then(setRole).catch(() => setRole('sprava'));
-    });
-    return () => unsubscribe();
-  }, []);
 
   useEffect(() => {
     getNavGroups().then(setNavGroups).catch(() => {});
@@ -319,7 +308,7 @@ export default function AdminPageBlocksEditor() {
     }
   };
 
-  const handleDeletePage = async () => {
+  const handleDeletePage = async (role: Role) => {
     if (role !== 'admin' || isProtected) return;
     try {
       await deletePage(pageId);
@@ -419,7 +408,7 @@ export default function AdminPageBlocksEditor() {
                     <Lock className="w-4 h-4" />
                   </span>
                 ) : (
-                  role === 'admin' && (
+                  user.role === 'admin' && (
                     <button
                       onClick={() => setDeletePageConfirmOpen(true)}
                       title="Smazat stránku"
@@ -751,7 +740,7 @@ export default function AdminPageBlocksEditor() {
             title="Smazat stránku"
             message={`Opravdu chcete stránku „${title}“ trvale smazat i s celým jejím obsahem? Zmizí i z navigace webu. Tuto akci nelze vzít zpět.`}
             onCancel={() => setDeletePageConfirmOpen(false)}
-            onConfirm={handleDeletePage}
+            onConfirm={() => handleDeletePage(user.role as Role)}
           />
         </div>
       )}

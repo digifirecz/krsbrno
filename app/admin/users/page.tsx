@@ -4,10 +4,12 @@ import { useEffect, useState } from 'react';
 import RequireAdmin from '@/components/admin/RequireAdmin';
 import ConfirmModal from '@/components/admin/blocks/ConfirmModal';
 import NewUserModal from '@/components/admin/blocks/NewUserModal';
+import SetPasswordModal from '@/components/admin/blocks/SetPasswordModal';
 import { useToast } from '@/components/admin/ToastProvider';
 import { getAllRoles, getRoleDefinitions, setRole, deleteRole } from '@/lib/actions/roles';
+import { adminSetPassword } from '@/lib/actions/auth';
 import type { RoleEntry, RoleDefinition } from '@/lib/roles';
-import { UserCog, Plus, Trash2 } from 'lucide-react';
+import { UserCog, Plus, Trash2, KeyRound } from 'lucide-react';
 
 function fmtDate(v: Date | null | undefined): string {
   if (!v) return '';
@@ -34,6 +36,7 @@ export default function AdminUsersPage() {
   const [addOpen, setAddOpen] = useState(false);
   const [savingEmail, setSavingEmail] = useState<string | null>(null);
   const [deleteTarget, setDeleteTarget] = useState<RoleEntry | null>(null);
+  const [passwordTarget, setPasswordTarget] = useState<string | null>(null);
 
   useEffect(() => {
     Promise.all([getAllRoles(), getRoleDefinitions()])
@@ -73,6 +76,13 @@ export default function AdminUsersPage() {
           } finally {
             setSavingEmail(null);
           }
+        };
+
+        const handleSetPassword = async (email: string, password: string) => {
+          const result = await adminSetPassword(email, password, user.email);
+          if (!result.ok) throw new Error(result.error);
+          setPasswordTarget(null);
+          showToast(`Heslo pro ${email} bylo nastaveno.`);
         };
 
         const handleDelete = async () => {
@@ -153,7 +163,16 @@ export default function AdminUsersPage() {
                             <Author by={entry.updatedBy} at={entry.updatedAt} />
                           </td>
                           <td className="px-4 py-3 align-top">
-                            <div className="flex justify-end">
+                            <div className="flex justify-end space-x-1">
+                              <button
+                                type="button"
+                                onClick={() => setPasswordTarget(entry.email)}
+                                className="p-1.5 rounded-lg text-neutral-400 hover:text-[#c93838] hover:bg-red-50 cursor-pointer"
+                                aria-label="Nastavit heslo"
+                                title="Nastavit heslo"
+                              >
+                                <KeyRound className="w-4 h-4" />
+                              </button>
                               <button
                                 type="button"
                                 disabled={isSelf}
@@ -175,6 +194,8 @@ export default function AdminUsersPage() {
             )}
 
             <NewUserModal open={addOpen} roleDefs={roleDefs} onClose={() => setAddOpen(false)} onCreate={handleAdd} />
+
+            <SetPasswordModal email={passwordTarget} onClose={() => setPasswordTarget(null)} onSubmit={handleSetPassword} />
 
             <ConfirmModal
               open={!!deleteTarget}

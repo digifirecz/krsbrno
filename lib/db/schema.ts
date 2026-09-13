@@ -78,16 +78,25 @@ export const meta = mysqlTable('meta', {
 });
 
 // People with admin access, keyed by e-mail so a role can be assigned before
-// the person ever signs in (auth still runs on Firebase; uid is filled
-// opportunistically). `role` references roles.id below.
+// the person ever signs in. `role` references roles.id below. `passwordHash`
+// is null until the account's first password-reset (bootstrap path).
 export const users = mysqlTable('users', {
   email: varchar('email', { length: 255 }).primaryKey(),
   role: varchar('role', { length: 32 }).notNull().default('sprava'),
-  uid: varchar('uid', { length: 128 }),
+  passwordHash: varchar('password_hash', { length: 255 }),
   createdAt: datetime('created_at'),
   createdBy: varchar('created_by', { length: 255 }),
   updatedAt: datetime('updated_at'),
   updatedBy: varchar('updated_by', { length: 255 }),
+});
+
+// Single-use password reset links. `token` is the random secret itself (the
+// lookup key); consuming it deletes the row, enforcing one-time use.
+export const passwordResetTokens = mysqlTable('password_reset_tokens', {
+  token: varchar('token', { length: 128 }).primaryKey(),
+  email: varchar('email', { length: 255 }).notNull(),
+  expiresAt: datetime('expires_at').notNull(),
+  createdAt: datetime('created_at'),
 });
 
 // Catalog of available roles ('admin' → "Administrátor", 'sprava' → "Správce").

@@ -1,17 +1,16 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { usePathname } from 'next/navigation';
+import { useState } from 'react';
+import { usePathname, useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { auth } from '@/lib/firebase';
-import { signOut } from 'firebase/auth';
+import { logout } from '@/lib/actions/auth';
 import { LogOut, LayoutDashboard, FileText, Users, Settings, LayoutTemplate, Newspaper, Layers, ChevronDown, AudioLines, Tag, Mic } from 'lucide-react';
 import { getPathForTab } from '@/lib/routes';
-import { getRole } from '@/lib/actions/roles';
 import type { Role } from '@/lib/roles';
 
 interface AdminLayoutProps {
   children: React.ReactNode;
+  user: { email: string; role: Role };
   setActiveTab?: (tab: string) => void;
 }
 
@@ -33,51 +32,24 @@ const SERMONS_GROUP_ITEMS = [
   { href: '/admin/recnici-zaznamu', label: 'Řečníci', icon: Mic },
 ];
 
-export default function AdminLayout({ children, setActiveTab }: AdminLayoutProps) {
+export default function AdminLayout({ children, user, setActiveTab }: AdminLayoutProps) {
   const pathname = usePathname();
-  const [userEmail, setUserEmail] = useState<string | null>(null);
-  const [role, setRole] = useState<Role | null>(null);
+  const router = useRouter();
+  const userEmail = user.email;
+  const role = user.role;
   const pagesGroupActive = PAGES_GROUP_ITEMS.some((item) => pathname === item.href || pathname.startsWith(`${item.href}/`));
   const [pagesGroupOpen, setPagesGroupOpen] = useState(true);
   const sermonsGroupActive = SERMONS_GROUP_ITEMS.some((item) => pathname === item.href || pathname.startsWith(`${item.href}/`));
   const [sermonsGroupOpen, setSermonsGroupOpen] = useState(true);
 
-  useEffect(() => {
-    const unsubscribe = auth.onAuthStateChanged((user) => {
-      if (user) {
-        setUserEmail(user.email);
-        getRole(user.email ?? "").then(setRole).catch(() => setRole('sprava'));
-      } else {
-        if (setActiveTab) {
-          setActiveTab('login');
-        } else if (typeof window !== 'undefined') {
-          window.location.href = getPathForTab('login');
-        }
-      }
-    });
-    return () => unsubscribe();
-  }, [setActiveTab]);
-
   const handleLogout = async () => {
-    try {
-      await signOut(auth);
-      if (setActiveTab) {
-        setActiveTab('home');
-      } else if (typeof window !== 'undefined') {
-        window.location.href = getPathForTab('home');
-      }
-    } catch (error) {
-      console.error('Error logging out:', error);
+    await logout();
+    if (setActiveTab) {
+      setActiveTab('home');
+    } else {
+      router.push(getPathForTab('home'));
     }
   };
-
-  if (!userEmail) {
-    return (
-      <div className="py-20 flex justify-center items-center min-h-[50vh]">
-        <div className="w-8 h-8 border-4 border-[#c93838] border-t-transparent rounded-full animate-spin"></div>
-      </div>
-    );
-  }
 
   const isActive = (href: string, exact: boolean) => (exact ? pathname === href : pathname === href || pathname.startsWith(`${href}/`));
 
@@ -153,20 +125,6 @@ export default function AdminLayout({ children, setActiveTab }: AdminLayoutProps
               )}
             </div>
 
-            {role === 'admin' && (
-              <Link
-                href="/admin/users"
-                className={`flex items-center space-x-3 w-full px-4 py-3 rounded-xl text-sm font-semibold transition-colors cursor-pointer ${
-                  isActive('/admin/users', false)
-                    ? 'bg-red-50 text-[#c93838]'
-                    : 'text-neutral-600 font-medium hover:bg-neutral-50 hover:text-neutral-900'
-                }`}
-              >
-                <Users className="w-5 h-5" />
-                <span>Uživatelé</span>
-              </Link>
-            )}
-
             <div>
               <button
                 type="button"
@@ -207,6 +165,20 @@ export default function AdminLayout({ children, setActiveTab }: AdminLayoutProps
                 </div>
               )}
             </div>
+
+            {role === 'admin' && (
+              <Link
+                href="/admin/users"
+                className={`flex items-center space-x-3 w-full px-4 py-3 rounded-xl text-sm font-semibold transition-colors cursor-pointer ${
+                  isActive('/admin/users', false)
+                    ? 'bg-red-50 text-[#c93838]'
+                    : 'text-neutral-600 font-medium hover:bg-neutral-50 hover:text-neutral-900'
+                }`}
+              >
+                <Users className="w-5 h-5" />
+                <span>Uživatelé</span>
+              </Link>
+            )}
 
             <Link
               href="/admin/nastaveni"

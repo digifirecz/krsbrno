@@ -1,11 +1,9 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { auth } from '@/lib/firebase';
-import { onAuthStateChanged } from 'firebase/auth';
+import RequireAuth from '@/components/admin/RequireAuth';
 import { Files, Users, LayoutTemplate, Newspaper, Layers } from 'lucide-react';
-import { getRole, getAllRoles } from '@/lib/actions/roles';
-import type { Role } from '@/lib/roles';
+import { getAllRoles } from '@/lib/actions/roles';
 import { getNavConfig } from '@/lib/actions/pages';
 import { getArticles } from '@/lib/actions/articles';
 import { getSections } from '@/lib/actions/sections';
@@ -20,15 +18,7 @@ interface DashboardStats {
 }
 
 export default function AdminDashboardPage() {
-  const [role, setRole] = useState<Role | null>(null);
   const [stats, setStats] = useState<DashboardStats | null>(null);
-
-  useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
-      if (user) getRole(user.email ?? "").then(setRole).catch(() => setRole('sprava'));
-    });
-    return () => unsubscribe();
-  }, []);
 
   useEffect(() => {
     let active = true;
@@ -54,15 +44,17 @@ export default function AdminDashboardPage() {
   }, []);
 
   return (
-    <>
-      <h1 className="text-3xl font-extrabold text-neutral-900 font-serif mb-2">
-        Vítejte v administraci
-      </h1>
-      <p className="text-neutral-500 mb-8">
-        Rychlý přehled obsahu webu.
-      </p>
+    <RequireAuth>
+      {(user) => (
+        <>
+          <h1 className="text-3xl font-extrabold text-neutral-900 font-serif mb-2">
+            Vítejte v administraci
+          </h1>
+          <p className="text-neutral-500 mb-8">
+            Rychlý přehled obsahu webu.
+          </p>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
         <a
           href="/admin/pages"
           className="bg-neutral-50 border border-neutral-100 rounded-2xl p-6 flex items-center space-x-4 hover:border-[#c93838]/50 hover:bg-red-50/20 transition-colors"
@@ -119,7 +111,7 @@ export default function AdminDashboardPage() {
             <p className="text-sm text-neutral-500 mt-1.5">Položek v navigaci</p>
           </div>
         </a>
-        {role === 'admin' && (
+        {user.role === 'admin' && (
           <a
             href="/admin/users"
             className="bg-neutral-50 border border-neutral-100 rounded-2xl p-6 flex items-center space-x-4 hover:border-[#c93838]/50 hover:bg-red-50/20 transition-colors"
@@ -135,7 +127,9 @@ export default function AdminDashboardPage() {
             </div>
           </a>
         )}
-      </div>
-    </>
+          </div>
+        </>
+      )}
+    </RequireAuth>
   );
 }

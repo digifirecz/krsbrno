@@ -1,7 +1,6 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import Image from 'next/image';
 import BlockRenderer from '@/components/blocks/BlockRenderer';
 import { getPageBlocks } from '@/lib/actions/pages';
 import { PAGE_IDS } from '@/lib/blocks/pageRegistry';
@@ -67,15 +66,6 @@ export default function Meetings({ setActiveTab, isHomePage = false }: MeetingsP
 
             {/* Nedělní bohoslužba */}
             <div className="bg-white rounded-2xl border border-neutral-200/90 hover:border-[#c93838]/40 transition-all duration-300 shadow-2xs hover:shadow-md hover:-translate-y-0.5 overflow-hidden group">
-              <div className="relative h-40 w-full overflow-hidden bg-neutral-100">
-                <Image
-                  src="https://picsum.photos/seed/sundayworship/800/450"
-                  alt="Nedělní bohoslužba"
-                  fill
-                  className="object-cover group-hover:scale-105 transition-transform duration-500"
-                  referrerPolicy="no-referrer"
-                />
-              </div>
               <div className="p-6 space-y-3">
                 <div className="flex items-center justify-between">
                   <div className="w-10 h-10 rounded-xl bg-red-50 text-[#c93838] border border-red-100 flex items-center justify-center group-hover:scale-105 transition-transform duration-300 shadow-2xs">
@@ -100,15 +90,6 @@ export default function Meetings({ setActiveTab, isHomePage = false }: MeetingsP
 
             {/* Středeční vyučování */}
             <div className="bg-white rounded-2xl border border-neutral-200/90 hover:border-[#c93838]/40 transition-all duration-300 shadow-2xs hover:shadow-md hover:-translate-y-0.5 overflow-hidden group">
-              <div className="relative h-40 w-full overflow-hidden bg-neutral-100">
-                <Image
-                  src="https://picsum.photos/seed/wednesdaybible/800/450"
-                  alt="Středeční vyučování"
-                  fill
-                  className="object-cover group-hover:scale-105 transition-transform duration-500"
-                  referrerPolicy="no-referrer"
-                />
-              </div>
               <div className="p-6 space-y-3">
                 <div className="flex items-center justify-between">
                   <div className="w-10 h-10 rounded-xl bg-amber-50 text-amber-700 border border-amber-100 flex items-center justify-center group-hover:scale-105 transition-transform duration-300 shadow-2xs">
@@ -133,15 +114,6 @@ export default function Meetings({ setActiveTab, isHomePage = false }: MeetingsP
 
             {/* Páteční modlitební */}
             <div className="bg-white rounded-2xl border border-neutral-200/90 hover:border-[#c93838]/40 transition-all duration-300 shadow-2xs hover:shadow-md hover:-translate-y-0.5 overflow-hidden group">
-              <div className="relative h-40 w-full overflow-hidden bg-neutral-100">
-                <Image
-                  src="https://picsum.photos/seed/fridayprayer/800/450"
-                  alt="Páteční modlitební"
-                  fill
-                  className="object-cover group-hover:scale-105 transition-transform duration-500"
-                  referrerPolicy="no-referrer"
-                />
-              </div>
               <div className="p-6 space-y-3">
                 <div className="flex items-center justify-between">
                   <div className="w-10 h-10 rounded-xl bg-blue-50 text-blue-700 border border-blue-100 flex items-center justify-center group-hover:scale-105 transition-transform duration-300 shadow-2xs">

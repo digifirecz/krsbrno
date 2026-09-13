@@ -1,4 +1,4 @@
-export type BlockType = 'pageHero' | 'homeHero' | 'iconGrid' | 'quote' | 'ctaBlock' | 'timeline' | 'infoCard' | 'photoCardGrid' | 'scheduleCard' | 'checklistCard' | 'listCard' | 'cardGrid' | 'badgeCard' | 'textSections' | 'mapEmbed' | 'tagGroups' | 'supportOptions' | 'socialCard' | 'peopleList' | 'articlesBlock';
+export type BlockType = 'pageHero' | 'homeHero' | 'iconGrid' | 'quote' | 'ctaBlock' | 'timeline' | 'infoCard' | 'photoCardGrid' | 'scheduleCard' | 'checklistCard' | 'listCard' | 'cardGrid' | 'badgeCard' | 'textSections' | 'mapEmbed' | 'tagGroups' | 'supportOptions' | 'socialCard' | 'peopleList' | 'articlesBlock' | 'sermonsBlock';
 
 export interface BlockPhoto {
   src: string;
@@ -290,6 +290,10 @@ export interface HomeHeroData {
   photo?: BlockPhoto;
 }
 
+// No configurable fields — SermonsBlock always renders the full sermon
+// library (search, category filter, player) straight from the DB.
+export type SermonsBlockData = Record<string, never>;
+
 export type BlockData =
   | PageHeroData
   | HomeHeroData
@@ -310,7 +314,8 @@ export type BlockData =
   | SupportOptionsData
   | SocialCardData
   | PeopleListData
-  | ArticlesBlockData;
+  | ArticlesBlockData
+  | SermonsBlockData;
 
 export interface BlockInstance {
   id: string;

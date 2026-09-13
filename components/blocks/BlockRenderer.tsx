@@ -19,6 +19,7 @@ import SupportOptionsBlock from '@/components/blocks/SupportOptionsBlock';
 import SocialCardBlock from '@/components/blocks/SocialCardBlock';
 import PeopleListBlock from '@/components/blocks/PeopleListBlock';
 import ArticlesBlock from '@/components/blocks/ArticlesBlock';
+import SermonsBlock from '@/components/blocks/SermonsBlock';
 import ScrollReveal from '@/components/blocks/ScrollReveal';
 
 function renderBlockContent(block: BlockInstance): React.ReactNode {
@@ -63,6 +64,8 @@ function renderBlockContent(block: BlockInstance): React.ReactNode {
       return <PeopleListBlock data={block.data as PeopleListData} />;
     case 'articlesBlock':
       return <ArticlesBlock data={block.data as ArticlesBlockData} />;
+    case 'sermonsBlock':
+      return <SermonsBlock />;
     default:
       return null;
   }

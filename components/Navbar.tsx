@@ -205,16 +205,6 @@ export default function Navbar({ activeTab, setActiveTab }: NavbarProps) {
               );
             })}
 
-            {/* Kázání */}
-            <a
-              href={getPathForTab('sermons')}
-              onClick={(e) => handleNavigate('sermons', e)}
-              className={`px-3 py-2 rounded-lg text-sm font-medium transition-colors cursor-pointer ${activeTab === 'sermons' ? 'text-[#c93838] bg-red-50/90 font-semibold' : 'text-neutral-700 hover:text-[#c93838] hover:bg-neutral-50'}`}
-              id="nav-sermons"
-            >
-              Kázání
-            </a>
-
             {/* Standalone (ungrouped) header items */}
             {standaloneEntries.map((item) => (
               <a
@@ -300,13 +290,6 @@ export default function Navbar({ activeTab, setActiveTab }: NavbarProps) {
           })}
 
           <div className="border-t border-neutral-100 pt-1">
-            <a
-              href={getPathForTab('sermons')}
-              onClick={(e) => handleNavigate('sermons', e)}
-              className={`block w-full text-left px-3 py-2.5 rounded-lg text-base font-medium transition-colors cursor-pointer ${activeTab === 'sermons' ? 'text-[#c93838] bg-red-50 font-bold' : 'text-neutral-900 hover:bg-neutral-50'}`}
-            >
-              Kázání
-            </a>
             {standaloneEntries.map((item) => (
               <a
                 key={item.id}

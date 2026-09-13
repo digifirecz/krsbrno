@@ -17,7 +17,6 @@ export const TAB_TO_PATH: Record<string, string> = {
   leadership: '/vedeni',
   meetings: '/setkavani',
   library: '/knihovna',
-  sermons: '/kazani',
   contact: '/kontakt',
   support: '/podpora',
   youth: '/mladez',
@@ -90,12 +89,6 @@ export const PATH_TO_TAB: Record<string, string> = {
   'udalosti': 'events',
   'events': 'events',
 
-  // Kázání
-  'kazani': 'sermons',
-  'zaznamy': 'sermons',
-  'audio': 'sermons',
-  'sermons': 'sermons',
-
   // Kontakt
   'kontakt': 'contact',
   'contact': 'contact',
@@ -124,7 +117,6 @@ export const PAGE_TITLES: Record<string, string> = {
   leadership: 'Kdo nás vede | Křesťanský sbor Brno',
   meetings: 'Společná setkávání | Křesťanský sbor Brno',
   library: 'Knihovna DEN | Křesťanský sbor Brno',
-  sermons: 'Záznamy z bohoslužeb a kázání | Křesťanský sbor Brno',
   contact: 'Kontakt | Křesťanský sbor Brno',
   support: 'Podpora | Křesťanský sbor Brno',
   youth: 'Mládež Elevate | Křesťanský sbor Brno',

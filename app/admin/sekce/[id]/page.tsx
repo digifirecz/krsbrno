@@ -29,6 +29,7 @@ import SupportOptionsEditor from '@/components/admin/blocks/SupportOptionsEditor
 import SocialCardEditor from '@/components/admin/blocks/SocialCardEditor';
 import PeopleListEditor from '@/components/admin/blocks/PeopleListEditor';
 import ArticlesBlockEditor from '@/components/admin/blocks/ArticlesBlockEditor';
+import SermonsBlockEditor from '@/components/admin/blocks/SermonsBlockEditor';
 
 import type {
   BlockData, PageHeroData, HomeHeroData, IconGridData, QuoteData, CtaBlockData, TimelineData,
@@ -262,6 +263,7 @@ export default function AdminSectionEditor() {
                   {section.type === 'articlesBlock' && (
                     <ArticlesBlockEditor data={data as ArticlesBlockData} onChange={setData} />
                   )}
+                  {section.type === 'sermonsBlock' && <SermonsBlockEditor />}
                 </div>
               </>
             )}

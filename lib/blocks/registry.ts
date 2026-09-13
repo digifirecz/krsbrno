@@ -27,6 +27,7 @@ export const BLOCK_TYPE_REGISTRY: BlockTypeInfo[] = [
   { type: 'socialCard', label: 'Text s odkazy', description: 'Nadpis, text a odkazy, volitelně s fotkou nebo vloženým obsahem vedle.' },
   { type: 'peopleList', label: 'Seznam osob', description: 'Ikona, nadpis a mřížka jmen s iniciálami v kolečku.' },
   { type: 'articlesBlock', label: 'Seznam článků', description: 'Ikona, nadpis a popis; karty se sem načtou automaticky ze Článků v administraci.' },
+  { type: 'sermonsBlock', label: 'Seznam kázání', description: 'Vyhledávání, filtrování podle kategorie a přehrávač — kázání se sem načtou automaticky ze sekce Kázání v administraci.' },
 ];
 
 export function getBlockTypeLabel(type: BlockType): string {

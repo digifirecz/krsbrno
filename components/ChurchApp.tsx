@@ -4,7 +4,6 @@ import { useState, useEffect, useCallback } from 'react';
 import Navbar from '@/components/Navbar';
 import Meetings from '@/components/Meetings';
 import GroupsSection from '@/components/GroupsSection';
-import SermonsSection from '@/components/SermonsSection';
 import BeliefsSection from '@/components/BeliefsSection';
 import HistoryLeadershipSection from '@/components/HistoryLeadershipSection';
 import EventsSection from '@/components/EventsSection';
@@ -25,7 +24,7 @@ import { useHomePageId } from '@/lib/useHomePageId';
 
 const KNOWN_TABS = new Set([
   'home', 'about', 'beliefs', 'confession', 'history', 'management', 'leadership',
-  'groups', 'kids', 'youth', 'teens', 'meetings', 'library', 'sermons', 'contact',
+  'groups', 'kids', 'youth', 'teens', 'meetings', 'library', 'contact',
   'support', 'events', 'login',
 ]);
 
@@ -174,11 +173,6 @@ export default function ChurchApp({ initialTab = 'home' }: ChurchAppProps) {
         {/* 3.4 Knihovna DEN */}
         {activeTab === 'library' && (
           <LibraryDen />
-        )}
-
-        {/* 4. Kázání */}
-        {activeTab === 'sermons' && (
-          <SermonsSection />
         )}
 
         {/* 5. Kontakt */}

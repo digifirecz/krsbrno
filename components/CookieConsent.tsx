@@ -96,7 +96,7 @@ export default function CookieConsent() {
                 dangerouslySetInnerHTML={{ __html: siteSettings.gdprText }}
               />
             ) : (
-              <p className="text-sm text-neutral-400">Text se právě načítá.</p>
+              <p className="text-sm text-neutral-400">Obsah se připravuje</p>
             )}
             <button
               onClick={() => setInfoOpen(false)}

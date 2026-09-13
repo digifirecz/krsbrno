@@ -101,8 +101,9 @@ export default function Footer({ setActiveTab }: FooterProps) {
             )}
           </div>
 
-          {/* Social Networks Column */}
-          {(socialLinks === null || socialLinks.length > 0) && (
+          {/* Social Networks Column — wait for confirmed data, don't show the
+              heading/blurb optimistically while socialLinks is still loading. */}
+          {socialLinks && socialLinks.length > 0 && (
             <div className="md:col-span-5 space-y-4 md:text-right">
               <h4 className="text-xs font-bold uppercase tracking-wider text-neutral-400 font-sans">
                 Sledujte nás
@@ -165,7 +166,7 @@ export default function Footer({ setActiveTab }: FooterProps) {
                 dangerouslySetInnerHTML={{ __html: siteSettings.gdprText }}
               />
             ) : (
-              <p className="text-sm text-neutral-400">Text se právě načítá.</p>
+              <p className="text-sm text-neutral-400">Obsah se připravuje</p>
             )}
             <button
               onClick={() => setGdprOpen(false)}

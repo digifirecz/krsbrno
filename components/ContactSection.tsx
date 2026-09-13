@@ -58,6 +58,8 @@ export default function ContactSection() {
 
       <BlockRenderer blocks={mainBlocks} />
 
+      <BlockRenderer blocks={mapBlocks} />
+
       {/* EMAIL & NAPIŠTE NÁM FORMULÁŘ */}
       <section className="py-14 sm:py-18 bg-neutral-50/70 border-b border-neutral-200/70">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -219,8 +221,6 @@ export default function ContactSection() {
           </div>
         </div>
       </section>
-
-      <BlockRenderer blocks={mapBlocks} />
 
     </div>
   );

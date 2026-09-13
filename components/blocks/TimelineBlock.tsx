@@ -53,7 +53,7 @@ export default function TimelineBlock({ data }: { data: TimelineData }) {
                       }`}
                     >
                       {item.photo?.src && (
-                        <div className="relative h-32 sm:h-36 w-full overflow-hidden bg-neutral-100">
+                        <div className="relative h-48 sm:h-56 w-full overflow-hidden bg-neutral-100">
                           <SafeImage
                             src={item.photo.src}
                             alt={item.photo.caption || item.title}

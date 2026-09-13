@@ -88,7 +88,7 @@ export default function HomeHeroBlock({ data }: { data: HomeHeroData }) {
                 aria-hidden="true"
               />
               <div
-                className={`absolute inset-0 shadow-xl overflow-hidden group [clip-path:url(#hero-hex-clip)] ${data.photo?.src ? 'bg-neutral-900' : 'bg-transparent'}`}
+                className={`absolute inset-0 shadow-xl overflow-hidden group [clip-path:url(#hero-hex-clip)] ${data.photo?.src ? 'bg-neutral-900' : 'bg-white'}`}
               >
                 {data.photo?.src && (
                   <Image

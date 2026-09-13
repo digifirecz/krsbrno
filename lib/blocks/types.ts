@@ -188,6 +188,9 @@ export interface SupportOptionsData {
     title: string;
     text?: string;
     photo?: BlockPhoto;
+    linkLabel?: string;
+    linkTarget?: string;
+    linkUrl?: string;
   };
 }
 

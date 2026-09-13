@@ -4,8 +4,14 @@ import { useState } from 'react';
 import IconPicker from '@/components/admin/blocks/IconPicker';
 import PhotoUpload from '@/components/admin/blocks/PhotoUpload';
 import ConfirmModal from '@/components/admin/blocks/ConfirmModal';
+import { TAB_TO_PATH, PAGE_TITLES } from '@/lib/routes';
 import type { SupportOptionsData } from '@/lib/blocks/types';
 import { Plus, Trash2 } from 'lucide-react';
+
+const TARGET_OPTIONS = Object.keys(TAB_TO_PATH).map((tab) => ({
+  tab,
+  label: (PAGE_TITLES[tab] || tab).split(' | ')[0],
+}));
 
 interface SupportOptionsEditorProps {
   data: SupportOptionsData;
@@ -168,6 +174,44 @@ export default function SupportOptionsEditor({ data, onChange, pageId }: Support
           placeholder="Text"
           className={fieldClass}
         />
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <input
+            type="text"
+            value={data.involvement.linkLabel || ''}
+            onChange={(e) => onChange({ ...data, involvement: { ...data.involvement, linkLabel: e.target.value || undefined } })}
+            placeholder="Text odkazu (např. Přehled služeb)"
+            className={fieldClass}
+          />
+          <select
+            value={data.involvement.linkUrl !== undefined ? '__external__' : (data.involvement.linkTarget || '')}
+            onChange={(e) => {
+              const value = e.target.value;
+              if (value === '__external__') {
+                onChange({ ...data, involvement: { ...data.involvement, linkTarget: undefined, linkUrl: data.involvement.linkUrl || '' } });
+              } else {
+                onChange({ ...data, involvement: { ...data.involvement, linkTarget: value || undefined, linkUrl: undefined } });
+              }
+            }}
+            className={`${fieldClass} bg-white`}
+          >
+            <option value="">Bez odkazu</option>
+            {TARGET_OPTIONS.map(({ tab, label }) => (
+              <option key={tab} value={tab}>{label}</option>
+            ))}
+            <option value="__external__">Externí odkaz (URL)</option>
+          </select>
+        </div>
+        {data.involvement.linkUrl !== undefined && (
+          <input
+            type="text"
+            value={data.involvement.linkUrl}
+            onChange={(e) => onChange({ ...data, involvement: { ...data.involvement, linkUrl: e.target.value } })}
+            placeholder="https://…"
+            className={fieldClass}
+          />
+        )}
+
         <PhotoUpload
           value={data.involvement.photo?.src || ''}
           pageId={pageId}

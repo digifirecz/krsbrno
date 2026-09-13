@@ -4,7 +4,8 @@ import { useState } from 'react';
 import SafeImage from '@/components/SafeImage';
 import ImageCard from '@/components/ImageCard';
 import { getIcon } from '@/lib/blocks/icons';
-import { Copy, Check, QrCode } from 'lucide-react';
+import { getPathForTab } from '@/lib/routes';
+import { Copy, Check, QrCode, ArrowRight } from 'lucide-react';
 import type { SupportOptionsData } from '@/lib/blocks/types';
 
 export default function SupportOptionsBlock({ data }: { data: SupportOptionsData }) {
@@ -15,6 +16,8 @@ export default function SupportOptionsBlock({ data }: { data: SupportOptionsData
 
   const FinancialIcon = getIcon(data.financial.icon) || QrCode;
   const InvolvementIcon = getIcon(data.involvement.icon);
+  const involvementHref = data.involvement.linkUrl || (data.involvement.linkTarget ? getPathForTab(data.involvement.linkTarget) : undefined);
+  const involvementLinkIsExternal = !!data.involvement.linkUrl;
 
   const copyAccount = () => {
     navigator.clipboard.writeText(data.financial.accountNumber);
@@ -138,6 +141,18 @@ export default function SupportOptionsBlock({ data }: { data: SupportOptionsData
               <p className="text-xs sm:text-sm text-neutral-600 leading-relaxed font-sans whitespace-pre-line">
                 {data.involvement.text}
               </p>
+            )}
+
+            {data.involvement.linkLabel && involvementHref && (
+              <a
+                href={involvementHref}
+                target={involvementLinkIsExternal ? '_blank' : undefined}
+                rel={involvementLinkIsExternal ? 'noopener noreferrer' : undefined}
+                className="inline-flex items-center space-x-1.5 text-xs sm:text-sm font-bold text-[#c93838] hover:underline cursor-pointer"
+              >
+                <span>{data.involvement.linkLabel}</span>
+                <ArrowRight className="w-3.5 h-3.5" />
+              </a>
             )}
 
             {data.involvement.photo?.src && (

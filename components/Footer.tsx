@@ -8,7 +8,6 @@ import { PAGE_ID_TO_TAB } from '@/lib/blocks/pageRegistry';
 import { useNavConfig } from '@/lib/useNavConfig';
 import { useSocialLinks } from '@/lib/useSocialLinks';
 import { useSiteSettings } from '@/lib/useSiteSettings';
-import { DEFAULT_SITE_SETTINGS, DEFAULT_GDPR_TEXT } from '@/lib/siteSettings';
 
 interface FooterProps {
   setActiveTab: (tab: string) => void;
@@ -20,10 +19,10 @@ export default function Footer({ setActiveTab }: FooterProps) {
   const footerEntries = navConfig ? [...navConfig.values()].filter((e) => e.showInFooter) : [];
   const socialLinks = useSocialLinks();
   const siteSettings = useSiteSettings();
-  const logo = siteSettings?.logo || DEFAULT_SITE_SETTINGS.logo;
-  const logoAlt = siteSettings?.logoAlt || DEFAULT_SITE_SETTINGS.logoAlt;
-  const address = siteSettings?.address || DEFAULT_SITE_SETTINGS.address;
-  const email = siteSettings?.email || DEFAULT_SITE_SETTINGS.email;
+  const logo = siteSettings?.logo;
+  const logoAlt = siteSettings?.logoAlt || '';
+  const address = siteSettings?.address;
+  const email = siteSettings?.email;
 
   const handleLink = (tab: string, e?: React.MouseEvent) => {
     if (e && (e.metaKey || e.ctrlKey || e.shiftKey || e.button === 1)) {
@@ -51,16 +50,18 @@ export default function Footer({ setActiveTab }: FooterProps) {
               onClick={(e) => handleLink('home', e)}
               title="Křesťanský sbor Brno - Úvod"
             >
-              <div className="relative h-9 sm:h-11 w-48 sm:w-56">
-                <Image
-                  src={logo}
-                  alt={logoAlt}
-                  fill
-                  unoptimized
-                  className="object-contain object-left brightness-0 invert hover:opacity-85 transition-opacity"
-                  referrerPolicy="no-referrer"
-                />
-              </div>
+              {logo && (
+                <div className="relative h-9 sm:h-11 w-48 sm:w-56">
+                  <Image
+                    src={logo}
+                    alt={logoAlt}
+                    fill
+                    unoptimized
+                    className="object-contain object-left brightness-0 invert hover:opacity-85 transition-opacity"
+                    referrerPolicy="no-referrer"
+                  />
+                </div>
+              )}
             </a>
 
             {/* Horizontal Organizace Row right under logo */}
@@ -85,17 +86,19 @@ export default function Footer({ setActiveTab }: FooterProps) {
               </div>
             )}
 
-            <div className="flex items-center space-x-4 text-xs text-neutral-400">
-              <div className="flex items-center space-x-1.5">
-                <MapPin className="w-3.5 h-3.5 text-[#c93838]" />
-                <span>{address}</span>
+            {address && email && (
+              <div className="flex items-center space-x-4 text-xs text-neutral-400">
+                <div className="flex items-center space-x-1.5">
+                  <MapPin className="w-3.5 h-3.5 text-[#c93838]" />
+                  <span>{address}</span>
+                </div>
+                <span className="text-neutral-700">·</span>
+                <div className="flex items-center space-x-1.5">
+                  <Mail className="w-3.5 h-3.5 text-[#c93838]" />
+                  <a href={`mailto:${email}`} className="hover:text-white transition-colors underline underline-offset-2">{email}</a>
+                </div>
               </div>
-              <span className="text-neutral-700">·</span>
-              <div className="flex items-center space-x-1.5">
-                <Mail className="w-3.5 h-3.5 text-[#c93838]" />
-                <a href={`mailto:${email}`} className="hover:text-white transition-colors underline underline-offset-2">{email}</a>
-              </div>
-            </div>
+            )}
           </div>
 
           {/* Social Networks Column */}
@@ -133,7 +136,7 @@ export default function Footer({ setActiveTab }: FooterProps) {
 
         {/* Bottom Bar Divider */}
         <div className="pt-6 border-t border-neutral-900 flex flex-col sm:flex-row items-center justify-between text-xs text-neutral-400 gap-3">
-          <p>Křesťanský sbor Brno © 2024</p>
+          <p>Křesťanský sbor Brno © {new Date().getFullYear()}</p>
           <div className="flex items-center space-x-4">
             <button
               onClick={() => setGdprOpen(true)}
@@ -156,10 +159,14 @@ export default function Footer({ setActiveTab }: FooterProps) {
                 ✕
               </button>
             </div>
-            <div
-              className="text-sm sm:text-base text-neutral-600 space-y-2 leading-relaxed max-h-80 overflow-y-auto font-sans [&_a]:text-[#c93838] [&_a]:underline [&_ul]:list-disc [&_ul]:pl-5 [&_ol]:list-decimal [&_ol]:pl-5 [&_p]:mb-2 last:[&_p]:mb-0"
-              dangerouslySetInnerHTML={{ __html: siteSettings?.gdprText || DEFAULT_GDPR_TEXT }}
-            />
+            {siteSettings?.gdprText ? (
+              <div
+                className="text-sm sm:text-base text-neutral-600 space-y-2 leading-relaxed max-h-80 overflow-y-auto font-sans [&_a]:text-[#c93838] [&_a]:underline [&_ul]:list-disc [&_ul]:pl-5 [&_ol]:list-decimal [&_ol]:pl-5 [&_p]:mb-2 last:[&_p]:mb-0"
+                dangerouslySetInnerHTML={{ __html: siteSettings.gdprText }}
+              />
+            ) : (
+              <p className="text-sm text-neutral-400">Text se právě načítá.</p>
+            )}
             <button
               onClick={() => setGdprOpen(false)}
               className="w-full py-2.5 rounded-xl bg-neutral-900 text-white font-bold text-xs hover:bg-neutral-800 transition-colors shadow-xs"

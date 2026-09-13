@@ -3,7 +3,6 @@
 import { useEffect, useState } from 'react';
 import { Cookie } from 'lucide-react';
 import { useSiteSettings } from '@/lib/useSiteSettings';
-import { DEFAULT_GDPR_TEXT } from '@/lib/siteSettings';
 
 const STORAGE_KEY = 'krsbrno-cookie-consent';
 
@@ -91,10 +90,14 @@ export default function CookieConsent() {
                 ✕
               </button>
             </div>
-            <div
-              className="text-sm sm:text-base text-neutral-600 space-y-2 leading-relaxed max-h-80 overflow-y-auto font-sans [&_a]:text-[#c93838] [&_a]:underline [&_ul]:list-disc [&_ul]:pl-5 [&_ol]:list-decimal [&_ol]:pl-5 [&_p]:mb-2 last:[&_p]:mb-0"
-              dangerouslySetInnerHTML={{ __html: siteSettings?.gdprText || DEFAULT_GDPR_TEXT }}
-            />
+            {siteSettings?.gdprText ? (
+              <div
+                className="text-sm sm:text-base text-neutral-600 space-y-2 leading-relaxed max-h-80 overflow-y-auto font-sans [&_a]:text-[#c93838] [&_a]:underline [&_ul]:list-disc [&_ul]:pl-5 [&_ol]:list-decimal [&_ol]:pl-5 [&_p]:mb-2 last:[&_p]:mb-0"
+                dangerouslySetInnerHTML={{ __html: siteSettings.gdprText }}
+              />
+            ) : (
+              <p className="text-sm text-neutral-400">Text se právě načítá.</p>
+            )}
             <button
               onClick={() => setInfoOpen(false)}
               className="w-full py-2.5 rounded-xl bg-neutral-900 text-white font-bold text-xs hover:bg-neutral-800 transition-colors shadow-xs cursor-pointer"

@@ -15,7 +15,6 @@ import { PAGE_ID_TO_TAB } from '@/lib/blocks/pageRegistry';
 import { getIcon } from '@/lib/blocks/icons';
 import { useNavConfig } from '@/lib/useNavConfig';
 import { useSiteSettings } from '@/lib/useSiteSettings';
-import { DEFAULT_SITE_SETTINGS } from '@/lib/siteSettings';
 import type { PageNavEntry } from '@/lib/pages';
 
 interface NavbarProps {
@@ -36,8 +35,8 @@ export default function Navbar({ activeTab, setActiveTab }: NavbarProps) {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const navConfig = useNavConfig();
   const siteSettings = useSiteSettings();
-  const logo = siteSettings?.logo || DEFAULT_SITE_SETTINGS.logo;
-  const logoAlt = siteSettings?.logoAlt || DEFAULT_SITE_SETTINGS.logoAlt;
+  const logo = siteSettings?.logo;
+  const logoAlt = siteSettings?.logoAlt || '';
   const navRef = useRef<HTMLDivElement>(null);
 
   const headerEntries = navConfig ? [...navConfig.values()].filter((e) => e.showInHeader) : [];
@@ -131,15 +130,17 @@ export default function Navbar({ activeTab, setActiveTab }: NavbarProps) {
             aria-label="Křesťanský sbor Brno - Domů"
           >
             <div className="relative h-9 sm:h-11 w-48 sm:w-56">
-              <Image
-                src={logo}
-                alt={logoAlt}
-                fill
-                unoptimized
-                className="object-contain object-left"
-                priority
-                referrerPolicy="no-referrer"
-              />
+              {logo && (
+                <Image
+                  src={logo}
+                  alt={logoAlt}
+                  fill
+                  unoptimized
+                  className="object-contain object-left"
+                  priority
+                  referrerPolicy="no-referrer"
+                />
+              )}
             </div>
           </a>
 

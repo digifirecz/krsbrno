@@ -6,11 +6,12 @@ import type { SiteSettings } from '@/lib/siteSettings';
 
 /**
  * Site-wide branding/contact info (logo, address, email) managed in /admin/nastaveni.
- * Returns null while loading — callers should fall back to the static defaults so
- * nothing flashes/changes on load.
+ * Undefined = still loading (don't render anything yet); null = loaded but the
+ * fetch failed (e.g. DB unreachable) — callers must not paper over that with
+ * hardcoded defaults, since those wouldn't be real data.
  */
-export function useSiteSettings(): SiteSettings | null {
-  const [settings, setSettings] = useState<SiteSettings | null>(null);
+export function useSiteSettings(): SiteSettings | null | undefined {
+  const [settings, setSettings] = useState<SiteSettings | null | undefined>(undefined);
 
   useEffect(() => {
     let active = true;
@@ -18,7 +19,9 @@ export function useSiteSettings(): SiteSettings | null {
       .then((fetched) => {
         if (active) setSettings(fetched);
       })
-      .catch(() => {});
+      .catch(() => {
+        if (active) setSettings(null);
+      });
     return () => {
       active = false;
     };

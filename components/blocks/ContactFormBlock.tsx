@@ -40,8 +40,8 @@ export default function ContactFormBlock({ data }: { data: ContactFormBlockData 
           {/* Left: Email Section */}
           <div className="lg:col-span-5 space-y-6">
             <div className="bg-white p-6 sm:p-7 rounded-2xl border border-neutral-200/80 shadow-2xs space-y-4">
-              <div className="flex items-center space-x-3">
-                <div className="w-10 h-10 rounded-xl bg-[#c93838] text-white flex items-center justify-center shadow-xs">
+              <div className="flex items-start space-x-3">
+                <div className="w-10 h-10 rounded-xl bg-[#c93838] text-white flex items-center justify-center shadow-xs shrink-0">
                   <Mail className="w-5 h-5" />
                 </div>
                 <div>
@@ -77,8 +77,8 @@ export default function ContactFormBlock({ data }: { data: ContactFormBlockData 
 
           {/* Right: Message Form */}
           <div className="lg:col-span-7 bg-white p-6 sm:p-8 rounded-2xl border border-neutral-200/80 shadow-2xs">
-            <div className="flex items-center space-x-3 mb-4">
-              <div className="w-10 h-10 rounded-xl bg-red-50 text-[#c93838] flex items-center justify-center">
+            <div className="flex items-start space-x-3 mb-4">
+              <div className="w-10 h-10 rounded-xl bg-red-50 text-[#c93838] flex items-center justify-center shrink-0">
                 <MessageSquare className="w-5 h-5" />
               </div>
               <div>

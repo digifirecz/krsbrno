@@ -17,7 +17,7 @@ export interface GroupActivity {
   description: string;
   details: string[];
   contacts: { label: string; value: string; type: 'email' | 'instagram' | 'facebook' | 'web' }[];
-  image: string;
+  image?: string;
 }
 
 export interface Sermon {
@@ -123,7 +123,6 @@ export const GROUPS_DATA: GroupActivity[] = [
     contacts: [
       { label: 'E-mail', value: 'besidka@krsbrno.cz', type: 'email' },
     ],
-    image: 'https://picsum.photos/seed/churchkids/800/500',
   },
   {
     id: 'poutnici',
@@ -142,7 +141,6 @@ export const GROUPS_DATA: GroupActivity[] = [
       { label: 'E-mail', value: 'poutnickymail@gmail.com', type: 'email' },
       { label: 'Instagram', value: '@poutnici_brno', type: 'instagram' },
     ],
-    image: 'https://picsum.photos/seed/poutnici/800/500',
   },
   {
     id: 'elevate',
@@ -162,7 +160,6 @@ export const GROUPS_DATA: GroupActivity[] = [
       { label: 'Instagram', value: '@elevate_brno', type: 'instagram' },
       { label: 'Facebook', value: 'Mládež Elevate Brno', type: 'facebook' },
     ],
-    image: 'https://picsum.photos/seed/youthgroup/800/500',
   },
   {
     id: 'knihovna',
@@ -180,7 +177,6 @@ export const GROUPS_DATA: GroupActivity[] = [
     contacts: [
       { label: 'E-mail', value: 'info@krsbrno.cz', type: 'email' },
     ],
-    image: 'https://picsum.photos/seed/libraryden/800/500',
   },
 ];
 

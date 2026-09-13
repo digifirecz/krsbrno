@@ -1,6 +1,5 @@
 'use client';
 
-import Image from 'next/image';
 import { ArrowRight, Sparkles } from 'lucide-react';
 
 interface HeroProps {
@@ -16,10 +15,10 @@ export default function Hero({ setActiveTab }: HeroProps) {
       <div className="absolute top-1/2 -right-24 w-96 h-96 bg-amber-100/30 rounded-full blur-3xl pointer-events-none" />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center">
+        <div className="grid grid-cols-1 items-center">
 
           {/* Left Text Content */}
-          <div className="lg:col-span-6 space-y-6 max-w-xl">
+          <div className="space-y-6 max-w-2xl">
             
             {/* Top Pill Tag */}
             <div className="inline-flex items-center space-x-2 px-3.5 py-1.5 rounded-full bg-red-50 text-[#c93838] border border-red-100/80 text-xs font-bold tracking-wide shadow-2xs">
@@ -62,28 +61,6 @@ export default function Hero({ setActiveTab }: HeroProps) {
               </button>
             </div>
 
-          </div>
-
-          {/* Right Image Frame (Modern Organic Composite) */}
-          <div className="lg:col-span-6 relative flex justify-center lg:justify-end">
-            <div className="relative w-full max-w-lg">
-              
-              {/* Back Accent Card */}
-              <div className="absolute -inset-2.5 bg-gradient-to-tr from-red-100 to-amber-100 rounded-3xl transform rotate-2 opacity-80 blur-xs" />
-
-              {/* Main Photo Card */}
-              <div className="relative rounded-2xl overflow-hidden shadow-xl border-4 border-white bg-neutral-900 aspect-[4/3] group">
-                <Image
-                  src="https://picsum.photos/seed/brnochurchservice/1000/750"
-                  alt="Shromáždění Křesťanského sboru Brno"
-                  fill
-                  className="object-cover group-hover:scale-105 transition-transform duration-500 ease-out"
-                  priority
-                  referrerPolicy="no-referrer"
-                />
-              </div>
-
-            </div>
           </div>
 
         </div>

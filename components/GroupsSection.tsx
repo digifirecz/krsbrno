@@ -51,9 +51,9 @@ export default function GroupsSection({ initialGroupId = 'besidka' }: GroupsSect
 
         {/* Group Detail Card */}
         <div className="bg-white rounded-2xl border border-neutral-200/80 shadow-md overflow-hidden grid grid-cols-1 lg:grid-cols-12">
-          
+
           {/* Left Text Content */}
-          <div className="lg:col-span-7 p-6 sm:p-10 space-y-6">
+          <div className={`${selectedGroup.image ? 'lg:col-span-7' : 'lg:col-span-12'} p-6 sm:p-10 space-y-6`}>
             <div>
               <div className="flex items-center space-x-3 mb-2">
                 <span className="px-3 py-1 rounded-md bg-red-50 text-[#c93838] text-xs font-bold uppercase tracking-wider border border-red-100">
@@ -122,21 +122,23 @@ export default function GroupsSection({ initialGroupId = 'besidka' }: GroupsSect
           </div>
 
           {/* Right Image Showcase */}
-          <div className="lg:col-span-5 relative bg-neutral-900 min-h-[300px] lg:min-h-full">
-            <Image
-              src={selectedGroup.image}
-              alt={selectedGroup.name}
-              fill
-              className="object-cover opacity-90"
-              referrerPolicy="no-referrer"
-            />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent flex items-end p-6">
-              <div className="text-white">
-                <span className="text-xs font-bold uppercase tracking-wider text-red-400">KS Brno</span>
-                <p className="text-sm font-semibold font-serif">{selectedGroup.name} – {selectedGroup.meetingTime}</p>
+          {selectedGroup.image && (
+            <div className="lg:col-span-5 relative bg-neutral-900 min-h-[300px] lg:min-h-full">
+              <Image
+                src={selectedGroup.image}
+                alt={selectedGroup.name}
+                fill
+                className="object-cover opacity-90"
+                referrerPolicy="no-referrer"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent flex items-end p-6">
+                <div className="text-white">
+                  <span className="text-xs font-bold uppercase tracking-wider text-red-400">KS Brno</span>
+                  <p className="text-sm font-semibold font-serif">{selectedGroup.name} – {selectedGroup.meetingTime}</p>
+                </div>
               </div>
             </div>
-          </div>
+          )}
 
         </div>
 

@@ -9,8 +9,6 @@ export interface Article {
   dateText: string;
   timeText?: string;
   location?: string;
-  // Barva štítků (datum, lokace) na stránce detailu článku — viz BADGE_COLORS.
-  badgeColor?: string;
   image?: string;
   focalX?: number;
   focalY?: number;

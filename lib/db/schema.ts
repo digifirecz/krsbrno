@@ -43,7 +43,6 @@ export const articles = mysqlTable('articles', {
   dateText: varchar('date_text', { length: 64 }).notNull().default(''),
   timeText: varchar('time_text', { length: 16 }),
   location: varchar('location', { length: 255 }),
-  badgeColor: varchar('badge_color', { length: 32 }),
   image: varchar('image', { length: 1024 }),
   focalX: float('focal_x'),
   focalY: float('focal_y'),

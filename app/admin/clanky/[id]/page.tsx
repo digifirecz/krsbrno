@@ -13,8 +13,7 @@ import LocationInput from '@/components/admin/blocks/LocationInput';
 import { useToast } from '@/components/admin/ToastProvider';
 import { getArticle, updateArticle, deleteArticle, getArticleLocations } from '@/lib/actions/articles';
 import type { Article } from '@/lib/articles';
-import { BADGE_COLOR_NAMES, BADGE_COLORS } from '@/lib/blocks/badgeColors';
-import { ArrowLeft, Trash2, Save, CheckCircle2, Eye, EyeOff, CalendarPlus, History, Check } from 'lucide-react';
+import { ArrowLeft, Trash2, Save, CheckCircle2, Eye, EyeOff, CalendarPlus, History } from 'lucide-react';
 
 const labelClass = 'block text-xs font-bold text-neutral-600 mb-1';
 // Poměr stran, do kterého se fotka ořízne na kartě události (viz EventsSection).
@@ -42,7 +41,6 @@ export default function AdminArticleEditor() {
   const [timeText, setTimeText] = useState('');
   const [location, setLocation] = useState('');
   const [locationOptions, setLocationOptions] = useState<string[]>([]);
-  const [badgeColor, setBadgeColor] = useState<string>('red');
   const [image, setImage] = useState('');
   const [focal, setFocal] = useState<FocalPoint | undefined>(undefined);
   const [visible, setVisible] = useState(true);
@@ -63,7 +61,6 @@ export default function AdminArticleEditor() {
         setDateText(fetched.dateText);
         setTimeText(fetched.timeText || '');
         setLocation(fetched.location || '');
-        setBadgeColor(fetched.badgeColor || 'red');
         setImage(fetched.image || '');
         setFocal(fetched.focalX !== undefined ? { x: fetched.focalX, y: fetched.focalY ?? 50, zoom: fetched.zoom } : undefined);
         setVisible(fetched.visible);
@@ -107,7 +104,6 @@ export default function AdminArticleEditor() {
                 dateText: dateText.trim(),
                 timeText: timeText.trim() || undefined,
                 location: location.trim() || undefined,
-                badgeColor,
                 image: image || undefined,
                 focalX: focal?.x,
                 focalY: focal?.y,
@@ -266,27 +262,6 @@ export default function AdminArticleEditor() {
                   <div>
                     <label className={labelClass}>Místo konání</label>
                     <LocationInput value={location} onChange={setLocation} options={locationOptions} />
-                  </div>
-
-                  <div>
-                    <label className={labelClass}>Barva štítků v detailu článku</label>
-                    <div className="flex items-center space-x-1.5">
-                      {BADGE_COLOR_NAMES.map((color) => {
-                        const selected = badgeColor === color;
-                        return (
-                          <button
-                            key={color}
-                            type="button"
-                            onClick={() => setBadgeColor(color)}
-                            title={BADGE_COLORS[color].label}
-                            className="w-7 h-7 rounded-full flex items-center justify-center cursor-pointer ring-1 ring-inset ring-black/10"
-                            style={{ backgroundColor: BADGE_COLORS[color].swatch }}
-                          >
-                            {selected && <Check className="w-4 h-4 text-white" />}
-                          </button>
-                        );
-                      })}
-                    </div>
                   </div>
 
                   <div>

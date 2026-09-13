@@ -6,7 +6,7 @@ import ArticleImageLightbox from '@/components/ArticleImageLightbox';
 import ArticleBackLink from '@/components/ArticleBackLink';
 import { getArticle } from '@/lib/data/articles';
 import { getPathForTab } from '@/lib/routes';
-import { getBadgeColorClasses } from '@/lib/blocks/badgeColors';
+import { BADGE_COLORS } from '@/lib/blocks/badgeColors';
 
 interface ArticlePageProps {
   params: Promise<{ id: string }>;
@@ -49,8 +49,6 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
   const article = await getArticle(id);
   if (!article || !article.visible) notFound();
 
-  const badgeColors = getBadgeColorClasses(article.badgeColor);
-
   return (
     <SiteChrome activeTab="events">
       <section className="py-10 sm:py-14 bg-white">
@@ -64,7 +62,7 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
               {(article.dateText || article.location) && (
                 <div className="flex flex-wrap items-center gap-2">
                   {article.dateText && (
-                    <div className={`inline-flex items-center space-x-1.5 px-2.5 py-1 rounded-md font-bold text-xs border border-black/5 font-sans w-fit shadow-2xs ${badgeColors.bg} ${badgeColors.text}`}>
+                    <div className={`inline-flex items-center space-x-1.5 px-2.5 py-1 rounded-md font-bold text-xs border border-black/5 font-sans w-fit shadow-2xs ${BADGE_COLORS.red.bg} ${BADGE_COLORS.red.text}`}>
                       <Calendar className="w-3.5 h-3.5" />
                       <span>{article.dateText}</span>
                       {article.timeText && <span>· {article.timeText}</span>}
@@ -72,7 +70,7 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
                   )}
 
                   {article.location && (
-                    <div className={`inline-flex items-center space-x-1.5 px-2.5 py-1 rounded-md font-bold text-xs border border-black/5 font-sans w-fit shadow-2xs ${badgeColors.bg} ${badgeColors.text}`}>
+                    <div className={`inline-flex items-center space-x-1.5 px-2.5 py-1 rounded-md font-bold text-xs border border-black/5 font-sans w-fit shadow-2xs ${BADGE_COLORS.blue.bg} ${BADGE_COLORS.blue.text}`}>
                       <MapPin className="w-3.5 h-3.5" />
                       <span>{article.location}</span>
                     </div>

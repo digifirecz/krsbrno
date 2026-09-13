@@ -28,6 +28,7 @@ export const BLOCK_TYPE_REGISTRY: BlockTypeInfo[] = [
   { type: 'peopleList', label: 'Seznam osob', description: 'Ikona, nadpis a mřížka jmen s iniciálami v kolečku.' },
   { type: 'articlesBlock', label: 'Seznam článků', description: 'Ikona, nadpis a popis; karty se sem načtou automaticky ze Článků v administraci.' },
   { type: 'sermonsBlock', label: 'Seznam kázání', description: 'Vyhledávání, filtrování podle kategorie a přehrávač — kázání se sem načtou automaticky ze sekce Kázání v administraci.' },
+  { type: 'contactFormBlock', label: 'E-mail a kontaktní formulář', description: 'Karta s e-mailovými kontakty vedle formuláře „Napište nám zprávu" — odeslané zprávy se ukládají do administrace (Oznamy).' },
 ];
 
 export function getBlockTypeLabel(type: BlockType): string {

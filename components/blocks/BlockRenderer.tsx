@@ -1,4 +1,4 @@
-import type { BlockInstance, PageHeroData, HomeHeroData, IconGridData, QuoteData, CtaBlockData, TimelineData, InfoCardData, PhotoCardGridData, ScheduleCardData, ChecklistCardData, ListCardData, CardGridData, BadgeCardData, TextSectionsData, MapEmbedData, TagGroupsData, SupportOptionsData, SocialCardData, PeopleListData, ArticlesBlockData } from '@/lib/blocks/types';
+import type { BlockInstance, PageHeroData, HomeHeroData, IconGridData, QuoteData, CtaBlockData, TimelineData, InfoCardData, PhotoCardGridData, ScheduleCardData, ChecklistCardData, ListCardData, CardGridData, BadgeCardData, TextSectionsData, MapEmbedData, TagGroupsData, SupportOptionsData, SocialCardData, PeopleListData, ArticlesBlockData, ContactFormBlockData } from '@/lib/blocks/types';
 import PageHeroBlock from '@/components/blocks/PageHeroBlock';
 import HomeHeroBlock from '@/components/blocks/HomeHeroBlock';
 import IconGridBlock from '@/components/blocks/IconGridBlock';
@@ -20,6 +20,7 @@ import SocialCardBlock from '@/components/blocks/SocialCardBlock';
 import PeopleListBlock from '@/components/blocks/PeopleListBlock';
 import ArticlesBlock from '@/components/blocks/ArticlesBlock';
 import SermonsBlock from '@/components/blocks/SermonsBlock';
+import ContactFormBlock from '@/components/blocks/ContactFormBlock';
 import ScrollReveal from '@/components/blocks/ScrollReveal';
 
 function renderBlockContent(block: BlockInstance): React.ReactNode {
@@ -66,6 +67,8 @@ function renderBlockContent(block: BlockInstance): React.ReactNode {
       return <ArticlesBlock data={block.data as ArticlesBlockData} />;
     case 'sermonsBlock':
       return <SermonsBlock />;
+    case 'contactFormBlock':
+      return <ContactFormBlock data={block.data as ContactFormBlockData} />;
     default:
       return null;
   }

@@ -8,7 +8,6 @@ import BeliefsSection from '@/components/BeliefsSection';
 import HistoryLeadershipSection from '@/components/HistoryLeadershipSection';
 import EventsSection from '@/components/EventsSection';
 import SupportSection from '@/components/SupportSection';
-import ContactSection from '@/components/ContactSection';
 import LibraryDen from '@/components/LibraryDen';
 import YouthSection from '@/components/YouthSection';
 import TeensSection from '@/components/TeensSection';
@@ -21,6 +20,7 @@ import EmptyPageState from '@/components/EmptyPageState';
 import Footer from '@/components/Footer';
 import { getPathForTab, getTabFromPath, getTitleForTab, preloadPageSlugs, resolveDynamicSlug } from '@/lib/routes';
 import { useHomePageId } from '@/lib/useHomePageId';
+import { PAGE_IDS } from '@/lib/blocks/pageRegistry';
 
 const KNOWN_TABS = new Set([
   'home', 'about', 'beliefs', 'confession', 'history', 'management', 'leadership',
@@ -177,7 +177,7 @@ export default function ChurchApp({ initialTab = 'home' }: ChurchAppProps) {
 
         {/* 5. Kontakt */}
         {activeTab === 'contact' && (
-          <ContactSection />
+          <CustomPageSection pageId={PAGE_IDS.contact} />
         )}
 
         {/* 6. Podpora */}

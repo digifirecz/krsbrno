@@ -30,12 +30,13 @@ import SocialCardEditor from '@/components/admin/blocks/SocialCardEditor';
 import PeopleListEditor from '@/components/admin/blocks/PeopleListEditor';
 import ArticlesBlockEditor from '@/components/admin/blocks/ArticlesBlockEditor';
 import SermonsBlockEditor from '@/components/admin/blocks/SermonsBlockEditor';
+import ContactFormBlockEditor from '@/components/admin/blocks/ContactFormBlockEditor';
 
 import type {
   BlockData, PageHeroData, HomeHeroData, IconGridData, QuoteData, CtaBlockData, TimelineData,
   InfoCardData, PhotoCardGridData, ScheduleCardData, ChecklistCardData, ListCardData, CardGridData,
   BadgeCardData, TextSectionsData, MapEmbedData, TagGroupsData, SupportOptionsData, SocialCardData, PeopleListData,
-  ArticlesBlockData,
+  ArticlesBlockData, ContactFormBlockData,
 } from '@/lib/blocks/types';
 import { ArrowLeft, Trash2, Save, CheckCircle2, CalendarPlus, History, Layers } from 'lucide-react';
 
@@ -264,6 +265,9 @@ export default function AdminSectionEditor() {
                     <ArticlesBlockEditor data={data as ArticlesBlockData} onChange={setData} />
                   )}
                   {section.type === 'sermonsBlock' && <SermonsBlockEditor />}
+                  {section.type === 'contactFormBlock' && (
+                    <ContactFormBlockEditor data={data as ContactFormBlockData} onChange={setData} />
+                  )}
                 </div>
               </>
             )}

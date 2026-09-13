@@ -104,6 +104,18 @@ export const passwordResetTokens = mysqlTable('password_reset_tokens', {
   createdAt: datetime('created_at'),
 });
 
+// Submissions from the public "Napište nám zprávu" contact form (viewed in
+// admin under "Oznamy").
+export const contactMessages = mysqlTable('contact_messages', {
+  id: varchar('id', { length: 64 }).primaryKey(),
+  name: varchar('name', { length: 255 }).notNull(),
+  email: varchar('email', { length: 255 }).notNull(),
+  topic: varchar('topic', { length: 255 }),
+  message: text('message').notNull(),
+  read: boolean('read').notNull().default(false),
+  createdAt: datetime('created_at'),
+});
+
 // Catalog of available roles ('admin' → "Administrátor", 'sprava' → "Správce").
 export const roles = mysqlTable('roles', {
   id: varchar('id', { length: 64 }).primaryKey(),

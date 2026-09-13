@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { logout } from '@/lib/actions/auth';
-import { LogOut, LayoutDashboard, FileText, Users, Settings, LayoutTemplate, Newspaper, Layers, ChevronDown, AudioLines, Tag, Mic } from 'lucide-react';
+import { LogOut, LayoutDashboard, FileText, Users, Settings, LayoutTemplate, Newspaper, Layers, ChevronDown, AudioLines, Tag, Mic, MessageSquare } from 'lucide-react';
 import { getPathForTab } from '@/lib/routes';
 import type { Role } from '@/lib/roles';
 
@@ -17,6 +17,7 @@ interface AdminLayoutProps {
 const NAV_ITEMS = [
   { href: '/admin', label: 'Přehled', icon: LayoutDashboard, exact: true },
   { href: '/admin/clanky', label: 'Články', icon: Newspaper, exact: false },
+  { href: '/admin/oznamy', label: 'Oznamy', icon: MessageSquare, exact: false },
 ];
 
 const PAGES_GROUP_ITEMS = [

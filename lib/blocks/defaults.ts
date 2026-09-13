@@ -26,5 +26,6 @@ export function emptyBlockData(type: BlockType): BlockData {
   if (type === 'peopleList') return { people: [''] };
   if (type === 'articlesBlock') return { heading: 'Události' };
   if (type === 'sermonsBlock') return {};
+  if (type === 'contactFormBlock') return { contacts: [{ email: '' }], topics: ['Běžný dotaz'] };
   return { cards: [{ title: '' }] };
 }

@@ -5,7 +5,7 @@ import { meta } from '@/lib/db/schema';
 // Replaces the Firestore `meta/{name}Counter` transaction. Atomically bumps
 // meta.data.value and returns the new value as a string (ids stay strings
 // app-wide, same as the Firestore doc ids were).
-export async function nextId(counter: 'pageCounter' | 'articleCounter' | 'sectionCounter' | 'sermonCounter'): Promise<string> {
+export async function nextId(counter: 'pageCounter' | 'articleCounter' | 'sectionCounter' | 'sermonCounter' | 'contactMessageCounter'): Promise<string> {
   return db.transaction(async (tx) => {
     await tx.execute(sql`
       INSERT INTO meta (id, data) VALUES (${counter}, JSON_OBJECT('value', 1))

@@ -1,4 +1,4 @@
-export type BlockType = 'pageHero' | 'homeHero' | 'iconGrid' | 'quote' | 'ctaBlock' | 'timeline' | 'infoCard' | 'photoCardGrid' | 'scheduleCard' | 'checklistCard' | 'listCard' | 'cardGrid' | 'badgeCard' | 'textSections' | 'mapEmbed' | 'tagGroups' | 'supportOptions' | 'socialCard' | 'peopleList' | 'articlesBlock' | 'sermonsBlock';
+export type BlockType = 'pageHero' | 'homeHero' | 'iconGrid' | 'quote' | 'ctaBlock' | 'timeline' | 'infoCard' | 'photoCardGrid' | 'scheduleCard' | 'checklistCard' | 'listCard' | 'cardGrid' | 'badgeCard' | 'textSections' | 'mapEmbed' | 'tagGroups' | 'supportOptions' | 'socialCard' | 'peopleList' | 'articlesBlock' | 'sermonsBlock' | 'contactFormBlock';
 
 export interface BlockPhoto {
   src: string;
@@ -298,6 +298,24 @@ export interface HomeHeroData {
 // library (search, category filter, player) straight from the DB.
 export type SermonsBlockData = Record<string, never>;
 
+export interface EmailContactItem {
+  email: string;
+  description?: string;
+}
+
+// The "E-mailové kontakty" card and the "Napište nám zprávu" form shown
+// together on Kontakt — one block since they always appear side by side.
+// Submissions save to the contact_messages table (viewed in admin as
+// "Oznamy"); this block has no knowledge of that beyond the topic options.
+export interface ContactFormBlockData {
+  emailsHeading?: string;
+  emailsSubheading?: string;
+  contacts: EmailContactItem[];
+  formHeading?: string;
+  formText?: string;
+  topics?: string[];
+}
+
 export type BlockData =
   | PageHeroData
   | HomeHeroData
@@ -319,7 +337,8 @@ export type BlockData =
   | SocialCardData
   | PeopleListData
   | ArticlesBlockData
-  | SermonsBlockData;
+  | SermonsBlockData
+  | ContactFormBlockData;
 
 export interface BlockInstance {
   id: string;

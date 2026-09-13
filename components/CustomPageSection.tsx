@@ -2,34 +2,22 @@
 
 import { useEffect, useState } from 'react';
 import BlockRenderer from '@/components/blocks/BlockRenderer';
+import EmptyPageState from '@/components/EmptyPageState';
 import { getPageBlocks } from '@/lib/actions/pages';
 import type { BlockInstance } from '@/lib/blocks/types';
 
-interface CustomPageSectionProps {
-  pageId: string;
-  // Shown instead of a blank page when the blocks genuinely fail to load
-  // (e.g. the database is unreachable) — distinct from a page that loaded
-  // fine and just has zero blocks configured.
-  fallback?: React.ReactNode;
-}
-
-export default function CustomPageSection({ pageId, fallback }: CustomPageSectionProps) {
+export default function CustomPageSection({ pageId }: { pageId: string }) {
   const [blocks, setBlocks] = useState<BlockInstance[] | null>(null);
-  const [failed, setFailed] = useState(false);
 
   useEffect(() => {
     let active = true;
     setBlocks(null);
-    setFailed(false);
     getPageBlocks(pageId)
       .then((fetched) => {
         if (active) setBlocks(fetched || []);
       })
       .catch(() => {
-        if (active) {
-          setBlocks([]);
-          setFailed(true);
-        }
+        if (active) setBlocks([]);
       });
     return () => {
       active = false;
@@ -44,8 +32,11 @@ export default function CustomPageSection({ pageId, fallback }: CustomPageSectio
     );
   }
 
-  if (failed && fallback) {
-    return <>{fallback}</>;
+  // Whether the blocks genuinely failed to load (e.g. the database is
+  // unreachable) or the page just has none configured yet, there's nothing
+  // real to show either way — never fall back to placeholder copy or photos.
+  if (blocks.length === 0) {
+    return <EmptyPageState />;
   }
 
   return (

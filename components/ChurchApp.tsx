@@ -2,7 +2,6 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import Navbar from '@/components/Navbar';
-import Hero from '@/components/Hero';
 import Meetings from '@/components/Meetings';
 import GroupsSection from '@/components/GroupsSection';
 import SermonsSection from '@/components/SermonsSection';
@@ -19,7 +18,7 @@ import LeadershipSection from '@/components/LeadershipSection';
 import ConfessionSection from '@/components/ConfessionSection';
 import LoginSection from '@/components/LoginSection';
 import CustomPageSection from '@/components/CustomPageSection';
-import QuoteBanner from '@/components/QuoteBanner';
+import EmptyPageState from '@/components/EmptyPageState';
 import Footer from '@/components/Footer';
 import { getPathForTab, getTabFromPath, getTitleForTab, preloadPageSlugs, resolveDynamicSlug } from '@/lib/routes';
 import { useHomePageId } from '@/lib/useHomePageId';
@@ -111,32 +110,10 @@ export default function ChurchApp({ initialTab = 'home' }: ChurchAppProps) {
         {/* 1. Úvod (Home Page) */}
         {activeTab === 'home' && (
           <div>
-            {homePageId ? (
-              <CustomPageSection
-                pageId={homePageId}
-                fallback={
-                  <>
-                    <Hero setActiveTab={setActiveTab} />
-                    <Meetings isHomePage setActiveTab={setActiveTab} />
-                  </>
-                }
-              />
+            {homePageId === undefined ? null : homePageId ? (
+              <CustomPageSection pageId={homePageId} />
             ) : (
-              <>
-                <Hero setActiveTab={setActiveTab} />
-                <Meetings isHomePage={true} setActiveTab={setActiveTab} />
-              </>
-            )}
-
-            {/* Výchozí (needitovatelný) úvod nemá vlastní blok s články, tak se sem doplní natvrdo.
-                Vlastní stránka Úvod si "Seznam článků" přidává jako blok sama, aby nešlo o duplicitu. */}
-            {!homePageId && <EventsSection />}
-
-            {!homePageId && (
-              <QuoteBanner
-                quote="„Z jednoho člověka učinil celé lidstvo, aby žilo na celém zemském povrchu. Vyměřil jim určená období a hranice jejich života, aby hledali Boha, zda by se ho snad mohli dotknout a nalézt ho – ačkoli není daleko od žádného z nás.“"
-                citation="Skutky 17:26-27 (Bible)"
-              />
+              <EmptyPageState />
             )}
           </div>
         )}
@@ -191,7 +168,7 @@ export default function ChurchApp({ initialTab = 'home' }: ChurchAppProps) {
 
         {/* 3.3 Společná setkávání */}
         {activeTab === 'meetings' && (
-          <Meetings setActiveTab={setActiveTab} />
+          <Meetings />
         )}
 
         {/* 3.4 Knihovna DEN */}

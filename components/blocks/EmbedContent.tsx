@@ -11,7 +11,7 @@ export default function EmbedContent({ data }: { data: MapEmbedData }) {
             </h3>
           )}
           {data.subheading && (
-            <p className="text-xs text-neutral-500 font-sans">
+            <p className="text-sm sm:text-base text-neutral-500 font-sans">
               {data.subheading}
             </p>
           )}

@@ -44,27 +44,25 @@ export default function ContactFormBlock({ data }: { data: ContactFormBlockData 
                 <div className="w-10 h-10 rounded-xl bg-[#c93838] text-white flex items-center justify-center shadow-xs">
                   <Mail className="w-5 h-5" />
                 </div>
-                <div>
-                  <h2 className="text-2xl font-extrabold text-neutral-900 font-serif">
-                    {data.emailsHeading || 'E-mailové kontakty'}
-                  </h2>
-                  {data.emailsSubheading && (
-                    <p className="text-xs text-neutral-500 font-sans">
-                      {data.emailsSubheading}
-                    </p>
-                  )}
-                </div>
+                <h2 className="text-2xl font-extrabold text-neutral-900 font-serif">
+                  {data.emailsHeading || 'E-mailové kontakty'}
+                </h2>
               </div>
+              {data.emailsSubheading && (
+                <p className="text-sm sm:text-base text-neutral-500 font-sans">
+                  {data.emailsSubheading}
+                </p>
+              )}
 
               {data.contacts.length > 0 && (
-                <ul className="space-y-3 font-sans text-sm sm:text-base pt-1">
+                <ul className="space-y-3 font-sans pt-1">
                   {data.contacts.map((contact, idx) => (
                     <li key={idx} className="p-3.5 rounded-xl bg-neutral-50 border border-neutral-200/70 space-y-0.5 hover:border-red-200 transition-colors">
-                      <a href={`mailto:${contact.email}`} className="font-bold text-[#c93838] hover:underline flex items-center space-x-1.5">
+                      <a href={`mailto:${contact.email}`} className="font-bold text-[#c93838] hover:underline flex items-center space-x-1.5 text-sm sm:text-base">
                         <span>{contact.email}</span>
                       </a>
                       {contact.description && (
-                        <p className="text-neutral-600">
+                        <p className="text-neutral-600 text-xs">
                           {contact.description}
                         </p>
                       )}
@@ -84,10 +82,12 @@ export default function ContactFormBlock({ data }: { data: ContactFormBlockData 
               <h2 className="text-2xl font-extrabold text-neutral-900 font-serif">{data.formHeading || 'Napište nám zprávu'}</h2>
             </div>
             {data.formText && (
-              <p className="text-sm sm:text-base text-neutral-600 mb-6 font-sans">
+              <p className="text-sm sm:text-base text-neutral-600 mb-4 font-sans">
                 {data.formText}
               </p>
             )}
+
+            <div className="border-t border-neutral-100 mb-6" />
 
             {formSubmitted ? (
               <div className="p-8 rounded-2xl bg-emerald-50 border border-emerald-200 text-center space-y-3 animate-in fade-in duration-200">

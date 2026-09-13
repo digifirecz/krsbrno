@@ -18,7 +18,7 @@ export default function Hero({ setActiveTab }: HeroProps) {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center">
 
           {/* Left Text Content */}
-          <div className="lg:col-span-6 space-y-6 max-w-xl">
+          <div className="lg:col-span-6 space-y-6 max-w-md">
             
             {/* Top Pill Tag */}
             <div className="inline-flex items-center space-x-2 px-3.5 py-1.5 rounded-full bg-red-50 text-[#c93838] border border-red-100/80 text-xs font-bold tracking-wide shadow-2xs">

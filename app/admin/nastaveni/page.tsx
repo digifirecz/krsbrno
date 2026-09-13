@@ -12,7 +12,7 @@ import type { SocialLink } from '@/lib/socialLinks';
 import { getSiteSettings, setSiteSettings } from '@/lib/actions/siteSettings';
 import { DEFAULT_SITE_SETTINGS } from '@/lib/siteSettings';
 import type { SiteSettings } from '@/lib/siteSettings';
-import { Settings, Share2, Plus, Save, CheckCircle2, X, Link2, Image as ImageIcon, MapPin, Mail, ShieldCheck } from 'lucide-react';
+import { Settings, Share2, Plus, Save, CheckCircle2, X, Link2, Image as ImageIcon, MapPin, Mail, ShieldCheck, Type } from 'lucide-react';
 
 interface Draft {
   icon: string;
@@ -55,6 +55,7 @@ export default function AdminSettingsPage() {
   };
 
   const siteDirty =
+    siteDraft.siteName !== siteSettings.siteName ||
     siteDraft.logo !== siteSettings.logo ||
     siteDraft.logoAlt !== siteSettings.logoAlt ||
     siteDraft.address !== siteSettings.address ||
@@ -155,6 +156,30 @@ export default function AdminSettingsPage() {
               <p className="text-xs font-medium text-amber-700 bg-amber-50 border border-amber-200 rounded-lg px-3 py-2 mb-6 -mt-4">
                 Máte neuložené změny.
               </p>
+            )}
+
+            <div className="flex items-center space-x-2 mb-3 px-1">
+              <Type className="w-4 h-4 text-neutral-400" />
+              <h2 className="text-xs font-bold uppercase tracking-wider text-neutral-400">Název sboru</h2>
+            </div>
+
+            {loading ? (
+              <div className="py-16 flex justify-center">
+                <div className="w-8 h-8 border-4 border-[#c93838] border-t-transparent rounded-full animate-spin"></div>
+              </div>
+            ) : (
+              <div className="p-4 sm:p-5 bg-white border border-neutral-200 rounded-2xl space-y-2 mb-10">
+                <input
+                  type="text"
+                  value={siteDraft.siteName}
+                  onChange={(e) => setSiteDraft((prev) => ({ ...prev, siteName: e.target.value }))}
+                  placeholder="Křesťanský sbor Brno"
+                  className="w-full px-3.5 py-2.5 rounded-xl border border-neutral-200 text-sm focus:outline-none focus:ring-2 focus:ring-[#c93838]/30 focus:border-[#c93838]"
+                />
+                <p className="text-xs text-neutral-400 px-0.5">
+                  Zobrazuje se v patičce webu u copyrightu.
+                </p>
+              </div>
             )}
 
             <div className="flex items-center space-x-2 mb-3 px-1">

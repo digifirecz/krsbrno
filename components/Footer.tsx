@@ -23,6 +23,7 @@ export default function Footer({ setActiveTab }: FooterProps) {
   const logoAlt = siteSettings?.logoAlt || '';
   const address = siteSettings?.address;
   const email = siteSettings?.email;
+  const siteName = siteSettings?.siteName;
 
   const handleLink = (tab: string, e?: React.MouseEvent) => {
     if (e && (e.metaKey || e.ctrlKey || e.shiftKey || e.button === 1)) {
@@ -137,7 +138,7 @@ export default function Footer({ setActiveTab }: FooterProps) {
 
         {/* Bottom Bar Divider */}
         <div className="pt-6 border-t border-neutral-900 flex flex-col sm:flex-row items-center justify-between text-xs text-neutral-400 gap-3">
-          <p>Křesťanský sbor Brno © {new Date().getFullYear()}</p>
+          {siteName && <p>{siteName} © {new Date().getFullYear()}</p>}
           <div className="flex items-center space-x-4">
             <button
               onClick={() => setGdprOpen(true)}

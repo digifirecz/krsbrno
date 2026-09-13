@@ -37,8 +37,14 @@ export default function PhotoCardGridBlock({ data, limit }: { data: PhotoCardGri
             const Icon = getIcon(card.icon);
             const BadgeIcon = getIcon(card.badgeIcon) || Clock;
             const badgeColors = getBadgeColorClasses(card.badgeColor);
+            const href = card.linkLabel && card.linkTarget ? getPathForTab(card.linkTarget) : undefined;
+            const CardTag = href ? 'a' : 'div';
             return (
-              <div key={idx} className="bg-white rounded-2xl border border-neutral-200/80 hover:border-[#c93838]/30 transition-all duration-300 shadow-2xs hover:shadow-md hover:-translate-y-0.5 overflow-hidden flex flex-col group">
+              <CardTag
+                key={idx}
+                {...(href ? { href } : {})}
+                className="bg-white rounded-2xl border border-neutral-200/80 hover:border-[#c93838]/30 transition-all duration-300 shadow-2xs hover:shadow-md hover:-translate-y-0.5 overflow-hidden flex flex-col group"
+              >
                 {card.photo?.src && (
                   <div className="relative h-40 w-full overflow-hidden bg-neutral-100">
                     <SafeImage
@@ -72,17 +78,14 @@ export default function PhotoCardGridBlock({ data, limit }: { data: PhotoCardGri
                       </p>
                     )}
                   </div>
-                  {card.linkLabel && card.linkTarget && (
-                    <a
-                      href={getPathForTab(card.linkTarget)}
-                      className="inline-flex items-center space-x-1.5 text-xs font-bold text-[#c93838] hover:text-[#b02e2e] transition-colors pt-2 cursor-pointer"
-                    >
+                  {card.linkLabel && href && (
+                    <span className="inline-flex items-center space-x-1.5 text-xs font-bold text-[#c93838] group-hover:text-[#b02e2e] transition-colors pt-2">
                       <span>{card.linkLabel}</span>
                       <ChevronRight className="w-3.5 h-3.5" />
-                    </a>
+                    </span>
                   )}
                 </div>
-              </div>
+              </CardTag>
             );
           })}
         </div>

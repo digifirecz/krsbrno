@@ -2,7 +2,7 @@ import { Metadata } from 'next';
 import { redirect } from 'next/navigation';
 import ChurchApp from '@/components/ChurchApp';
 import { getTabFromSlug, getTitleForTab, resolveDynamicSlug } from '@/lib/routes';
-import { getPageDoc } from '@/lib/pages';
+import { getPageDoc } from '@/lib/data/pages';
 
 interface SlugPageProps {
   params: Promise<{ slug: string }>;

@@ -1,4 +1,4 @@
-import Image from 'next/image';
+import SafeImage from '@/components/SafeImage';
 import { getIcon } from '@/lib/blocks/icons';
 import { getPathForTab } from '@/lib/routes';
 import { focalCropStyle } from '@/lib/blocks/photoFocal';
@@ -20,14 +20,14 @@ export default function PhotoCardGridBlock({ data, limit }: { data: PhotoCardGri
               </h2>
             )}
             {data.subheading && (
-              <p className="text-sm text-neutral-600 leading-relaxed font-sans max-w-2xl mx-auto whitespace-pre-line">
+              <p className="text-sm sm:text-base text-neutral-600 leading-relaxed font-sans max-w-2xl mx-auto whitespace-pre-line">
                 {data.subheading}
               </p>
             )}
             {data.highlight && (
-              <div className="inline-block bg-red-50/80 border border-red-100/90 rounded-xl px-4 py-2.5 text-sm text-neutral-700 font-sans shadow-2xs whitespace-pre-line">
+              <p className="italic font-serif text-sm sm:text-base text-[#c93838] leading-relaxed max-w-2xl mx-auto whitespace-pre-line">
                 {data.highlight}
-              </div>
+              </p>
             )}
           </div>
         )}
@@ -41,7 +41,7 @@ export default function PhotoCardGridBlock({ data, limit }: { data: PhotoCardGri
               <div key={idx} className="bg-white rounded-2xl border border-neutral-200/80 hover:border-[#c93838]/30 transition-all duration-300 shadow-2xs hover:shadow-md hover:-translate-y-0.5 overflow-hidden flex flex-col group">
                 {card.photo?.src && (
                   <div className="relative h-40 w-full overflow-hidden bg-neutral-100">
-                    <Image
+                    <SafeImage
                       src={card.photo.src}
                       alt={card.photo.caption || card.title}
                       fill

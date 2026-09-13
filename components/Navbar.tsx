@@ -10,7 +10,7 @@ import {
   ShieldCheck
 } from 'lucide-react';
 import { getPathForTab } from '@/lib/routes';
-import { auth } from '@/lib/firebase';
+import { getCurrentUser } from '@/lib/actions/auth';
 import { PAGE_ID_TO_TAB } from '@/lib/blocks/pageRegistry';
 import { getIcon } from '@/lib/blocks/icons';
 import { useNavConfig } from '@/lib/useNavConfig';
@@ -55,10 +55,13 @@ export default function Navbar({ activeTab, setActiveTab }: NavbarProps) {
   const groups = [...groupedEntries.entries()];
 
   useEffect(() => {
-    const unsubscribe = auth.onAuthStateChanged((user) => {
-      setIsLoggedIn(!!user);
+    let active = true;
+    getCurrentUser().then((user) => {
+      if (active) setIsLoggedIn(!!user);
     });
-    return () => unsubscribe();
+    return () => {
+      active = false;
+    };
   }, []);
 
   // Close dropdowns on click outside or escape key

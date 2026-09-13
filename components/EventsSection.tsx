@@ -2,21 +2,31 @@
 
 import { useState, useEffect, useRef } from 'react';
 import Image from 'next/image';
+import Link from 'next/link';
 import { Calendar, ChevronLeft, ChevronRight, Sparkles } from 'lucide-react';
-import { getArticles, type Article } from '@/lib/articles';
+import { getArticles } from '@/lib/actions/articles';
+import type { Article } from '@/lib/articles';
 import { getIcon } from '@/lib/blocks/icons';
+import { focalCropStyle } from '@/lib/blocks/photoFocal';
+import { eventDateSortKey } from '@/lib/eventDate';
 
 interface EventsSectionProps {
   icon?: string;
   heading?: string;
   description?: string;
+  // Podle čeho se seznam řadí — datum konání akce (výchozí), nebo datum
+  // přidání článku do administrace. Nastavuje se v editaci bloku, žádný
+  // přepínač pro návštěvníky webu.
+  sortBy?: 'eventDate' | 'created';
+  // Směr řazení — od nejnižší hodnoty (výchozí), nebo od nejvyšší.
+  sortDir?: 'asc' | 'desc';
 }
 
 const DEFAULT_HEADING = 'Události';
 const DEFAULT_DESCRIPTION =
   'Pořádáme různé akce během roku – setkání, vyučování, konference i společné aktivity pro rodiny a děti. Jsou otevřené všem, kdo chtějí poznat víru blíž nebo strávit čas ve společenství.';
 
-export default function EventsSection({ icon, heading, description }: EventsSectionProps = {}) {
+export default function EventsSection({ icon, heading, description, sortBy = 'eventDate', sortDir = 'asc' }: EventsSectionProps = {}) {
   const [articles, setArticles] = useState<Article[] | null>(null);
   const HeadingIcon = getIcon(icon) || Sparkles;
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -54,9 +64,30 @@ export default function EventsSection({ icon, heading, description }: EventsSect
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-  if (!articles || articles.length === 0) return null;
+  // Dokud se články ještě nenačetly (první render), sekci nezobrazovat vůbec.
+  // Když se načtou a žádné nejsou, sekce zůstává (nadpis/popis) jen s hláškou
+  // místo kolotoče, ať návštěvník ví, že prázdno je záměrné, ne chyba.
+  if (!articles) return null;
+  const hasArticles = articles.length > 0;
 
-  const totalItems = articles.length;
+  // Datum akce = chybějící/nerozpoznané datum vždy až na konec bez ohledu na
+  // směr, ať netříští řazení zbytku. Datum přidání = pořadí z getArticles().
+  const dir = sortDir === 'desc' ? -1 : 1;
+  const sortedArticles =
+    sortBy === 'created'
+      ? sortDir === 'desc'
+        ? [...articles].reverse()
+        : articles
+      : [...articles].sort((a, b) => {
+          const da = eventDateSortKey(a.dateText)?.getTime() ?? null;
+          const db = eventDateSortKey(b.dateText)?.getTime() ?? null;
+          if (da === null && db === null) return 0;
+          if (da === null) return 1;
+          if (db === null) return -1;
+          return (da - db) * dir;
+        });
+
+  const totalItems = sortedArticles.length;
   const maxIndex = Math.max(0, totalItems - visibleCards);
   const effectiveIndex = Math.min(currentIndex, maxIndex);
 
@@ -99,7 +130,7 @@ export default function EventsSection({ icon, heading, description }: EventsSect
 
   return (
     <section className="py-16 sm:py-20 bg-white relative overflow-hidden" id="sec-events">
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
         {/* Section Header */}
         <div className="text-center max-w-3xl mx-auto space-y-4 mb-12">
@@ -111,14 +142,24 @@ export default function EventsSection({ icon, heading, description }: EventsSect
             {heading || DEFAULT_HEADING}
           </h2>
 
-          <p className="text-base text-neutral-700 font-sans leading-relaxed max-w-2xl mx-auto">
+          <p className="text-sm sm:text-base text-neutral-700 font-sans leading-relaxed max-w-2xl mx-auto">
             {description || DEFAULT_DESCRIPTION}
           </p>
         </div>
 
+        {!hasArticles && (
+          <div className="text-center max-w-md mx-auto py-6 px-6 rounded-2xl bg-neutral-50 border border-neutral-200/80">
+            <p className="text-sm text-neutral-500 font-sans">
+              Momentálně není žádná událost k dispozici.
+            </p>
+          </div>
+        )}
+
         {/* Carousel Container with Arrows */}
+        {hasArticles && (
+        <>
         <div
-          className="relative px-0 sm:px-2"
+          className="relative"
           onTouchStart={handleTouchStart}
           onTouchEnd={handleTouchEnd}
         >
@@ -152,12 +193,15 @@ export default function EventsSection({ icon, heading, description }: EventsSect
                 transform: `translateX(-${(effectiveIndex * 100) / visibleCards}%)`
               }}
             >
-              {articles.map((article) => (
+              {sortedArticles.map((article) => (
                 <div
                   key={article.id}
                   className="w-full sm:w-1/2 lg:w-1/4 flex-shrink-0 px-3"
                 >
-                  <div className="h-full rounded-2xl overflow-hidden bg-white border border-neutral-200/80 shadow-xs hover:shadow-md hover:-translate-y-1 transition-all duration-200 flex flex-col group cursor-pointer">
+                  <Link
+                    href={`/clanek/${article.id}`}
+                    className="h-full rounded-2xl overflow-hidden bg-white border border-neutral-200/80 shadow-xs hover:shadow-md hover:-translate-y-1 transition-all duration-200 flex flex-col group cursor-pointer"
+                  >
 
                     {/* Image banner */}
                     {article.image && (
@@ -168,6 +212,7 @@ export default function EventsSection({ icon, heading, description }: EventsSect
                           fill
                           sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
                           className="object-cover group-hover:scale-105 transition-transform duration-500 ease-out"
+                          style={focalCropStyle({ src: article.image, focalX: article.focalX, focalY: article.focalY, zoom: article.zoom })}
                           referrerPolicy="no-referrer"
                         />
                       </div>
@@ -194,9 +239,14 @@ export default function EventsSection({ icon, heading, description }: EventsSect
                           />
                         )}
                       </div>
+
+                      <span className="inline-flex items-center space-x-1.5 text-xs font-bold text-[#c93838] pt-3">
+                        <span>Zjistit více</span>
+                        <ChevronRight className="w-3.5 h-3.5" />
+                      </span>
                     </div>
 
-                  </div>
+                  </Link>
                 </div>
               ))}
             </div>
@@ -222,6 +272,8 @@ export default function EventsSection({ icon, heading, description }: EventsSect
               );
             })}
           </div>
+        )}
+        </>
         )}
 
       </div>

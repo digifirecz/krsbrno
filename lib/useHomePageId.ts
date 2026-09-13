@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { getHomePageId } from '@/lib/pages';
+import { getHomePageId } from '@/lib/actions/pages';
 
 /**
  * The "Správa stránek" page chosen to render at "/", if the admin picked one

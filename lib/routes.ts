@@ -165,7 +165,7 @@ export function getTitleForTab(tab: string): string {
 let pageIdToSlugCache: Record<string, string> = {};
 
 export async function preloadPageSlugs(): Promise<void> {
-  const { getAllPageSlugs } = await import('@/lib/pages');
+  const { getAllPageSlugs } = await import('@/lib/actions/pages');
   const entries = await getAllPageSlugs();
   const next: Record<string, string> = {};
   entries.forEach((e) => {
@@ -187,7 +187,7 @@ export interface DynamicSlugResolution {
 export async function resolveDynamicSlug(slug: string): Promise<DynamicSlugResolution | null> {
   const normalized = (slug || '').toLowerCase().replace(/^\/+|\/+$/g, '');
   if (!normalized) return null;
-  const { resolvePageBySlug } = await import('@/lib/pages');
+  const { resolvePageBySlug } = await import('@/lib/actions/pages');
   const match = await resolvePageBySlug(normalized);
   if (!match) return null;
   const tab = PAGE_ID_TO_TAB[match.pageId] || match.pageId;

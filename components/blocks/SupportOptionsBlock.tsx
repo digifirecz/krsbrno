@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import Image from 'next/image';
+import SafeImage from '@/components/SafeImage';
 import ImageCard from '@/components/ImageCard';
 import { getIcon } from '@/lib/blocks/icons';
 import { Copy, Check, QrCode } from 'lucide-react';
@@ -44,7 +44,7 @@ export default function SupportOptionsBlock({ data }: { data: SupportOptionsData
               </h2>
             )}
             {data.description && (
-              <p className="text-xs sm:text-sm text-neutral-600 font-sans leading-relaxed max-w-2xl mx-auto whitespace-pre-line">
+              <p className="text-sm sm:text-base text-neutral-600 font-sans leading-relaxed max-w-2xl mx-auto whitespace-pre-line">
                 {data.description}
               </p>
             )}
@@ -200,7 +200,7 @@ export default function SupportOptionsBlock({ data }: { data: SupportOptionsData
               )}
 
               <div className="p-4 bg-neutral-100 rounded-xl flex flex-col items-center justify-center">
-                <Image
+                <SafeImage
                   src={qrImageUrl}
                   alt="QR Platba"
                   width={200}

@@ -6,13 +6,19 @@ import Link from 'next/link';
 import RequireAuth from '@/components/admin/RequireAuth';
 import ConfirmModal from '@/components/admin/blocks/ConfirmModal';
 import PhotoUpload from '@/components/admin/blocks/PhotoUpload';
+import type { FocalPoint } from '@/components/admin/blocks/FocalPointPicker';
 import RichTextEditor from '@/components/admin/blocks/RichTextEditor';
+import EventDatePicker from '@/components/admin/blocks/EventDatePicker';
+import LocationInput from '@/components/admin/blocks/LocationInput';
 import { useToast } from '@/components/admin/ToastProvider';
-import { getArticle, updateArticle, deleteArticle, type Article } from '@/lib/articles';
-import { ArrowLeft, Trash2, Save, CheckCircle2, Eye, EyeOff, CalendarPlus, History } from 'lucide-react';
+import { getArticle, updateArticle, deleteArticle, getArticleLocations } from '@/lib/actions/articles';
+import type { Article } from '@/lib/articles';
+import { BADGE_COLOR_NAMES, BADGE_COLORS } from '@/lib/blocks/badgeColors';
+import { ArrowLeft, Trash2, Save, CheckCircle2, Eye, EyeOff, CalendarPlus, History, Check } from 'lucide-react';
 
-const fieldClass = 'w-full px-3.5 py-2.5 rounded-xl border border-neutral-200 text-sm focus:outline-none focus:ring-2 focus:ring-[#c93838]/30 focus:border-[#c93838]';
 const labelClass = 'block text-xs font-bold text-neutral-600 mb-1';
+// Poměr stran, do kterého se fotka ořízne na kartě události (viz EventsSection).
+const CARD_ASPECT_RATIO = 16 / 11;
 
 function formatTimestamp(value: unknown): string | null {
   let date: Date | null = null;
@@ -33,13 +39,19 @@ export default function AdminArticleEditor() {
   const [title, setTitle] = useState('');
   const [subtitle, setSubtitle] = useState('');
   const [dateText, setDateText] = useState('');
+  const [timeText, setTimeText] = useState('');
+  const [location, setLocation] = useState('');
+  const [locationOptions, setLocationOptions] = useState<string[]>([]);
+  const [badgeColor, setBadgeColor] = useState<string>('red');
   const [image, setImage] = useState('');
+  const [focal, setFocal] = useState<FocalPoint | undefined>(undefined);
   const [visible, setVisible] = useState(true);
   const [meta, setMeta] = useState<Pick<Article, 'createdAt' | 'createdBy' | 'updatedAt' | 'updatedBy'>>({});
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
   const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
+  const [titleError, setTitleError] = useState(false);
 
   useEffect(() => {
     let active = true;
@@ -49,7 +61,11 @@ export default function AdminArticleEditor() {
         setTitle(fetched.title);
         setSubtitle(fetched.subtitle || '');
         setDateText(fetched.dateText);
+        setTimeText(fetched.timeText || '');
+        setLocation(fetched.location || '');
+        setBadgeColor(fetched.badgeColor || 'red');
         setImage(fetched.image || '');
+        setFocal(fetched.focalX !== undefined ? { x: fetched.focalX, y: fetched.focalY ?? 50, zoom: fetched.zoom } : undefined);
         setVisible(fetched.visible);
         setMeta({
           createdAt: fetched.createdAt,
@@ -67,15 +83,37 @@ export default function AdminArticleEditor() {
     };
   }, [articleId]);
 
+  useEffect(() => {
+    getArticleLocations().then(setLocationOptions).catch(() => {});
+  }, []);
+
   return (
     <RequireAuth>
       {(user) => {
         const handleSave = async () => {
+          if (!title.trim()) {
+            setTitleError(true);
+            showToast('Titulek je povinný.', 'error');
+            return;
+          }
+          setTitleError(false);
           setSaving(true);
           try {
             await updateArticle(
               articleId,
-              { title: title.trim(), subtitle: subtitle.trim() || undefined, dateText: dateText.trim(), image: image || undefined, visible },
+              {
+                title: title.trim(),
+                subtitle: subtitle.trim() || undefined,
+                dateText: dateText.trim(),
+                timeText: timeText.trim() || undefined,
+                location: location.trim() || undefined,
+                badgeColor,
+                image: image || undefined,
+                focalX: focal?.x,
+                focalY: focal?.y,
+                zoom: focal?.zoom,
+                visible,
+              },
               user.email
             );
             setMeta((prev) => ({ ...prev, updatedAt: new Date(), updatedBy: user.email }));
@@ -152,14 +190,23 @@ export default function AdminArticleEditor() {
               <>
                 <div className="mb-8 bg-white border border-neutral-200 rounded-2xl p-5 sm:p-6 shadow-2xs space-y-4">
                   <div>
-                    <label className={labelClass}>Titulek</label>
+                    <label className={labelClass}>
+                      Titulek <span className="text-[#c93838]">*</span>
+                    </label>
                     <input
                       type="text"
                       value={title}
-                      onChange={(e) => setTitle(e.target.value)}
-                      placeholder="Název akce"
-                      className="w-full text-lg sm:text-xl font-extrabold text-neutral-900 font-serif px-3.5 py-2 rounded-xl border border-neutral-200 bg-white focus:border-[#c93838]/50 focus:outline-none focus:ring-2 focus:ring-[#c93838]/20 transition-colors"
+                      onChange={(e) => {
+                        setTitle(e.target.value);
+                        if (e.target.value.trim()) setTitleError(false);
+                      }}
+                      className={`w-full text-lg sm:text-xl font-extrabold text-neutral-900 font-serif px-3.5 py-2 rounded-xl border bg-white focus:outline-none focus:ring-2 transition-colors ${
+                        titleError
+                          ? 'border-[#c93838] focus:border-[#c93838] focus:ring-[#c93838]/20'
+                          : 'border-neutral-200 focus:border-[#c93838]/50 focus:ring-[#c93838]/20'
+                      }`}
                     />
+                    {titleError && <p className="text-xs font-medium text-[#c93838] mt-1">Titulek je povinný.</p>}
                   </div>
 
                   <div className="flex flex-col gap-2 border-t border-neutral-100 pt-4">
@@ -195,23 +242,56 @@ export default function AdminArticleEditor() {
                 <div className="bg-white border border-neutral-200 rounded-2xl p-5 sm:p-6 shadow-2xs space-y-4">
                   <div>
                     <label className={labelClass}>Fotka</label>
-                    <PhotoUpload value={image} pageId={articleId} folder="articles" onChange={setImage} />
-                  </div>
-
-                  <div>
-                    <label className={labelClass}>Datum</label>
-                    <input
-                      type="text"
-                      value={dateText}
-                      onChange={(e) => setDateText(e.target.value)}
-                      placeholder="7. 2. 2026"
-                      className={fieldClass}
+                    <PhotoUpload
+                      value={image}
+                      pageId={articleId}
+                      folder="articles"
+                      onChange={setImage}
+                      focal={focal}
+                      onFocalChange={setFocal}
+                      aspectRatio={CARD_ASPECT_RATIO}
                     />
                   </div>
 
                   <div>
+                    <label className={labelClass}>Datum</label>
+                    <EventDatePicker
+                      value={dateText}
+                      onChange={setDateText}
+                      time={timeText}
+                      onTimeChange={setTimeText}
+                    />
+                  </div>
+
+                  <div>
+                    <label className={labelClass}>Místo konání</label>
+                    <LocationInput value={location} onChange={setLocation} options={locationOptions} />
+                  </div>
+
+                  <div>
+                    <label className={labelClass}>Barva štítků v detailu článku</label>
+                    <div className="flex items-center space-x-1.5">
+                      {BADGE_COLOR_NAMES.map((color) => {
+                        const selected = badgeColor === color;
+                        return (
+                          <button
+                            key={color}
+                            type="button"
+                            onClick={() => setBadgeColor(color)}
+                            title={BADGE_COLORS[color].label}
+                            className="w-7 h-7 rounded-full flex items-center justify-center cursor-pointer ring-1 ring-inset ring-black/10"
+                            style={{ backgroundColor: BADGE_COLORS[color].swatch }}
+                          >
+                            {selected && <Check className="w-4 h-4 text-white" />}
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </div>
+
+                  <div>
                     <label className={labelClass}>Popisek</label>
-                    <RichTextEditor value={subtitle} onChange={setSubtitle} placeholder="Krátký popis akce" />
+                    <RichTextEditor value={subtitle} onChange={setSubtitle} placeholder="" />
                   </div>
                 </div>
               </>

@@ -23,7 +23,7 @@ export default function InfoCardBlock({ data }: { data: InfoCardData }) {
             </h2>
 
             {data.text && (
-              <p className="text-sm text-neutral-600 leading-relaxed font-sans whitespace-pre-line">
+              <p className="text-sm sm:text-base text-neutral-600 leading-relaxed font-sans whitespace-pre-line">
                 {data.text}
               </p>
             )}

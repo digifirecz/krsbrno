@@ -22,7 +22,7 @@ export default function SocialCardBlock({ data }: { data: SocialCardData }) {
       )}
 
       {data.text && (
-        <p className="text-neutral-600 text-xs sm:text-sm leading-relaxed whitespace-pre-line">
+        <p className="text-neutral-600 text-sm sm:text-base leading-relaxed whitespace-pre-line">
           {data.text}
         </p>
       )}

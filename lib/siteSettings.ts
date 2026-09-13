@@ -1,5 +1,7 @@
-import { doc, getDoc, setDoc } from 'firebase/firestore';
-import { db } from '@/lib/firebase';
+// Shared types + default content for site-wide settings. Implementation lives
+// in lib/data/siteSettings.ts (server, Drizzle); client components reach it
+// through lib/actions/siteSettings.ts. The DEFAULT_* consts are safe to import
+// anywhere (no server dependency).
 
 export interface SiteSettings {
   address: string;
@@ -18,20 +20,3 @@ export const DEFAULT_SITE_SETTINGS: SiteSettings = {
   logoAlt: 'Křesťanský sbor Brno',
   gdprText: DEFAULT_GDPR_TEXT,
 };
-
-export async function getSiteSettings(): Promise<SiteSettings> {
-  const snap = await getDoc(doc(db, 'meta', 'siteSettings'));
-  if (!snap.exists()) return DEFAULT_SITE_SETTINGS;
-  const data = snap.data() as Partial<SiteSettings>;
-  return {
-    address: data.address || DEFAULT_SITE_SETTINGS.address,
-    email: data.email || DEFAULT_SITE_SETTINGS.email,
-    logo: data.logo || DEFAULT_SITE_SETTINGS.logo,
-    logoAlt: data.logoAlt || DEFAULT_SITE_SETTINGS.logoAlt,
-    gdprText: data.gdprText || DEFAULT_SITE_SETTINGS.gdprText,
-  };
-}
-
-export async function setSiteSettings(patch: Partial<SiteSettings>): Promise<void> {
-  await setDoc(doc(db, 'meta', 'siteSettings'), patch, { merge: true });
-}

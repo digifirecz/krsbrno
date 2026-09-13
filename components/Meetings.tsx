@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import Image from 'next/image';
 import BlockRenderer from '@/components/blocks/BlockRenderer';
-import { getPageBlocks } from '@/lib/pages';
+import { getPageBlocks } from '@/lib/actions/pages';
 import { PAGE_IDS } from '@/lib/blocks/pageRegistry';
 import type { BlockInstance } from '@/lib/blocks/types';
 import {
@@ -53,13 +53,13 @@ export default function Meetings({ setActiveTab, isHomePage = false }: MeetingsP
               Běžná setkávání
             </h2>
 
-            <p className="text-sm text-neutral-600 font-sans leading-relaxed max-w-2xl mx-auto">
+            <p className="text-sm sm:text-base text-neutral-600 font-sans leading-relaxed max-w-2xl mx-auto">
               Čas, kdy se scházíme a zaměřujeme svou pozornost na Boha. Součástí setkání jsou chvály (zpěv písní Bohu), srozumitelné a praktické biblické kázání (výklad z knihy Bible), modlitby (rozhovory s Bohem) a také prostor ke společným diskuzím.
             </p>
 
-            <div className="bg-red-50/80 border border-red-100/90 rounded-xl px-4 py-2.5 text-sm text-neutral-700 font-sans shadow-2xs max-w-2xl mx-auto">
+            <p className="italic font-serif text-sm sm:text-base text-[#c93838] leading-relaxed max-w-2xl mx-auto">
               Každé setkání má nenucený a přirozený průběh. Můžeš přijít, posadit se a poslouchat.
-            </div>
+            </p>
           </div>
 
           {/* 3 Modern Cards */}
@@ -91,7 +91,7 @@ export default function Meetings({ setActiveTab, isHomePage = false }: MeetingsP
                   <h3 className="text-lg font-extrabold text-neutral-900 font-serif group-hover:text-[#c93838] transition-colors">
                     Nedělní bohoslužba
                   </h3>
-                  <p className="text-sm text-neutral-600 leading-relaxed font-sans">
+                  <p className="text-sm sm:text-base text-neutral-600 leading-relaxed font-sans">
                     Společné chvály, biblické kázání a připomínka toho, co pro nás Ježíš Kristus udělal.
                   </p>
                 </div>
@@ -111,10 +111,10 @@ export default function Meetings({ setActiveTab, isHomePage = false }: MeetingsP
               </div>
               <div className="p-6 space-y-3">
                 <div className="flex items-center justify-between">
-                  <div className="w-10 h-10 rounded-xl bg-red-50 text-[#c93838] border border-red-100 flex items-center justify-center group-hover:scale-105 transition-transform duration-300 shadow-2xs">
+                  <div className="w-10 h-10 rounded-xl bg-amber-50 text-amber-700 border border-amber-100 flex items-center justify-center group-hover:scale-105 transition-transform duration-300 shadow-2xs">
                     <BookOpen className="w-5 h-5" />
                   </div>
-                  <span className="inline-flex items-center space-x-1.5 px-2.5 py-1 rounded-full bg-red-50/90 text-[#c93838] border border-red-100 text-xs font-bold font-sans">
+                  <span className="inline-flex items-center space-x-1.5 px-2.5 py-1 rounded-full bg-amber-50/90 text-amber-700 border border-amber-100 text-xs font-bold font-sans">
                     <Clock className="w-3.5 h-3.5" />
                     <span>17:45 – 18:45</span>
                   </span>
@@ -124,7 +124,7 @@ export default function Meetings({ setActiveTab, isHomePage = false }: MeetingsP
                   <h3 className="text-lg font-extrabold text-neutral-900 font-serif group-hover:text-[#c93838] transition-colors">
                     Středeční vyučování
                   </h3>
-                  <p className="text-sm text-neutral-600 leading-relaxed font-sans">
+                  <p className="text-sm sm:text-base text-neutral-600 leading-relaxed font-sans">
                     Společné studium Bible a hledání odpovědí na otázky víry.
                   </p>
                 </div>
@@ -144,10 +144,10 @@ export default function Meetings({ setActiveTab, isHomePage = false }: MeetingsP
               </div>
               <div className="p-6 space-y-3">
                 <div className="flex items-center justify-between">
-                  <div className="w-10 h-10 rounded-xl bg-red-50 text-[#c93838] border border-red-100 flex items-center justify-center group-hover:scale-105 transition-transform duration-300 shadow-2xs">
+                  <div className="w-10 h-10 rounded-xl bg-blue-50 text-blue-700 border border-blue-100 flex items-center justify-center group-hover:scale-105 transition-transform duration-300 shadow-2xs">
                     <HeartHandshake className="w-5 h-5" />
                   </div>
-                  <span className="inline-flex items-center space-x-1.5 px-2.5 py-1 rounded-full bg-red-50/90 text-[#c93838] border border-red-100 text-xs font-bold font-sans">
+                  <span className="inline-flex items-center space-x-1.5 px-2.5 py-1 rounded-full bg-blue-50/90 text-blue-700 border border-blue-100 text-xs font-bold font-sans">
                     <Clock className="w-3.5 h-3.5" />
                     <span>17:45 – 18:45</span>
                   </span>
@@ -157,7 +157,7 @@ export default function Meetings({ setActiveTab, isHomePage = false }: MeetingsP
                   <h3 className="text-lg font-extrabold text-neutral-900 font-serif group-hover:text-[#c93838] transition-colors">
                     Páteční modlitební
                   </h3>
-                  <p className="text-sm text-neutral-600 leading-relaxed font-sans">
+                  <p className="text-sm sm:text-base text-neutral-600 leading-relaxed font-sans">
                     Společné modlitby a duchovní zamyšlení pro každodenní život.
                   </p>
                 </div>

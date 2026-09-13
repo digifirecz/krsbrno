@@ -1,41 +1,15 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-import type { User } from 'firebase/auth';
 import RequireAuth from '@/components/admin/RequireAuth';
-import { getRole } from '@/lib/roles';
+import type { SessionUser } from '@/lib/auth/session';
 import { ShieldAlert } from 'lucide-react';
 
 interface RequireAdminProps {
-  children: (user: User) => React.ReactNode;
+  children: (user: SessionUser) => React.ReactNode;
 }
 
-function AdminGate({ user, children }: { user: User; children: (user: User) => React.ReactNode }) {
-  const [allowed, setAllowed] = useState<boolean | null>(null);
-
-  useEffect(() => {
-    let active = true;
-    getRole(user.uid)
-      .then((role) => {
-        if (active) setAllowed(role === 'admin');
-      })
-      .catch(() => {
-        if (active) setAllowed(false);
-      });
-    return () => {
-      active = false;
-    };
-  }, [user.uid]);
-
-  if (allowed === null) {
-    return (
-      <div className="py-20 flex justify-center items-center min-h-[50vh]">
-        <div className="w-8 h-8 border-4 border-[#c93838] border-t-transparent rounded-full animate-spin"></div>
-      </div>
-    );
-  }
-
-  if (!allowed) {
+function AdminGate({ user, children }: { user: SessionUser; children: (user: SessionUser) => React.ReactNode }) {
+  if (user.role !== 'admin') {
     return (
       <div className="max-w-md mx-auto px-4 py-20 text-center space-y-3">
         <div className="w-12 h-12 rounded-2xl bg-red-50 text-[#c93838] flex items-center justify-center mx-auto">
@@ -46,7 +20,6 @@ function AdminGate({ user, children }: { user: User; children: (user: User) => R
       </div>
     );
   }
-
   return <>{children(user)}</>;
 }
 

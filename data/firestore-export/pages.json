@@ -1,0 +1,701 @@
+[
+  {
+    "id": "1",
+    "headerIcon": "",
+    "title": "Čemu věříme",
+    "blocks": [
+      {
+        "order": 0,
+        "data": {},
+        "visible": true,
+        "sectionId": "1",
+        "type": "pageHero",
+        "id": "hero"
+      },
+      {
+        "visible": true,
+        "type": "iconGrid",
+        "sectionId": "2",
+        "id": "grid-plan",
+        "data": {},
+        "order": 1
+      },
+      {
+        "type": "photoCardGrid",
+        "id": "c066f064-e666-464f-8346-759f71aa1c51",
+        "visible": true,
+        "order": 2,
+        "sectionId": "47",
+        "data": {
+          "heading": "Život věřícího člověka",
+          "subheading": "Praktické prožívání víry v každodenním životě i ve společenství.",
+          "cards": [
+            {
+              "icon": "Sparkles",
+              "title": "Nový začátek",
+              "text": "Víra začíná osobním rozhodnutím důvěřovat Ježíši Kristu. Křest je fyzickým vyjádřením víry a symbolem nového života."
+            },
+            {
+              "title": "Církev",
+              "text": "Církev je společenství lidí, kteří se snaží následovat Ježíše Krista. Místo přijetí, růstu a vzájemné podpory.",
+              "icon": "Users"
+            },
+            {
+              "text": "Bůh v životě věřícího působí skrze proměnu srdce, pokoj v obtížích i vedení při rozhodování.",
+              "icon": "Flame",
+              "title": "Boží působení"
+            },
+            {
+              "title": "Boží slovo – Bible",
+              "text": "Průvodce pro každodenní život a zdroj povzbuzení. Skrze Písmo poznáváme, kým Bůh je.",
+              "icon": "BookOpen",
+              "photo": {
+                "src": "https://firebasestorage.googleapis.com/v0/b/krsbrno.firebasestorage.app/o/pages%2F1%2Fa54fd1b6-5fbd-4049-8d9a-f15f870b937c-IMG_1478.jpg?alt=media"
+              }
+            },
+            {
+              "text": "Osobní rozhovor s Bohem. Prostor pro vděčnost, prosby i hledání Božího vedení v běžném životě.",
+              "icon": "MessageSquare",
+              "title": "Modlitba"
+            },
+            {
+              "title": "Chvály",
+              "text": "Hudební vyjádření vděčnosti a radosti z Boží přítomnosti v našem životě a společenství.",
+              "icon": "Music2",
+              "photo": {
+                "src": "https://firebasestorage.googleapis.com/v0/b/krsbrno.firebasestorage.app/o/pages%2F1%2Fe7bb837a-6f46-4d7c-bc03-cdf081192fa2-IMG_1251.jpg?alt=media"
+              }
+            }
+          ]
+        }
+      },
+      {
+        "type": "quote",
+        "order": 3,
+        "visible": true,
+        "data": {},
+        "sectionId": "4",
+        "id": "quote-prayer"
+      },
+      {
+        "order": 4,
+        "data": {},
+        "sectionId": "5",
+        "id": "cta-join",
+        "type": "ctaBlock",
+        "visible": true
+      }
+    ],
+    "createdAt": {
+      "type": "firestore/timestamp/1.0",
+      "seconds": 1787145951,
+      "nanoseconds": 394000000
+    },
+    "slug": "cemu-verime",
+    "updatedAt": {
+      "type": "firestore/timestamp/1.0",
+      "seconds": 1788338560,
+      "nanoseconds": 401000000
+    },
+    "updatedBy": "admin@krsbrno.cz",
+    "createdBy": "admin@krsbrno.cz",
+    "showInHeader": true,
+    "showInFooter": false,
+    "slugHistory": [],
+    "headerGroup": "Kdo jsme",
+    "headerGroupId": "kdo-jsme"
+  },
+  {
+    "id": "10",
+    "slugHistory": [
+      "vedeni"
+    ],
+    "blocks": [
+      {
+        "type": "pageHero",
+        "visible": true,
+        "id": "hero",
+        "sectionId": "38",
+        "data": {},
+        "order": 0
+      },
+      {
+        "visible": true,
+        "id": "services",
+        "data": {},
+        "order": 1,
+        "type": "iconGrid",
+        "sectionId": "39"
+      },
+      {
+        "type": "badgeCard",
+        "visible": true,
+        "order": 2,
+        "data": {},
+        "id": "council",
+        "sectionId": "40"
+      }
+    ],
+    "createdAt": {
+      "type": "firestore/timestamp/1.0",
+      "seconds": 1787145951,
+      "nanoseconds": 394000000
+    },
+    "updatedAt": {
+      "type": "firestore/timestamp/1.0",
+      "seconds": 1787145951,
+      "nanoseconds": 394000000
+    },
+    "slug": "kdo-nas-vede",
+    "updatedBy": "admin@krsbrno.cz",
+    "showInFooter": true,
+    "createdBy": "admin@krsbrno.cz",
+    "title": "Kdo nás vede",
+    "showInHeader": false
+  },
+  {
+    "id": "11",
+    "updatedBy": "admin@krsbrno.cz",
+    "showInFooter": true,
+    "slugHistory": [],
+    "showInHeader": false,
+    "updatedAt": {
+      "type": "firestore/timestamp/1.0",
+      "seconds": 1787145951,
+      "nanoseconds": 394000000
+    },
+    "slug": "nase-vyznani",
+    "createdBy": "admin@krsbrno.cz",
+    "title": "Naše vyznání",
+    "blocks": [
+      {
+        "sectionId": "41",
+        "order": 0,
+        "data": {},
+        "type": "pageHero",
+        "id": "hero",
+        "visible": true
+      },
+      {
+        "id": "points",
+        "order": 1,
+        "sectionId": "42",
+        "visible": true,
+        "data": {},
+        "type": "cardGrid"
+      }
+    ],
+    "createdAt": {
+      "type": "firestore/timestamp/1.0",
+      "seconds": 1787145951,
+      "nanoseconds": 394000000
+    }
+  },
+  {
+    "id": "12",
+    "createdAt": {
+      "type": "firestore/timestamp/1.0",
+      "seconds": 1787168123,
+      "nanoseconds": 379000000
+    },
+    "blocks": [
+      {
+        "type": "homeHero",
+        "visible": true,
+        "sectionId": "43",
+        "data": {},
+        "id": "hero",
+        "order": 0
+      },
+      {
+        "visible": true,
+        "data": {},
+        "itemLimit": 3,
+        "sectionId": "11",
+        "id": "meetings-preview",
+        "order": 1,
+        "type": "photoCardGrid"
+      },
+      {
+        "type": "articlesBlock",
+        "order": 2,
+        "visible": true,
+        "data": {},
+        "id": "events",
+        "sectionId": "46"
+      },
+      {
+        "visible": true,
+        "data": {},
+        "order": 3,
+        "id": "quote",
+        "sectionId": "45",
+        "type": "quote"
+      }
+    ],
+    "protected": true,
+    "title": "Úvod",
+    "slugHistory": [],
+    "createdBy": null,
+    "slug": "uvod",
+    "updatedBy": null,
+    "updatedAt": {
+      "type": "firestore/timestamp/1.0",
+      "seconds": 1787168123,
+      "nanoseconds": 379000000
+    }
+  },
+  {
+    "id": "2",
+    "createdBy": "admin@krsbrno.cz",
+    "blocks": [
+      {
+        "order": 0,
+        "sectionId": "6",
+        "id": "hero",
+        "data": {},
+        "type": "pageHero",
+        "visible": true
+      },
+      {
+        "data": {},
+        "sectionId": "7",
+        "id": "building-card",
+        "visible": true,
+        "type": "infoCard",
+        "order": 1
+      },
+      {
+        "type": "timeline",
+        "sectionId": "8",
+        "order": 2,
+        "data": {},
+        "visible": true,
+        "id": "history-timeline"
+      },
+      {
+        "sectionId": "9",
+        "order": 3,
+        "data": {},
+        "type": "ctaBlock",
+        "visible": true,
+        "id": "cta-visit"
+      }
+    ],
+    "slugHistory": [],
+    "updatedAt": {
+      "type": "firestore/timestamp/1.0",
+      "seconds": 1787145951,
+      "nanoseconds": 394000000
+    },
+    "headerGroup": "Kdo jsme",
+    "updatedBy": "admin@krsbrno.cz",
+    "createdAt": {
+      "type": "firestore/timestamp/1.0",
+      "seconds": 1787145951,
+      "nanoseconds": 394000000
+    },
+    "slug": "o-nasem-sboru",
+    "showInHeader": true,
+    "title": "O našem sboru",
+    "showInFooter": false,
+    "headerGroupId": "kdo-jsme"
+  },
+  {
+    "id": "3",
+    "updatedBy": "admin@krsbrno.cz",
+    "showInFooter": false,
+    "slugHistory": [
+      "setkavani"
+    ],
+    "updatedAt": {
+      "type": "firestore/timestamp/1.0",
+      "seconds": 1787145951,
+      "nanoseconds": 394000000
+    },
+    "showInHeader": true,
+    "headerGroup": "Co děláme",
+    "slug": "spolecna-setkavani",
+    "createdBy": "admin@krsbrno.cz",
+    "headerGroupId": "co-delame",
+    "title": "Společná setkávání",
+    "blocks": [
+      {
+        "sectionId": "10",
+        "type": "pageHero",
+        "id": "hero",
+        "order": 0,
+        "data": {},
+        "visible": true
+      },
+      {
+        "sectionId": "11",
+        "id": "regular-meetings",
+        "order": 1,
+        "visible": true,
+        "data": {},
+        "type": "photoCardGrid"
+      },
+      {
+        "order": 2,
+        "sectionId": "12",
+        "visible": true,
+        "data": {},
+        "id": "regular-events",
+        "type": "photoCardGrid"
+      },
+      {
+        "visible": true,
+        "type": "iconGrid",
+        "order": 3,
+        "sectionId": "13",
+        "data": {},
+        "id": "benefits"
+      },
+      {
+        "order": 4,
+        "data": {},
+        "sectionId": "14",
+        "visible": true,
+        "type": "quote",
+        "id": "quote-ecclesiastes"
+      },
+      {
+        "data": {},
+        "order": 5,
+        "sectionId": "15",
+        "visible": true,
+        "id": "cta-join",
+        "type": "ctaBlock"
+      }
+    ],
+    "createdAt": {
+      "type": "firestore/timestamp/1.0",
+      "seconds": 1787145951,
+      "nanoseconds": 394000000
+    }
+  },
+  {
+    "id": "4",
+    "slug": "knihovna-den",
+    "createdBy": "admin@krsbrno.cz",
+    "headerGroupId": "co-delame",
+    "updatedBy": "admin@krsbrno.cz",
+    "updatedAt": {
+      "type": "firestore/timestamp/1.0",
+      "seconds": 1787145951,
+      "nanoseconds": 394000000
+    },
+    "title": "Knihovna DEN",
+    "createdAt": {
+      "type": "firestore/timestamp/1.0",
+      "seconds": 1787145951,
+      "nanoseconds": 394000000
+    },
+    "slugHistory": [
+      "knihovna"
+    ],
+    "headerGroup": "Co děláme",
+    "blocks": [
+      {
+        "type": "pageHero",
+        "data": {},
+        "sectionId": "16",
+        "visible": true,
+        "id": "hero",
+        "order": 0
+      },
+      {
+        "id": "hours",
+        "order": 1,
+        "data": {},
+        "sectionId": "17",
+        "visible": true,
+        "type": "scheduleCard"
+      },
+      {
+        "type": "iconGrid",
+        "visible": true,
+        "sectionId": "18",
+        "id": "categories",
+        "data": {},
+        "order": 2
+      },
+      {
+        "visible": true,
+        "type": "checklistCard",
+        "id": "services",
+        "order": 3,
+        "sectionId": "19",
+        "data": {}
+      },
+      {
+        "order": 4,
+        "visible": true,
+        "data": {},
+        "id": "cta-catalog",
+        "type": "ctaBlock",
+        "sectionId": "20"
+      }
+    ],
+    "showInFooter": false,
+    "showInHeader": true
+  },
+  {
+    "id": "5",
+    "updatedBy": "admin@krsbrno.cz",
+    "updatedAt": {
+      "type": "firestore/timestamp/1.0",
+      "seconds": 1787221707,
+      "nanoseconds": 551000000
+    },
+    "headerIcon": "",
+    "createdBy": "admin@krsbrno.cz",
+    "blocks": [
+      {
+        "sectionId": "21",
+        "order": 0,
+        "data": {},
+        "id": "hero",
+        "type": "pageHero",
+        "visible": true
+      },
+      {
+        "type": "textSections",
+        "visible": true,
+        "data": {},
+        "id": "address-building",
+        "order": 1,
+        "sectionId": "22"
+      },
+      {
+        "sectionId": "23",
+        "data": {},
+        "order": 2,
+        "type": "mapEmbed",
+        "visible": true,
+        "id": "map"
+      }
+    ],
+    "headerGroupId": "",
+    "title": "Kontakt",
+    "createdAt": {
+      "type": "firestore/timestamp/1.0",
+      "seconds": 1787145951,
+      "nanoseconds": 394000000
+    },
+    "slug": "kontakt",
+    "showInHeader": true,
+    "showInFooter": false,
+    "headerGroup": "",
+    "slugHistory": []
+  },
+  {
+    "id": "6",
+    "updatedAt": {
+      "type": "firestore/timestamp/1.0",
+      "seconds": 1787145951,
+      "nanoseconds": 394000000
+    },
+    "updatedBy": "admin@krsbrno.cz",
+    "createdBy": "admin@krsbrno.cz",
+    "blocks": [
+      {
+        "id": "hero",
+        "data": {},
+        "visible": true,
+        "order": 0,
+        "sectionId": "24",
+        "type": "pageHero"
+      },
+      {
+        "sectionId": "25",
+        "type": "supportOptions",
+        "id": "support-options",
+        "order": 1,
+        "visible": true,
+        "data": {}
+      },
+      {
+        "data": {},
+        "visible": true,
+        "id": "quote-corinthians",
+        "order": 2,
+        "type": "quote",
+        "sectionId": "26"
+      },
+      {
+        "data": {},
+        "id": "usage",
+        "order": 3,
+        "type": "tagGroups",
+        "sectionId": "27",
+        "visible": true
+      }
+    ],
+    "headerGroup": "",
+    "slugHistory": [],
+    "slug": "podpora",
+    "showInFooter": false,
+    "title": "Podpora",
+    "showInHeader": true,
+    "createdAt": {
+      "type": "firestore/timestamp/1.0",
+      "seconds": 1787145951,
+      "nanoseconds": 394000000
+    }
+  },
+  {
+    "id": "7",
+    "title": "Mládež Elevate",
+    "slugHistory": [
+      "mladez"
+    ],
+    "createdBy": "admin@krsbrno.cz",
+    "slug": "mladez-elevate",
+    "showInFooter": false,
+    "updatedBy": "admin@krsbrno.cz",
+    "showInHeader": false,
+    "blocks": [
+      {
+        "order": 0,
+        "data": {},
+        "visible": true,
+        "type": "pageHero",
+        "sectionId": "28",
+        "id": "hero"
+      },
+      {
+        "sectionId": "29",
+        "order": 1,
+        "visible": true,
+        "id": "gatherings",
+        "data": {},
+        "type": "textSections"
+      },
+      {
+        "order": 2,
+        "visible": true,
+        "data": {},
+        "id": "retreats",
+        "sectionId": "30",
+        "type": "textSections"
+      },
+      {
+        "data": {},
+        "visible": true,
+        "sectionId": "31",
+        "order": 3,
+        "type": "socialCard",
+        "id": "join-calendar"
+      }
+    ],
+    "updatedAt": {
+      "type": "firestore/timestamp/1.0",
+      "seconds": 1787145951,
+      "nanoseconds": 394000000
+    },
+    "createdAt": {
+      "type": "firestore/timestamp/1.0",
+      "seconds": 1787145951,
+      "nanoseconds": 394000000
+    }
+  },
+  {
+    "id": "8",
+    "createdAt": {
+      "type": "firestore/timestamp/1.0",
+      "seconds": 1787145951,
+      "nanoseconds": 394000000
+    },
+    "title": "Dorost Poutníci",
+    "createdBy": "admin@krsbrno.cz",
+    "slugHistory": [
+      "dorost"
+    ],
+    "showInHeader": false,
+    "blocks": [
+      {
+        "type": "pageHero",
+        "sectionId": "32",
+        "id": "hero",
+        "visible": true,
+        "data": {},
+        "order": 0
+      },
+      {
+        "id": "gatherings",
+        "type": "textSections",
+        "visible": true,
+        "sectionId": "33",
+        "order": 1,
+        "data": {}
+      },
+      {
+        "order": 2,
+        "data": {},
+        "visible": true,
+        "id": "retreats",
+        "type": "textSections",
+        "sectionId": "34"
+      },
+      {
+        "visible": true,
+        "type": "socialCard",
+        "id": "join",
+        "sectionId": "35",
+        "data": {},
+        "order": 3
+      }
+    ],
+    "slug": "dorost-poutnici",
+    "updatedBy": "admin@krsbrno.cz",
+    "showInFooter": false,
+    "updatedAt": {
+      "type": "firestore/timestamp/1.0",
+      "seconds": 1787145951,
+      "nanoseconds": 394000000
+    }
+  },
+  {
+    "id": "9",
+    "showInHeader": false,
+    "createdBy": "admin@krsbrno.cz",
+    "showInFooter": true,
+    "updatedAt": {
+      "type": "firestore/timestamp/1.0",
+      "seconds": 1787176089,
+      "nanoseconds": 17000000
+    },
+    "slugHistory": [
+      "sprava-sboru"
+    ],
+    "slug": "kdo-spravuje-sbor",
+    "updatedBy": "admin@krsbrno.cz",
+    "headerGroupId": "",
+    "title": "Kdo spravuje sbor",
+    "blocks": [
+      {
+        "type": "pageHero",
+        "id": "hero",
+        "order": 0,
+        "sectionId": "36",
+        "visible": true,
+        "data": {}
+      },
+      {
+        "data": {},
+        "order": 1,
+        "visible": true,
+        "type": "cardGrid",
+        "sectionId": "37",
+        "id": "matrix"
+      }
+    ],
+    "createdAt": {
+      "type": "firestore/timestamp/1.0",
+      "seconds": 1787145951,
+      "nanoseconds": 394000000
+    }
+  }
+]

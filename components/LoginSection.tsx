@@ -2,10 +2,10 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { Lock, Mail, ArrowLeft, CheckCircle2, AlertCircle, Eye, EyeOff, ShieldCheck, UserCheck } from 'lucide-react';
+import Link from 'next/link';
+import { Lock, Mail, ArrowLeft, CheckCircle2, AlertCircle, Eye, EyeOff, UserCheck } from 'lucide-react';
 import { getPathForTab } from '@/lib/routes';
-import { signInWithEmailAndPassword, sendPasswordResetEmail } from 'firebase/auth';
-import { auth } from '@/lib/firebase';
+import { login } from '@/lib/actions/auth';
 
 interface LoginSectionProps {
   setActiveTab?: (tab: string) => void;
@@ -19,7 +19,6 @@ export default function LoginSection({ setActiveTab }: LoginSectionProps) {
   const [isLoading, setIsLoading] = useState(false);
   const [successMessage, setSuccessMessage] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
-  const [infoNotice, setInfoNotice] = useState('');
 
   const handleNavigateHome = (e?: React.MouseEvent) => {
     if (e && (e.metaKey || e.ctrlKey || e.shiftKey || e.button === 1)) {
@@ -39,7 +38,6 @@ export default function LoginSection({ setActiveTab }: LoginSectionProps) {
     e.preventDefault();
     setErrorMessage('');
     setSuccessMessage('');
-    setInfoNotice('');
 
     if (!email || !password) {
       setErrorMessage('Prosím vyplňte e-mail i heslo.');
@@ -48,37 +46,16 @@ export default function LoginSection({ setActiveTab }: LoginSectionProps) {
 
     setIsLoading(true);
     try {
-      await signInWithEmailAndPassword(auth, email, password);
+      const result = await login(email, password);
       setIsLoading(false);
+      if (!result.ok) {
+        setErrorMessage(result.error || 'Při přihlašování došlo k chybě. Zkuste to prosím znovu.');
+        return;
+      }
       router.push('/admin');
-    } catch (error: any) {
+    } catch {
       setIsLoading(false);
-      // Basic error translation
-      if (error.code === 'auth/invalid-credential' || error.code === 'auth/user-not-found' || error.code === 'auth/wrong-password') {
-         setErrorMessage('Nesprávný e-mail nebo heslo.');
-      } else if (error.code === 'auth/too-many-requests') {
-         setErrorMessage('Příliš mnoho neúspěšných pokusů. Zkuste to prosím později.');
-      } else {
-         setErrorMessage('Při přihlašování došlo k chybě. Zkuste to prosím znovu.');
-      }
-    }
-  };
-
-  const handleResetPassword = async () => {
-    if (!email) {
-      setErrorMessage('Pro obnovu hesla zadejte nejprve svůj e-mail.');
-      return;
-    }
-    try {
-      await sendPasswordResetEmail(auth, email);
-      setInfoNotice('E-mail pro obnovu hesla byl odeslán. Zkontrolujte prosím svou schránku.');
-      setErrorMessage('');
-    } catch (error: any) {
-      if (error.code === 'auth/user-not-found') {
-        setErrorMessage('Uživatel s tímto e-mailem nebyl nalezen.');
-      } else {
-        setErrorMessage('Při odesílání e-mailu pro obnovu hesla došlo k chybě.');
-      }
+      setErrorMessage('Při přihlašování došlo k chybě. Zkuste to prosím znovu.');
     }
   };
 
@@ -144,14 +121,6 @@ export default function LoginSection({ setActiveTab }: LoginSectionProps) {
               </div>
             )}
 
-            {/* Info / Reset Message */}
-            {infoNotice && (
-              <div className="bg-amber-50 border border-amber-200 rounded-xl p-3.5 flex items-start space-x-3 text-amber-900 text-xs sm:text-sm animate-in fade-in duration-150">
-                <ShieldCheck className="w-5 h-5 text-amber-600 shrink-0 mt-0.5" />
-                <span>{infoNotice}</span>
-              </div>
-            )}
-
             {/* Email Field */}
             <div className="space-y-1.5">
               <label className="block text-xs font-bold uppercase tracking-wider text-neutral-600">
@@ -178,13 +147,12 @@ export default function LoginSection({ setActiveTab }: LoginSectionProps) {
                 <label className="block text-xs font-bold uppercase tracking-wider text-neutral-600">
                   Heslo
                 </label>
-                <button 
-                  type="button" 
-                  onClick={handleResetPassword} 
-                  className="text-xs font-medium text-[#c93838] hover:underline cursor-pointer bg-transparent border-0 p-0"
+                <Link
+                  href="/forgot-password"
+                  className="text-xs font-medium text-[#c93838] hover:underline"
                 >
                   Zapomněli jste heslo?
-                </button>
+                </Link>
               </div>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-neutral-400">

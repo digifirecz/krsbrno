@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import BlockRenderer from '@/components/blocks/BlockRenderer';
-import { getPageBlocks } from '@/lib/pages';
+import { getPageBlocks } from '@/lib/actions/pages';
 import type { BlockInstance } from '@/lib/blocks/types';
 
 export default function CustomPageSection({ pageId }: { pageId: string }) {

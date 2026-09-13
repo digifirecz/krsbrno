@@ -1,7 +1,8 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { getNavConfig, type PageNavEntry } from '@/lib/pages';
+import { getNavConfig } from '@/lib/actions/pages';
+import type { PageNavEntry } from '@/lib/pages';
 
 /**
  * Per-page header/footer visibility, driven by "Správa stránek" (see /admin/navigace).

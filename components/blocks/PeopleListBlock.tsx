@@ -23,7 +23,7 @@ export default function PeopleListBlock({ data }: { data: PeopleListData }) {
                   </h2>
                 )}
                 {data.subheading && (
-                  <p className="text-sm text-neutral-500 font-sans">
+                  <p className="text-sm sm:text-base text-neutral-500 font-sans">
                     {data.subheading}
                   </p>
                 )}

@@ -23,14 +23,14 @@ export default function PageHeroBlock({ data }: { data: PageHeroData }) {
           {(data.description || data.highlight) && (
             <div className="space-y-4 max-w-3xl mx-auto">
               {data.description && (
-                <p className="text-sm text-neutral-700 font-sans leading-relaxed whitespace-pre-line">
+                <p className="text-sm sm:text-base text-neutral-700 font-sans leading-relaxed whitespace-pre-line">
                   {data.description}
                 </p>
               )}
               {data.highlight && (
-                <div className="bg-red-50/80 border border-red-100/90 rounded-xl px-5 py-3 text-sm text-neutral-700 font-sans shadow-2xs whitespace-pre-line">
+                <p className="italic font-serif text-sm sm:text-base text-[#c93838] leading-relaxed whitespace-pre-line">
                   {data.highlight}
-                </div>
+                </p>
               )}
             </div>
           )}

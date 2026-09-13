@@ -42,7 +42,7 @@ export default function TextSectionsBlock({ data }: { data: TextSectionsData }) 
                     </h2>
                   </div>
 
-                  <div className="text-xs sm:text-sm text-neutral-600 space-y-3 font-sans leading-relaxed">
+                  <div className="text-sm sm:text-base text-neutral-600 space-y-3 font-sans leading-relaxed">
                     {section.text && (
                       <div
                         className="[&_a]:text-[#c93838] [&_a]:underline [&_ul]:list-disc [&_ul]:pl-5 [&_ol]:list-decimal [&_ol]:pl-5 [&_p]:mb-3 [&_p:last-child]:mb-0"

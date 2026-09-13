@@ -50,7 +50,7 @@ export default function ChecklistCardBlock({ data }: { data: ChecklistCardData }
                   </div>
                 )}
                 {data.noteText && (
-                  <p className="text-xs text-neutral-700 leading-relaxed whitespace-pre-line">{data.noteText}</p>
+                  <p className="text-xs sm:text-sm text-neutral-700 leading-relaxed whitespace-pre-line">{data.noteText}</p>
                 )}
               </div>
             )}

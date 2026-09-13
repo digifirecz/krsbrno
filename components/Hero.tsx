@@ -16,10 +16,10 @@ export default function Hero({ setActiveTab }: HeroProps) {
       <div className="absolute top-1/2 -right-24 w-96 h-96 bg-amber-100/30 rounded-full blur-3xl pointer-events-none" />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-8 items-center">
-          
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center">
+
           {/* Left Text Content */}
-          <div className="lg:col-span-6 space-y-6">
+          <div className="lg:col-span-6 space-y-6 max-w-xl">
             
             {/* Top Pill Tag */}
             <div className="inline-flex items-center space-x-2 px-3.5 py-1.5 rounded-full bg-red-50 text-[#c93838] border border-red-100/80 text-xs font-bold tracking-wide shadow-2xs">
@@ -33,7 +33,7 @@ export default function Hero({ setActiveTab }: HeroProps) {
             </h1>
 
             {/* Paragraphs */}
-            <div className="space-y-3.5 text-sm text-neutral-600 leading-relaxed font-sans">
+            <div className="space-y-3.5 text-sm sm:text-base text-neutral-600 leading-relaxed font-sans">
               <p>
                 Věříme, že Bůh proměňuje životy a přináší skutečnou radost a naději v dnešním světě. Poznáváme ho skrze Ježíše Krista, který nám ukázal, jaký Bůh skutečně je.
               </p>

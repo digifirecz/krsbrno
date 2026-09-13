@@ -51,7 +51,7 @@ export default function BadgeCardBlock({ data }: { data: BadgeCardData }) {
           )}
 
           {data.text && (
-            <p className="text-sm text-neutral-700 font-sans leading-relaxed whitespace-pre-line">
+            <p className="text-sm sm:text-base text-neutral-700 font-sans leading-relaxed whitespace-pre-line">
               {data.text}
             </p>
           )}

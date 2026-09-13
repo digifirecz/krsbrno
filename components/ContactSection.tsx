@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import BlockRenderer from '@/components/blocks/BlockRenderer';
-import { getPageBlocks } from '@/lib/pages';
+import { getPageBlocks } from '@/lib/actions/pages';
 import { PAGE_IDS } from '@/lib/blocks/pageRegistry';
 import type { BlockInstance } from '@/lib/blocks/types';
 import {
@@ -121,7 +121,7 @@ export default function ContactSection() {
                 </div>
                 <h2 className="text-2xl font-extrabold text-neutral-900 font-serif">Napište nám zprávu</h2>
               </div>
-              <p className="text-xs sm:text-sm text-neutral-600 mb-6 font-sans">
+              <p className="text-sm sm:text-base text-neutral-600 mb-6 font-sans">
                 Máte dotaz k programu, víře nebo hledáte duchovní rozhovor? Vyplňte formulář a my se vám rádi ozveme.
               </p>
 

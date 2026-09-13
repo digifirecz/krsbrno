@@ -28,11 +28,12 @@ import ArticlesBlockEditor from '@/components/admin/blocks/ArticlesBlockEditor';
 import AddPageModal from '@/components/admin/AddPageModal';
 import ConfirmModal from '@/components/admin/blocks/ConfirmModal';
 import { useToast } from '@/components/admin/ToastProvider';
-import { getPageDoc, savePageBlocks, deletePage, slugify, getNavGroups, type NavGroup } from '@/lib/pages';
-import { getSections, type Section } from '@/lib/sections';
-import { getRole, type Role } from '@/lib/roles';
-import { auth } from '@/lib/firebase';
-import { onAuthStateChanged } from 'firebase/auth';
+import { getPageDoc, savePageBlocks, deletePage, getNavGroups } from '@/lib/actions/pages';
+import { slugify } from '@/lib/pages';
+import type { NavGroup } from '@/lib/pages';
+import { getSections } from '@/lib/actions/sections';
+import type { Section } from '@/lib/sections';
+import type { Role } from '@/lib/roles';
 import { MANAGEABLE_PAGES } from '@/lib/blocks/pageRegistry';
 import { getBlockTypeLabel } from '@/lib/blocks/registry';
 import type { BlockInstance, PageHeroData, HomeHeroData, IconGridData, QuoteData, CtaBlockData, TimelineData, InfoCardData, PhotoCardGridData, ScheduleCardData, ChecklistCardData, ListCardData, CardGridData, BadgeCardData, TextSectionsData, MapEmbedData, TagGroupsData, SupportOptionsData, SocialCardData, PeopleListData, ArticlesBlockData } from '@/lib/blocks/types';
@@ -69,20 +70,12 @@ export default function AdminPageBlocksEditor() {
   const [sections, setSections] = useState<Section[]>([]);
   const [pendingDeleteId, setPendingDeleteId] = useState<string | null>(null);
   const [deletePageConfirmOpen, setDeletePageConfirmOpen] = useState(false);
-  const [role, setRole] = useState<Role | null>(null);
   const [headerGroupId, setHeaderGroupId] = useState('');
   const [headerIcon, setHeaderIcon] = useState<string | undefined>(undefined);
   const [savedHeaderGroupId, setSavedHeaderGroupId] = useState('');
   const [savedHeaderIcon, setSavedHeaderIcon] = useState<string | undefined>(undefined);
   const [navGroups, setNavGroups] = useState<NavGroup[]>([]);
   const [isProtected, setIsProtected] = useState(false);
-
-  useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (u) => {
-      if (u) getRole(u.uid).then(setRole).catch(() => setRole('sprava'));
-    });
-    return () => unsubscribe();
-  }, []);
 
   useEffect(() => {
     getNavGroups().then(setNavGroups).catch(() => {});
@@ -315,7 +308,7 @@ export default function AdminPageBlocksEditor() {
     }
   };
 
-  const handleDeletePage = async () => {
+  const handleDeletePage = async (role: Role) => {
     if (role !== 'admin' || isProtected) return;
     try {
       await deletePage(pageId);
@@ -376,13 +369,13 @@ export default function AdminPageBlocksEditor() {
 
                 <div className="flex items-center flex-wrap gap-x-4 gap-y-2 mt-3">
                   <div className="flex items-center space-x-2">
-                    <label className="text-xs font-bold text-neutral-500 shrink-0">Skupina</label>
+                    <label className="text-xs font-bold text-neutral-500 shrink-0">Kategorie</label>
                     <select
                       value={headerGroupId}
                       onChange={(e) => handleGroupChange(e.target.value)}
                       className="px-2.5 py-1.5 rounded-lg border border-neutral-200 text-xs bg-white focus:outline-none focus:ring-2 focus:ring-[#c93838]/30 focus:border-[#c93838]"
                     >
-                      <option value="">Bez skupiny</option>
+                      <option value="">Bez kategorie</option>
                       {navGroups.map((g) => (
                         <option key={g.id} value={g.id}>{g.label}</option>
                       ))}
@@ -415,7 +408,7 @@ export default function AdminPageBlocksEditor() {
                     <Lock className="w-4 h-4" />
                   </span>
                 ) : (
-                  role === 'admin' && (
+                  user.role === 'admin' && (
                     <button
                       onClick={() => setDeletePageConfirmOpen(true)}
                       title="Smazat stránku"
@@ -461,7 +454,7 @@ export default function AdminPageBlocksEditor() {
 
           {navDirty && (
             <p className="text-xs font-medium text-amber-700 bg-amber-50 border border-amber-200 rounded-lg px-3 py-2 mb-6">
-              Máte neuloženou změnu skupiny nebo ikony. Projeví se až po kliknutí na „Uložit změny“.
+              Máte neuloženou změnu kategorie nebo ikony. Projeví se až po kliknutí na „Uložit změny“.
             </p>
           )}
 
@@ -747,7 +740,7 @@ export default function AdminPageBlocksEditor() {
             title="Smazat stránku"
             message={`Opravdu chcete stránku „${title}“ trvale smazat i s celým jejím obsahem? Zmizí i z navigace webu. Tuto akci nelze vzít zpět.`}
             onCancel={() => setDeletePageConfirmOpen(false)}
-            onConfirm={handleDeletePage}
+            onConfirm={() => handleDeletePage(user.role as Role)}
           />
         </div>
       )}

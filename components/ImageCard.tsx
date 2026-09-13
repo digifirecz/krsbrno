@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
-import Image from 'next/image';
+import SafeImage from '@/components/SafeImage';
 import { X, Maximize2 } from 'lucide-react';
 
 interface ImageCardProps {
@@ -67,7 +67,7 @@ export default function ImageCard({
         className={`relative ${fixedWidth ? 'w-72 max-w-full mx-auto' : 'w-full'} rounded-2xl overflow-hidden ${aspectRatio} border border-neutral-200/80 shadow-xs bg-neutral-100 group cursor-pointer ${className}`}
         title="Kliknutím zvětšíte obrázek"
       >
-        <Image
+        <SafeImage
           src={src}
           alt={alt}
           fill
@@ -112,7 +112,7 @@ export default function ImageCard({
               onClick={(e) => e.stopPropagation()}
             >
               <div className="relative w-full h-[80vh] sm:h-[85vh] flex items-center justify-center">
-                <Image
+                <SafeImage
                   src={src}
                   alt={alt}
                   fill

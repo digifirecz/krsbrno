@@ -112,7 +112,15 @@ export default function ChurchApp({ initialTab = 'home' }: ChurchAppProps) {
         {activeTab === 'home' && (
           <div>
             {homePageId ? (
-              <CustomPageSection pageId={homePageId} />
+              <CustomPageSection
+                pageId={homePageId}
+                fallback={
+                  <>
+                    <Hero setActiveTab={setActiveTab} />
+                    <Meetings isHomePage setActiveTab={setActiveTab} />
+                  </>
+                }
+              />
             ) : (
               <>
                 <Hero setActiveTab={setActiveTab} />

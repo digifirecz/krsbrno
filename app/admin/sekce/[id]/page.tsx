@@ -220,7 +220,7 @@ export default function AdminSectionEditor() {
                     <CtaBlockEditor data={data as CtaBlockData} onChange={setData} pageId={sectionId} />
                   )}
                   {section.type === 'timeline' && (
-                    <TimelineEditor data={data as TimelineData} onChange={setData} />
+                    <TimelineEditor data={data as TimelineData} onChange={setData} pageId={sectionId} />
                   )}
                   {section.type === 'infoCard' && (
                     <InfoCardEditor data={data as InfoCardData} onChange={setData} pageId={sectionId} />

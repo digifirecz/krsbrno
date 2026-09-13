@@ -1,6 +1,8 @@
 'use client';
 
 import { useState } from 'react';
+import SafeImage from '@/components/SafeImage';
+import { focalCropStyle } from '@/lib/blocks/photoFocal';
 import { Calendar, ChevronDown } from 'lucide-react';
 import type { TimelineData } from '@/lib/blocks/types';
 
@@ -44,37 +46,52 @@ export default function TimelineBlock({ data }: { data: TimelineData }) {
                   <div className={`w-full md:w-1/2 pl-10 md:pl-0 ${isEven ? 'md:order-2 md:pl-8 md:pr-0' : 'md:order-1 md:pr-8 md:pl-0'}`}>
                     <div
                       onClick={() => toggleExpand(idx)}
-                      className={`bg-neutral-50/90 p-4 sm:p-5 rounded-2xl border transition-all duration-200 cursor-pointer select-none group ${
+                      className={`bg-neutral-50/90 rounded-2xl border transition-all duration-200 cursor-pointer select-none group overflow-hidden ${
                         isExpanded
                           ? 'border-[#c93838] bg-white shadow-md ring-1 ring-[#c93838]/20'
                           : 'border-neutral-200/80 hover:border-[#c93838]/40 hover:bg-white shadow-2xs'
                       }`}
                     >
-                      <div className="flex items-center justify-between gap-2">
-                        <span className="inline-flex items-center space-x-1.5 px-2.5 py-0.5 rounded-md bg-[#c93838] text-white font-extrabold text-xs tracking-wider shadow-2xs font-mono">
-                          <Calendar className="w-3 h-3" />
-                          <span>{item.year}</span>
-                        </span>
-                        <div className={`p-1 rounded-full transition-transform duration-200 ${isExpanded ? 'bg-red-50 text-[#c93838] rotate-180' : 'text-neutral-400 group-hover:text-neutral-700'}`}>
-                          <ChevronDown className="w-4 h-4" />
+                      {item.photo?.src && (
+                        <div className="relative h-32 sm:h-36 w-full overflow-hidden bg-neutral-100">
+                          <SafeImage
+                            src={item.photo.src}
+                            alt={item.photo.caption || item.title}
+                            fill
+                            className="object-cover"
+                            style={focalCropStyle(item.photo)}
+                            referrerPolicy="no-referrer"
+                          />
                         </div>
-                      </div>
+                      )}
 
-                      <h3 className="text-base font-bold text-neutral-900 font-serif mt-2 group-hover:text-[#c93838] transition-colors">
-                        {item.title}
-                      </h3>
+                      <div className="p-4 sm:p-5">
+                        <div className="flex items-center justify-between gap-2">
+                          <span className="inline-flex items-center space-x-1.5 px-2.5 py-0.5 rounded-md bg-[#c93838] text-white font-extrabold text-xs tracking-wider shadow-2xs font-mono">
+                            <Calendar className="w-3 h-3" />
+                            <span>{item.year}</span>
+                          </span>
+                          <div className={`p-1 rounded-full transition-transform duration-200 ${isExpanded ? 'bg-red-50 text-[#c93838] rotate-180' : 'text-neutral-400 group-hover:text-neutral-700'}`}>
+                            <ChevronDown className="w-4 h-4" />
+                          </div>
+                        </div>
 
-                      <div
-                        className={`grid transition-[grid-template-rows] duration-300 ease-in-out ${
-                          isExpanded ? 'grid-rows-[1fr]' : 'grid-rows-[0fr]'
-                        }`}
-                      >
-                        <div className="overflow-hidden">
-                          {item.text && (
-                            <div className="mt-2.5 pt-2.5 border-t border-neutral-100 text-sm sm:text-base text-neutral-600 leading-relaxed font-sans whitespace-pre-line">
-                              {item.text}
-                            </div>
-                          )}
+                        <h3 className="text-base font-bold text-neutral-900 font-serif mt-2 group-hover:text-[#c93838] transition-colors">
+                          {item.title}
+                        </h3>
+
+                        <div
+                          className={`grid transition-[grid-template-rows] duration-300 ease-in-out ${
+                            isExpanded ? 'grid-rows-[1fr]' : 'grid-rows-[0fr]'
+                          }`}
+                        >
+                          <div className="overflow-hidden">
+                            {item.text && (
+                              <div className="mt-2.5 pt-2.5 border-t border-neutral-100 text-sm sm:text-base text-neutral-600 leading-relaxed font-sans whitespace-pre-line">
+                                {item.text}
+                              </div>
+                            )}
+                          </div>
                         </div>
                       </div>
                     </div>

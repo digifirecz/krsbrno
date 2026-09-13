@@ -605,6 +605,7 @@ export default function AdminPageBlocksEditor() {
                     <TimelineEditor
                       data={block.data as TimelineData}
                       onChange={(data) => updateBlockData(block.id, data)}
+                      pageId={pageId}
                     />
                   )}
                   {block.type === 'infoCard' && (

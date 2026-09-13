@@ -59,6 +59,7 @@ export interface TimelineItem {
   year: string;
   title: string;
   text?: string;
+  photo?: BlockPhoto;
 }
 
 export interface TimelineData {

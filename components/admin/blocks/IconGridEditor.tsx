@@ -71,6 +71,26 @@ export default function IconGridEditor({ data, onChange, pageId }: IconGridEdito
               </button>
             </div>
 
+            <div>
+              <span className="text-xs font-bold text-neutral-500 block mb-1.5">Fotka v hlavičce karty (nepovinná)</span>
+              <PhotoUpload
+                value={card.photo?.src || ''}
+                pageId={pageId}
+                aspectRatio={2}
+                focal={card.photo?.focalX !== undefined ? { x: card.photo.focalX, y: card.photo.focalY ?? 50, zoom: card.photo.zoom } : undefined}
+                onFocalChange={(f) => {
+                  const next = [...cards];
+                  next[idx] = { ...next[idx], photo: { ...next[idx].photo, src: next[idx].photo?.src || '', focalX: f.x, focalY: f.y, zoom: f.zoom } };
+                  onChange({ ...data, cards: next });
+                }}
+                onChange={(src) => {
+                  const next = [...cards];
+                  next[idx] = { ...next[idx], photo: src ? { ...next[idx].photo, src } : undefined };
+                  onChange({ ...data, cards: next });
+                }}
+              />
+            </div>
+
             <IconPicker
               value={card.icon}
               onChange={(icon) => {

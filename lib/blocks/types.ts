@@ -28,6 +28,7 @@ export interface IconGridCard {
   title: string;
   text?: string;
   items?: ChecklistItem[];
+  photo?: BlockPhoto;
 }
 
 export interface IconGridData {

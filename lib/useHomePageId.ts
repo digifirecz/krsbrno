@@ -4,12 +4,11 @@ import { useEffect, useState } from 'react';
 import { getHomePageId } from '@/lib/actions/pages';
 
 /**
- * The "Správa stránek" page chosen to render at "/", if the admin picked one
- * to override the built-in static home content. Null = not loaded yet or
- * no override configured (use the built-in content).
+ * The "Správa stránek" page chosen to render at "/". Undefined = still
+ * loading (don't render anything yet); null = loaded, no page configured.
  */
-export function useHomePageId(): string | null {
-  const [pageId, setPageId] = useState<string | null>(null);
+export function useHomePageId(): string | null | undefined {
+  const [pageId, setPageId] = useState<string | null | undefined>(undefined);
 
   useEffect(() => {
     let active = true;
@@ -17,7 +16,9 @@ export function useHomePageId(): string | null {
       .then((id) => {
         if (active) setPageId(id);
       })
-      .catch(() => {});
+      .catch(() => {
+        if (active) setPageId(null);
+      });
     return () => {
       active = false;
     };

@@ -24,7 +24,7 @@ function AuthorCell({ by, at }: { by?: string | null; at?: Date | null }) {
   if (!by && !at) return <span className="text-neutral-300">—</span>;
   return (
     <div className="leading-tight">
-      <div className="text-neutral-800 truncate">{by || '—'}</div>
+      <div className="text-neutral-800 truncate">{by || <span className="text-neutral-300">—</span>}</div>
       <div className="text-xs text-neutral-400">{fmtDate(at)}</div>
     </div>
   );

@@ -29,7 +29,7 @@ function Author({ by, at }: { by?: string | null; at?: Date | null }) {
   if (!by && !at) return <span className="text-neutral-300">—</span>;
   return (
     <div className="leading-tight">
-      <div className="text-neutral-800 truncate" title={by || undefined}>{by || '—'}</div>
+      <div className="text-neutral-800 truncate" title={by || undefined}>{by || <span className="text-neutral-300">—</span>}</div>
       <div className="text-xs text-neutral-400">{fmtDate(at)}</div>
     </div>
   );
@@ -220,7 +220,7 @@ export default function AdminArticlesListPage() {
                             <span className="font-semibold text-neutral-900">{a.title || 'Bez titulku'}</span>
                           </td>
                           <td className="px-4 py-3 align-top text-neutral-500 whitespace-nowrap leading-tight">
-                            <div>{a.dateText || '—'}</div>
+                            <div>{a.dateText || <span className="text-neutral-300">—</span>}</div>
                             {a.timeText && <div className="text-xs text-neutral-400">{a.timeText}</div>}
                           </td>
                           <td className="px-4 py-3 align-top">

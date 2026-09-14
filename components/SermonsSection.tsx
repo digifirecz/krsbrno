@@ -24,7 +24,6 @@ export default function SermonsSection() {
   const [currentId, setCurrentId] = useState<string | null>(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const audioRef = useRef<HTMLAudioElement>(null);
-  const playerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     let active = true;
@@ -60,7 +59,6 @@ export default function SermonsSection() {
   }, [sermons, activeCat, search, speakers]);
 
   const active = sermons.find((s) => s.id === currentId) || null;
-  const activeEmbedUrl = getYoutubeEmbedUrl(active?.youtubeUrl);
 
   // Load the selected recording into the audio element.
   useEffect(() => {
@@ -83,11 +81,6 @@ export default function SermonsSection() {
     setCurrentId(s.id);
     // src set by effect on next render; play once it's ready
     requestAnimationFrame(() => audioRef.current?.play().catch(() => {}));
-  };
-
-  const selectVideo = (s: Sermon) => {
-    setCurrentId(s.id);
-    playerRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
   };
 
   return (
@@ -149,11 +142,11 @@ export default function SermonsSection() {
 
               {/* Player bar */}
               {active && (
-                <div ref={playerRef} className="mb-10 bg-neutral-900 text-white rounded-2xl p-5 sm:p-6 shadow-xl border border-neutral-800 scroll-mt-24">
+                <div className="mb-10 bg-neutral-900 text-white rounded-2xl p-5 sm:p-6 shadow-xl border border-neutral-800">
                   <div className="flex flex-col md:flex-row md:items-center gap-4 md:gap-6">
                     <div className="min-w-0 md:w-64 shrink-0">
                       <span className="text-xs font-bold text-red-400 uppercase tracking-wider block">
-                        {activeEmbedUrl ? 'Vybrané video' : isPlaying ? 'Právě hraje' : 'Vybraný záznam'}
+                        {isPlaying ? 'Právě hraje' : 'Vybraný záznam'}
                       </span>
                       {active.title && (
                         <h3 className="text-base sm:text-lg font-bold font-serif text-white truncate">{active.title}</h3>
@@ -163,29 +156,17 @@ export default function SermonsSection() {
                       </p>
                     </div>
 
-                    {activeEmbedUrl ? (
-                      <div className="w-full flex-1 min-w-0 aspect-video rounded-xl overflow-hidden bg-black">
-                        <iframe
-                          src={activeEmbedUrl}
-                          className="w-full h-full"
-                          title={active.title || 'Záznam'}
-                          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                          allowFullScreen
-                        />
-                      </div>
-                    ) : (
-                      <audio
-                        ref={audioRef}
-                        controls
-                        preload="none"
-                        onPlay={() => setIsPlaying(true)}
-                        onPause={() => setIsPlaying(false)}
-                        onEnded={() => setIsPlaying(false)}
-                        className="w-full flex-1 min-w-0"
-                      >
-                        Váš prohlížeč nepodporuje přehrávání zvuku.
-                      </audio>
-                    )}
+                    <audio
+                      ref={audioRef}
+                      controls
+                      preload="none"
+                      onPlay={() => setIsPlaying(true)}
+                      onPause={() => setIsPlaying(false)}
+                      onEnded={() => setIsPlaying(false)}
+                      className="w-full flex-1 min-w-0"
+                    >
+                      Váš prohlížeč nepodporuje přehrávání zvuku.
+                    </audio>
 
                     {active.audioUrl && (
                       <a
@@ -282,13 +263,15 @@ export default function SermonsSection() {
                             </button>
 
                             {embedUrl && (
-                              <button
-                                onClick={() => selectVideo(s)}
-                                className="inline-flex items-center space-x-1.5 px-3 py-2 rounded-xl bg-neutral-50 hover:bg-neutral-100 text-neutral-700 border border-neutral-200 text-xs font-bold transition-colors cursor-pointer shrink-0"
+                              <a
+                                href={s.youtubeUrl ?? undefined}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="inline-flex items-center space-x-1.5 px-3 py-2 rounded-xl bg-neutral-50 hover:bg-neutral-100 text-neutral-700 border border-neutral-200 text-xs font-bold transition-colors shrink-0"
                               >
                                 <Youtube className="w-4 h-4 text-[#FF0000]" />
-                                <span>Video</span>
-                              </button>
+                                <span>Video na YouTube</span>
+                              </a>
                             )}
                           </div>
 

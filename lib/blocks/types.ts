@@ -169,6 +169,9 @@ export interface TagGroupsData {
 export interface VariableSymbolItem {
   code: string;
   label: string;
+  linkLabel?: string;
+  linkTarget?: string;
+  linkUrl?: string;
 }
 
 export interface SupportOptionsData {

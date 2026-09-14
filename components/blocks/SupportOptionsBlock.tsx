@@ -5,7 +5,7 @@ import SafeImage from '@/components/SafeImage';
 import ImageCard from '@/components/ImageCard';
 import { getIcon } from '@/lib/blocks/icons';
 import { getPathForTab } from '@/lib/routes';
-import { Copy, Check, QrCode, ArrowRight } from 'lucide-react';
+import { Copy, Check, QrCode, ArrowRight, ChevronRight } from 'lucide-react';
 import type { SupportOptionsData } from '@/lib/blocks/types';
 
 export default function SupportOptionsBlock({ data }: { data: SupportOptionsData }) {
@@ -112,12 +112,27 @@ export default function SupportOptionsBlock({ data }: { data: SupportOptionsData
                     Lze uvést konkrétní účel daru pomocí variabilního symbolu:
                   </span>
                   <ul className="space-y-2 text-xs font-sans">
-                    {data.financial.variableSymbols.map((vs, idx) => (
-                      <li key={idx} className="flex items-center space-x-2.5 p-2.5 bg-white rounded-xl border border-neutral-200/80">
-                        <span className="font-mono font-extrabold text-[#c93838] px-2 py-0.5 rounded bg-red-50 border border-red-100">{vs.code}</span>
-                        <span className="font-bold text-neutral-800">{vs.label}</span>
-                      </li>
-                    ))}
+                    {data.financial.variableSymbols.map((vs, idx) => {
+                      const vsHref = vs.linkUrl || (vs.linkTarget ? getPathForTab(vs.linkTarget) : undefined);
+                      const vsLinkIsExternal = !!vs.linkUrl;
+                      return (
+                        <li key={idx} className="flex items-center flex-wrap gap-x-2.5 gap-y-1 p-2.5 bg-white rounded-xl border border-neutral-200/80">
+                          <span className="font-mono font-extrabold text-[#c93838] px-2 py-0.5 rounded bg-red-50 border border-red-100">{vs.code}</span>
+                          <span className="font-bold text-neutral-800">{vs.label}</span>
+                          {vs.linkLabel && vsHref && (
+                            <a
+                              href={vsHref}
+                              target={vsLinkIsExternal ? '_blank' : undefined}
+                              rel={vsLinkIsExternal ? 'noopener noreferrer' : undefined}
+                              className="inline-flex items-center space-x-0.5 ml-auto text-[#c93838] font-bold hover:underline cursor-pointer"
+                            >
+                              <span>{vs.linkLabel}</span>
+                              <ChevronRight className="w-3 h-3" />
+                            </a>
+                          )}
+                        </li>
+                      );
+                    })}
                   </ul>
                 </div>
               )}

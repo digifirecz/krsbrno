@@ -146,36 +146,84 @@ export default function SupportOptionsEditor({ data, onChange, pageId }: Support
             </button>
           </div>
           {vs.map((item, idx) => (
-            <div key={idx} className="flex items-center space-x-2">
-              <input
-                type="text"
-                value={item.code}
-                onChange={(e) => {
-                  const next = [...vs];
-                  next[idx] = { ...next[idx], code: e.target.value };
-                  onChange({ ...data, financial: { ...data.financial, variableSymbols: next } });
-                }}
-                placeholder="Kód"
-                className={`${fieldBase} w-28 shrink-0`}
-              />
-              <input
-                type="text"
-                value={item.label}
-                onChange={(e) => {
-                  const next = [...vs];
-                  next[idx] = { ...next[idx], label: e.target.value };
-                  onChange({ ...data, financial: { ...data.financial, variableSymbols: next } });
-                }}
-                placeholder="Účel"
-                className={`${fieldBase} flex-1 min-w-0`}
-              />
-              <button
-                type="button"
-                onClick={() => setDeleteVsIdx(idx)}
-                className="text-neutral-400 hover:text-[#c93838] cursor-pointer shrink-0"
-              >
-                <Trash2 className="w-3.5 h-3.5" />
-              </button>
+            <div key={idx} className="p-2.5 rounded-xl border border-neutral-200 space-y-2 bg-white">
+              <div className="flex items-center space-x-2">
+                <input
+                  type="text"
+                  value={item.code}
+                  onChange={(e) => {
+                    const next = [...vs];
+                    next[idx] = { ...next[idx], code: e.target.value };
+                    onChange({ ...data, financial: { ...data.financial, variableSymbols: next } });
+                  }}
+                  placeholder="Kód"
+                  className={`${fieldBase} w-28 shrink-0`}
+                />
+                <input
+                  type="text"
+                  value={item.label}
+                  onChange={(e) => {
+                    const next = [...vs];
+                    next[idx] = { ...next[idx], label: e.target.value };
+                    onChange({ ...data, financial: { ...data.financial, variableSymbols: next } });
+                  }}
+                  placeholder="Účel"
+                  className={`${fieldBase} flex-1 min-w-0`}
+                />
+                <button
+                  type="button"
+                  onClick={() => setDeleteVsIdx(idx)}
+                  className="text-neutral-400 hover:text-[#c93838] cursor-pointer shrink-0"
+                >
+                  <Trash2 className="w-3.5 h-3.5" />
+                </button>
+              </div>
+              <div className="flex items-center space-x-2">
+                <input
+                  type="text"
+                  value={item.linkLabel || ''}
+                  onChange={(e) => {
+                    const next = [...vs];
+                    next[idx] = { ...next[idx], linkLabel: e.target.value || undefined };
+                    onChange({ ...data, financial: { ...data.financial, variableSymbols: next } });
+                  }}
+                  placeholder="Text odkazu (nepovinné, např. více o rodině)"
+                  className={`${fieldBase} flex-1 min-w-0`}
+                />
+                <select
+                  value={item.linkUrl !== undefined ? '__external__' : (item.linkTarget || '')}
+                  onChange={(e) => {
+                    const value = e.target.value;
+                    const next = [...vs];
+                    if (value === '__external__') {
+                      next[idx] = { ...next[idx], linkTarget: undefined, linkUrl: next[idx].linkUrl || '' };
+                    } else {
+                      next[idx] = { ...next[idx], linkTarget: value || undefined, linkUrl: undefined };
+                    }
+                    onChange({ ...data, financial: { ...data.financial, variableSymbols: next } });
+                  }}
+                  className={`${fieldBase} bg-white w-40 shrink-0`}
+                >
+                  <option value="">Bez odkazu</option>
+                  {TARGET_OPTIONS.map(({ tab, label }) => (
+                    <option key={tab} value={tab}>{label}</option>
+                  ))}
+                  <option value="__external__">Externí URL</option>
+                </select>
+              </div>
+              {item.linkUrl !== undefined && (
+                <input
+                  type="text"
+                  value={item.linkUrl}
+                  onChange={(e) => {
+                    const next = [...vs];
+                    next[idx] = { ...next[idx], linkUrl: e.target.value };
+                    onChange({ ...data, financial: { ...data.financial, variableSymbols: next } });
+                  }}
+                  placeholder="https://…"
+                  className={fieldClass}
+                />
+              )}
             </div>
           ))}
         </div>

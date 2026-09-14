@@ -224,7 +224,11 @@ export default function AdminSermonsListPage() {
                         <tr key={s.id} className="border-b border-neutral-100 last:border-0 hover:bg-neutral-50/60">
                           <td className="px-4 py-3 text-neutral-500 whitespace-nowrap tabular-nums">{formatDate(s.date)}</td>
                           <td className="px-4 py-3">
-                            <span className="font-semibold text-neutral-900">{s.title || 'Bez názvu'}</span>
+                            {s.title ? (
+                              <span className="font-semibold text-neutral-900">{s.title}</span>
+                            ) : (
+                              <span className="text-neutral-300">—</span>
+                            )}
                           </td>
                           {showCatCol && (
                             <td className="px-4 py-3">

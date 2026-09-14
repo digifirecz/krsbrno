@@ -244,7 +244,7 @@ export default function SermonsSection() {
                           <button
                             onClick={() => selectAndPlay(s)}
                             disabled={!s.audioUrl}
-                            className="inline-flex items-center space-x-2 px-4 py-2 rounded-xl bg-red-50 hover:bg-red-100 text-[#c93838] border border-red-100 text-xs font-bold transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+                            className="inline-flex items-center space-x-2 px-4 py-2 rounded-xl bg-red-50 hover:bg-red-100 text-[#c93838] border border-red-100 text-xs font-bold transition-colors cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed"
                           >
                             {thisPlaying ? (
                               <>

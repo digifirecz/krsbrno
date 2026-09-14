@@ -10,7 +10,7 @@ import AudioUpload from '@/components/admin/blocks/AudioUpload';
 import CategorySelect from '@/components/admin/blocks/CategorySelect';
 import SpeakerSelect from '@/components/admin/blocks/SpeakerSelect';
 import { useToast } from '@/components/admin/ToastProvider';
-import { getSermon, updateSermon, deleteSermon } from '@/lib/actions/sermons';
+import { getSermon, createSermon, updateSermon, deleteSermon } from '@/lib/actions/sermons';
 import { ArrowLeft, Trash2, Save, CheckCircle2, Eye, EyeOff } from 'lucide-react';
 
 const fieldClass =
@@ -28,6 +28,7 @@ export default function AdminSermonEditor() {
   const params = useParams<{ id: string }>();
   const router = useRouter();
   const sermonId = params.id;
+  const isNew = sermonId === 'novy';
   const { showToast } = useToast();
 
   const [title, setTitle] = useState('');
@@ -41,8 +42,13 @@ export default function AdminSermonEditor() {
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
   const [deleteOpen, setDeleteOpen] = useState(false);
+  const [speakerError, setSpeakerError] = useState(false);
 
   useEffect(() => {
+    if (isNew) {
+      setLoading(false);
+      return;
+    }
     let active = true;
     getSermon(sermonId)
       .then((s) => {
@@ -62,32 +68,41 @@ export default function AdminSermonEditor() {
     return () => {
       active = false;
     };
-  }, [sermonId]);
+  }, [sermonId, isNew]);
 
   return (
     <RequireAuth>
       {(user) => {
         const handleSave = async () => {
+          if (!speakerId) {
+            setSpeakerError(true);
+            showToast('Řečník je povinný.', 'error');
+            return;
+          }
+          setSpeakerError(false);
           setSaving(true);
+          const patch = {
+            title: title.trim(),
+            speakerId: speakerId || null,
+            date: dateStr ? new Date(`${dateStr}T12:00:00`) : null,
+            categoryId: categoryId || null,
+            description: description.trim() || undefined,
+            audioUrl: audioUrl || undefined,
+            visible,
+          };
           try {
-            await updateSermon(
-              sermonId,
-              {
-                title: title.trim(),
-                speakerId: speakerId || null,
-                date: dateStr ? new Date(`${dateStr}T12:00:00`) : null,
-                categoryId: categoryId || null,
-                description: description.trim() || undefined,
-                audioUrl: audioUrl || undefined,
-                visible,
-              },
-              user.email,
-            );
+            if (isNew) {
+              const newId = await createSermon(patch, user.email);
+              showToast(visible ? 'Záznam byl vytvořen.' : 'Záznam byl vytvořen a je skrytý na webu.');
+              router.replace(`/admin/zaznamy/${newId}`);
+              return;
+            }
+            await updateSermon(sermonId, patch, user.email);
             setSaved(true);
             setTimeout(() => setSaved(false), 3000);
             showToast(visible ? 'Záznam byl uložen.' : 'Záznam byl uložen a je skrytý na webu.');
           } catch (err) {
-            showToast(`Záznam se nepodařilo uložit${err instanceof Error ? `: ${err.message}` : '.'}`, 'error');
+            showToast(`Záznam se nepodařilo ${isNew ? 'vytvořit' : 'uložit'}${err instanceof Error ? `: ${err.message}` : '.'}`, 'error');
           } finally {
             setSaving(false);
           }
@@ -122,7 +137,7 @@ export default function AdminSermonEditor() {
                     className="inline-flex items-center justify-center space-x-2 px-5 py-2.5 rounded-xl bg-[#c93838] hover:bg-[#b02f2f] text-white font-bold text-sm transition-all shadow-sm hover:shadow-md active:scale-[0.98] cursor-pointer disabled:opacity-60"
                   >
                     {saved ? <CheckCircle2 className="w-4 h-4" /> : <Save className="w-4 h-4" />}
-                    <span>{saving ? 'Ukládám…' : saved ? 'Uloženo' : 'Uložit'}</span>
+                    <span>{saving ? (isNew ? 'Vytvářím…' : 'Ukládám…') : saved ? 'Uloženo' : isNew ? 'Vytvořit' : 'Uložit'}</span>
                   </button>
                   <button
                     onClick={() => setVisible((v) => !v)}
@@ -136,14 +151,16 @@ export default function AdminSermonEditor() {
                   >
                     {visible ? <Eye className="w-4 h-4" /> : <EyeOff className="w-4 h-4" />}
                   </button>
-                  <button
-                    onClick={() => setDeleteOpen(true)}
-                    title="Smazat záznam"
-                    aria-label="Smazat záznam"
-                    className="inline-flex items-center justify-center w-11 h-11 rounded-xl border border-neutral-200 bg-white hover:border-[#c93838] hover:bg-red-50 text-neutral-500 hover:text-[#c93838] transition-all cursor-pointer"
-                  >
-                    <Trash2 className="w-4 h-4" />
-                  </button>
+                  {!isNew && (
+                    <button
+                      onClick={() => setDeleteOpen(true)}
+                      title="Smazat záznam"
+                      aria-label="Smazat záznam"
+                      className="inline-flex items-center justify-center w-11 h-11 rounded-xl border border-neutral-200 bg-white hover:border-[#c93838] hover:bg-red-50 text-neutral-500 hover:text-[#c93838] transition-all cursor-pointer"
+                    >
+                      <Trash2 className="w-4 h-4" />
+                    </button>
+                  )}
                 </div>
               )}
             </div>
@@ -161,7 +178,6 @@ export default function AdminSermonEditor() {
                       type="text"
                       value={title}
                       onChange={(e) => setTitle(e.target.value)}
-                      placeholder="Např. Naděje, která nezklame"
                       className="w-full text-lg sm:text-xl font-extrabold text-neutral-900 font-serif px-3.5 py-2 rounded-xl border border-neutral-200 bg-white focus:border-[#c93838]/50 focus:outline-none focus:ring-2 focus:ring-[#c93838]/20 transition-colors"
                     />
                   </div>
@@ -183,8 +199,17 @@ export default function AdminSermonEditor() {
                   </div>
 
                   <div>
-                    <label className={labelClass}>Řečník</label>
-                    <SpeakerSelect value={speakerId} onChange={setSpeakerId} />
+                    <label className={labelClass}>
+                      Řečník <span className="text-[#c93838]">*</span>
+                    </label>
+                    <SpeakerSelect
+                      value={speakerId}
+                      onChange={(v) => {
+                        setSpeakerId(v);
+                        if (v) setSpeakerError(false);
+                      }}
+                    />
+                    {speakerError && <p className="text-xs font-medium text-[#c93838] mt-1">Řečník je povinný.</p>}
                   </div>
                 </div>
 
@@ -195,8 +220,8 @@ export default function AdminSermonEditor() {
                   </div>
 
                   <div>
-                    <label className={labelClass}>Popis (nepovinné)</label>
-                    <RichTextEditor value={description} onChange={setDescription} placeholder="Krátký popis, verše, poznámky…" />
+                    <label className={labelClass}>Popis</label>
+                    <RichTextEditor value={description} onChange={setDescription} placeholder="" />
                   </div>
                 </div>
               </div>

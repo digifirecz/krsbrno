@@ -169,19 +169,23 @@ export async function getSermon(id: string): Promise<Sermon | null> {
   return row ? fromRow(row) : null;
 }
 
-export async function createSermon(createdBy?: string | null): Promise<string> {
+// Only called once the admin has filled out the form and hit "Vytvořit" —
+// no blank row is persisted just from clicking "Přidat záznam". Speaker is
+// required (validated in the action layer / UI); title is intentionally
+// optional, unlike articles.
+export async function createSermon(patch: SermonPatch, createdBy?: string | null): Promise<string> {
   const id = await nextId('sermonCounter');
   const now = new Date();
   await db.insert(sermons).values({
     id,
-    title: '',
-    speakerId: null,
-    date: now,
-    categoryId: null,
-    description: null,
-    audioUrl: null,
-    visible: true,
-    order: 0,
+    title: patch.title?.trim() || '',
+    speakerId: patch.speakerId || null,
+    date: patch.date ?? now,
+    categoryId: patch.categoryId || null,
+    description: patch.description || null,
+    audioUrl: patch.audioUrl || null,
+    visible: patch.visible ?? true,
+    order: patch.order ?? 0,
     createdAt: now,
     createdBy: createdBy || null,
     updatedAt: now,

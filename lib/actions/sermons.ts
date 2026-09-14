@@ -54,8 +54,8 @@ export async function getSermon(id: string): Promise<Sermon | null> {
   return data.getSermon(id);
 }
 
-export async function createSermon(createdBy?: string | null): Promise<string> {
-  return data.createSermon(createdBy);
+export async function createSermon(patch: SermonPatch, createdBy?: string | null): Promise<string> {
+  return data.createSermon(patch, createdBy);
 }
 
 export async function updateSermon(id: string, patch: SermonPatch, updatedBy?: string | null): Promise<void> {

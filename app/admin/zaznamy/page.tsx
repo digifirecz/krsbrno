@@ -3,19 +3,11 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import RequireAuth from '@/components/admin/RequireAuth';
-import NewSermonModal from '@/components/admin/blocks/NewSermonModal';
 import SearchSelect from '@/components/admin/blocks/SearchSelect';
 import ConfirmModal from '@/components/admin/blocks/ConfirmModal';
 import Badge from '@/components/admin/blocks/Badge';
 import { useToast } from '@/components/admin/ToastProvider';
-import {
-  getSermons,
-  getSermonCategories,
-  getSermonSpeakers,
-  createSermon,
-  updateSermon,
-  deleteSermon,
-} from '@/lib/actions/sermons';
+import { getSermons, getSermonCategories, getSermonSpeakers, deleteSermon } from '@/lib/actions/sermons';
 import type { Sermon, SermonCategory, SermonSpeaker } from '@/lib/sermons';
 import { AudioLines, Plus, Eye, EyeOff, Pencil, Trash2 } from 'lucide-react';
 
@@ -50,7 +42,6 @@ export default function AdminSermonsListPage() {
   const [cats, setCats] = useState<SermonCategory[]>([]);
   const [speakers, setSpeakers] = useState<SermonSpeaker[]>([]);
   const [loading, setLoading] = useState(true);
-  const [modalOpen, setModalOpen] = useState(false);
 
   const [activeCat, setActiveCat] = useState(''); // '' = Vše
   const [fName, setFName] = useState('');
@@ -96,14 +87,7 @@ export default function AdminSermonsListPage() {
 
   return (
     <RequireAuth>
-      {(user) => {
-        const handleCreate = async (title: string) => {
-          const id = await createSermon(user.email);
-          await updateSermon(id, { title }, user.email);
-          showToast('Záznam byl vytvořen.');
-          router.push(`/admin/zaznamy/${id}`);
-        };
-
+      {() => {
         const handleDelete = async () => {
           if (!deleteTarget) return;
           const { id } = deleteTarget;
@@ -129,7 +113,7 @@ export default function AdminSermonsListPage() {
               </div>
               <button
                 type="button"
-                onClick={() => setModalOpen(true)}
+                onClick={() => router.push('/admin/zaznamy/novy')}
                 className="inline-flex items-center space-x-2 px-4 py-2.5 rounded-xl bg-[#c93838] text-white text-sm font-bold hover:bg-[#b02f2f] transition-all shadow-sm hover:shadow-md active:scale-[0.98] cursor-pointer shrink-0"
               >
                 <Plus className="w-4 h-4" />
@@ -316,8 +300,6 @@ export default function AdminSermonsListPage() {
                 )}
               </>
             )}
-
-            <NewSermonModal open={modalOpen} onClose={() => setModalOpen(false)} onCreate={handleCreate} />
 
             <ConfirmModal
               open={!!deleteTarget}

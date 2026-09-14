@@ -115,7 +115,7 @@ export default function SermonsSection() {
                 <div className="flex flex-wrap justify-center gap-2 mb-10">
                   <button
                     onClick={() => setActiveCat('')}
-                    className={`flex items-center space-x-2 px-5 py-2.5 rounded-xl text-sm font-bold transition-all shadow-2xs ${
+                    className={`flex items-center space-x-2 px-5 py-2.5 rounded-xl text-sm font-bold transition-all shadow-2xs cursor-pointer ${
                       activeCat === ''
                         ? 'bg-[#c93838] text-white shadow-md'
                         : 'bg-neutral-50 text-neutral-700 hover:bg-neutral-100 border border-neutral-200'
@@ -128,7 +128,7 @@ export default function SermonsSection() {
                     <button
                       key={c.id}
                       onClick={() => setActiveCat(c.id)}
-                      className={`px-5 py-2.5 rounded-xl text-sm font-bold transition-all shadow-2xs capitalize ${
+                      className={`px-5 py-2.5 rounded-xl text-sm font-bold transition-all shadow-2xs capitalize cursor-pointer ${
                         activeCat === c.id
                           ? 'bg-[#c93838] text-white shadow-md'
                           : 'bg-neutral-50 text-neutral-700 hover:bg-neutral-100 border border-neutral-200'

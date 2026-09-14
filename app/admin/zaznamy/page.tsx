@@ -9,14 +9,14 @@ import Badge from '@/components/admin/blocks/Badge';
 import { useToast } from '@/components/admin/ToastProvider';
 import { getSermons, getSermonCategories, getSermonSpeakers, deleteSermon } from '@/lib/actions/sermons';
 import type { Sermon, SermonCategory, SermonSpeaker } from '@/lib/sermons';
-import { AudioLines, Plus, Eye, EyeOff, Pencil, Trash2 } from 'lucide-react';
+import { AudioLines, Plus, Eye, EyeOff, Pencil, Trash2, ChevronDown, ChevronUp } from 'lucide-react';
 
 const PAGE_SIZE = 20;
 
-function formatDate(value: Date | null | undefined): string {
-  if (!value) return '—';
+function formatDate(value: Date | null | undefined): string | null {
+  if (!value) return null;
   const d = value instanceof Date ? value : new Date(value);
-  if (Number.isNaN(d.getTime())) return '—';
+  if (Number.isNaN(d.getTime())) return null;
   return d.toLocaleDateString('cs-CZ', { day: 'numeric', month: 'numeric', year: 'numeric' });
 }
 
@@ -29,7 +29,7 @@ function Author({ by, at }: { by?: string | null; at?: Date | null }) {
   const when = d && !Number.isNaN(d.getTime()) ? d.toLocaleDateString('cs-CZ', { day: 'numeric', month: 'numeric', year: 'numeric', hour: '2-digit', minute: '2-digit' }) : '';
   return (
     <div className="leading-tight">
-      <div className="text-neutral-800 truncate">{by || '—'}</div>
+      <div className="text-neutral-800 truncate">{by || <span className="text-neutral-300">—</span>}</div>
       <div className="text-xs text-neutral-400">{when}</div>
     </div>
   );
@@ -49,6 +49,7 @@ export default function AdminSermonsListPage() {
   const [fState, setFState] = useState<'' | 'visible' | 'hidden'>('');
   const [limit, setLimit] = useState(PAGE_SIZE);
   const [deleteTarget, setDeleteTarget] = useState<Sermon | null>(null);
+  const [sortDir, setSortDir] = useState<'asc' | 'desc'>('desc');
 
   useEffect(() => {
     Promise.all([getSermons(), getSermonCategories(), getSermonSpeakers()])
@@ -78,8 +79,24 @@ export default function AdminSermonsListPage() {
     });
   }, [sermons, activeCat, fName, fSpeaker, fState]);
 
-  const shown = filtered.slice(0, limit);
+  const sorted = useMemo(() => {
+    const dir = sortDir === 'asc' ? 1 : -1;
+    return [...filtered].sort((a, b) => {
+      const ka = a.date ? new Date(a.date).getTime() : null;
+      const kb = b.date ? new Date(b.date).getTime() : null;
+      if (ka === null && kb === null) return 0;
+      if (ka === null) return 1;
+      if (kb === null) return -1;
+      return (ka - kb) * dir;
+    });
+  }, [filtered, sortDir]);
+
+  const shown = sorted.slice(0, limit);
   const resetLimit = () => setLimit(PAGE_SIZE);
+  const toggleSort = () => {
+    setSortDir((d) => (d === 'asc' ? 'desc' : 'asc'));
+    resetLimit();
+  };
   const selectCat = (id: string) => {
     setActiveCat(id);
     resetLimit();
@@ -162,7 +179,16 @@ export default function AdminSermonsListPage() {
                   <table className="w-full min-w-[960px] text-sm">
                     <thead>
                       <tr className="text-left text-xs font-bold uppercase tracking-wider text-neutral-400 border-b border-neutral-200">
-                        <th className="px-4 pt-3 pb-1.5 w-24">Datum</th>
+                        <th className="px-4 pt-3 pb-1.5 w-24">
+                          <button
+                            type="button"
+                            onClick={toggleSort}
+                            className="inline-flex items-center gap-1 uppercase tracking-wider cursor-pointer hover:text-neutral-700"
+                          >
+                            <span>Datum</span>
+                            {sortDir === 'asc' ? <ChevronUp className="w-3 h-3" /> : <ChevronDown className="w-3 h-3" />}
+                          </button>
+                        </th>
                         <th className="px-4 pt-3 pb-1.5">Název</th>
                         {showCatCol && <th className="px-4 pt-3 pb-1.5 w-40">Kategorie</th>}
                         <th className="px-4 pt-3 pb-1.5 w-36">Řečník</th>
@@ -222,7 +248,9 @@ export default function AdminSermonsListPage() {
                     <tbody>
                       {shown.map((s) => (
                         <tr key={s.id} className="border-b border-neutral-100 last:border-0 hover:bg-neutral-50/60">
-                          <td className="px-4 py-3 text-neutral-500 whitespace-nowrap tabular-nums">{formatDate(s.date)}</td>
+                          <td className="px-4 py-3 text-neutral-500 whitespace-nowrap tabular-nums">
+                            {formatDate(s.date) ?? <span className="text-neutral-300">—</span>}
+                          </td>
                           <td className="px-4 py-3">
                             {s.title ? (
                               <span className="font-semibold text-neutral-900">{s.title}</span>
@@ -239,7 +267,9 @@ export default function AdminSermonsListPage() {
                               )}
                             </td>
                           )}
-                          <td className="px-4 py-3 text-neutral-600">{speakerName(s.speakerId) || '—'}</td>
+                          <td className="px-4 py-3 text-neutral-600">
+                            {speakerName(s.speakerId) || <span className="text-neutral-300">—</span>}
+                          </td>
                           <td className="px-4 py-3">
                             <span
                               className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-xs font-semibold ${

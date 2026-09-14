@@ -154,9 +154,16 @@ export interface MapEmbedData {
   embedUrl: string;
 }
 
+export interface TagItem {
+  label: string;
+  description?: string;
+  linkTarget?: string;
+  linkUrl?: string;
+}
+
 export interface TagGroup {
   heading: string;
-  tags: string[];
+  tags: TagItem[];
 }
 
 export interface TagGroupsData {
@@ -169,9 +176,8 @@ export interface TagGroupsData {
 export interface VariableSymbolItem {
   code: string;
   label: string;
-  linkLabel?: string;
-  linkTarget?: string;
-  linkUrl?: string;
+  description?: string;
+  photo?: BlockPhoto;
 }
 
 export interface SupportOptionsData {

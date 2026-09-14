@@ -178,52 +178,33 @@ export default function SupportOptionsEditor({ data, onChange, pageId }: Support
                   <Trash2 className="w-3.5 h-3.5" />
                 </button>
               </div>
-              <div className="flex items-center space-x-2">
-                <input
-                  type="text"
-                  value={item.linkLabel || ''}
-                  onChange={(e) => {
-                    const next = [...vs];
-                    next[idx] = { ...next[idx], linkLabel: e.target.value || undefined };
-                    onChange({ ...data, financial: { ...data.financial, variableSymbols: next } });
-                  }}
-                  placeholder="Text odkazu (nepovinné, např. více o rodině)"
-                  className={`${fieldBase} flex-1 min-w-0`}
-                />
-                <select
-                  value={item.linkUrl !== undefined ? '__external__' : (item.linkTarget || '')}
-                  onChange={(e) => {
-                    const value = e.target.value;
-                    const next = [...vs];
-                    if (value === '__external__') {
-                      next[idx] = { ...next[idx], linkTarget: undefined, linkUrl: next[idx].linkUrl || '' };
-                    } else {
-                      next[idx] = { ...next[idx], linkTarget: value || undefined, linkUrl: undefined };
-                    }
-                    onChange({ ...data, financial: { ...data.financial, variableSymbols: next } });
-                  }}
-                  className={`${fieldBase} bg-white w-40 shrink-0`}
-                >
-                  <option value="">Bez odkazu</option>
-                  {TARGET_OPTIONS.map(({ tab, label }) => (
-                    <option key={tab} value={tab}>{label}</option>
-                  ))}
-                  <option value="__external__">Externí URL</option>
-                </select>
-              </div>
-              {item.linkUrl !== undefined && (
-                <input
-                  type="text"
-                  value={item.linkUrl}
-                  onChange={(e) => {
-                    const next = [...vs];
-                    next[idx] = { ...next[idx], linkUrl: e.target.value };
-                    onChange({ ...data, financial: { ...data.financial, variableSymbols: next } });
-                  }}
-                  placeholder="https://…"
-                  className={fieldClass}
-                />
-              )}
+              <textarea
+                rows={2}
+                value={item.description || ''}
+                onChange={(e) => {
+                  const next = [...vs];
+                  next[idx] = { ...next[idx], description: e.target.value || undefined };
+                  onChange({ ...data, financial: { ...data.financial, variableSymbols: next } });
+                }}
+                placeholder="Krátký popisek (nepovinné, např. o rodině/projektu) — zobrazí se po rozkliknutí"
+                className={fieldClass}
+              />
+              <PhotoUpload
+                value={item.photo?.src || ''}
+                pageId={pageId}
+                aspectRatio={16 / 9}
+                focal={item.photo?.focalX !== undefined ? { x: item.photo.focalX, y: item.photo.focalY ?? 50, zoom: item.photo.zoom } : undefined}
+                onFocalChange={(f) => {
+                  const next = [...vs];
+                  next[idx] = { ...next[idx], photo: { ...next[idx].photo, src: next[idx].photo?.src || '', focalX: f.x, focalY: f.y, zoom: f.zoom } };
+                  onChange({ ...data, financial: { ...data.financial, variableSymbols: next } });
+                }}
+                onChange={(src) => {
+                  const next = [...vs];
+                  next[idx] = { ...next[idx], photo: src ? { ...next[idx].photo, src } : undefined };
+                  onChange({ ...data, financial: { ...data.financial, variableSymbols: next } });
+                }}
+              />
             </div>
           ))}
         </div>

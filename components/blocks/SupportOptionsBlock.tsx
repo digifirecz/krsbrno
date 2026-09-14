@@ -5,7 +5,8 @@ import SafeImage from '@/components/SafeImage';
 import ImageCard from '@/components/ImageCard';
 import { getIcon } from '@/lib/blocks/icons';
 import { getPathForTab } from '@/lib/routes';
-import { Copy, Check, QrCode, ArrowRight, ChevronRight } from 'lucide-react';
+import { focalCropStyle } from '@/lib/blocks/photoFocal';
+import { Copy, Check, QrCode, ArrowRight, ChevronDown } from 'lucide-react';
 import type { SupportOptionsData } from '@/lib/blocks/types';
 
 export default function SupportOptionsBlock({ data }: { data: SupportOptionsData }) {
@@ -13,6 +14,7 @@ export default function SupportOptionsBlock({ data }: { data: SupportOptionsData
   const [showQrModal, setShowQrModal] = useState(false);
   const [qrAmount, setQrAmount] = useState('500');
   const [selectedVs, setSelectedVs] = useState(data.financial.variableSymbols[0]?.code || '');
+  const [expandedVs, setExpandedVs] = useState<number | null>(null);
 
   const FinancialIcon = getIcon(data.financial.icon) || QrCode;
   const InvolvementIcon = getIcon(data.involvement.icon);
@@ -113,22 +115,43 @@ export default function SupportOptionsBlock({ data }: { data: SupportOptionsData
                   </span>
                   <ul className="space-y-2 text-xs font-sans">
                     {data.financial.variableSymbols.map((vs, idx) => {
-                      const vsHref = vs.linkUrl || (vs.linkTarget ? getPathForTab(vs.linkTarget) : undefined);
-                      const vsLinkIsExternal = !!vs.linkUrl;
+                      const hasDetail = !!(vs.description || vs.photo?.src);
+                      const isExpanded = expandedVs === idx;
                       return (
-                        <li key={idx} className="flex items-center flex-wrap gap-x-2.5 gap-y-1 p-2.5 bg-white rounded-xl border border-neutral-200/80">
-                          <span className="font-mono font-extrabold text-[#c93838] px-2 py-0.5 rounded bg-red-50 border border-red-100">{vs.code}</span>
-                          <span className="font-bold text-neutral-800">{vs.label}</span>
-                          {vs.linkLabel && vsHref && (
-                            <a
-                              href={vsHref}
-                              target={vsLinkIsExternal ? '_blank' : undefined}
-                              rel={vsLinkIsExternal ? 'noopener noreferrer' : undefined}
-                              className="inline-flex items-center space-x-0.5 ml-auto text-[#c93838] font-bold hover:underline cursor-pointer"
-                            >
-                              <span>{vs.linkLabel}</span>
-                              <ChevronRight className="w-3 h-3" />
-                            </a>
+                        <li key={idx} className="bg-white rounded-xl border border-neutral-200/80 overflow-hidden">
+                          <button
+                            type="button"
+                            onClick={() => hasDetail && setExpandedVs(isExpanded ? null : idx)}
+                            className={`w-full flex items-center gap-2.5 p-2.5 text-left ${hasDetail ? 'cursor-pointer' : 'cursor-default'}`}
+                          >
+                            <span className="font-mono font-extrabold text-[#c93838] px-2 py-0.5 rounded bg-red-50 border border-red-100 shrink-0">{vs.code}</span>
+                            <span className="font-bold text-neutral-800 flex-1">{vs.label}</span>
+                            {hasDetail && (
+                              <ChevronDown className={`w-3.5 h-3.5 text-neutral-400 shrink-0 transition-transform duration-200 ${isExpanded ? 'rotate-180' : ''}`} />
+                            )}
+                          </button>
+                          {hasDetail && (
+                            <div className={`grid transition-[grid-template-rows] duration-300 ease-in-out ${isExpanded ? 'grid-rows-[1fr]' : 'grid-rows-[0fr]'}`}>
+                              <div className="overflow-hidden">
+                                <div className="p-2.5 pt-0 space-y-2.5">
+                                  {vs.photo?.src && (
+                                    <div className="relative h-32 w-full rounded-lg overflow-hidden bg-neutral-100">
+                                      <SafeImage
+                                        src={vs.photo.src}
+                                        alt={vs.photo.caption || vs.label}
+                                        fill
+                                        className="object-cover"
+                                        style={focalCropStyle(vs.photo)}
+                                        referrerPolicy="no-referrer"
+                                      />
+                                    </div>
+                                  )}
+                                  {vs.description && (
+                                    <p className="text-neutral-600 whitespace-pre-line">{vs.description}</p>
+                                  )}
+                                </div>
+                              </div>
+                            </div>
                           )}
                         </li>
                       );

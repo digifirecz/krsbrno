@@ -15,7 +15,7 @@ export function emptyBlockData(type: BlockType): BlockData {
   if (type === 'badgeCard') return { badges: [] };
   if (type === 'textSections') return { sections: [{ heading: '' }] };
   if (type === 'mapEmbed') return { embedUrl: '' };
-  if (type === 'tagGroups') return { groups: [{ heading: '', tags: [''] }] };
+  if (type === 'tagGroups') return { groups: [{ heading: '', tags: [{ label: '' }] }] };
   if (type === 'supportOptions') {
     return {
       financial: { title: '', accountNumber: '', iban: '', variableSymbols: [] },

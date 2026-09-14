@@ -1,4 +1,5 @@
 import { getIcon } from '@/lib/blocks/icons';
+import { getPathForTab } from '@/lib/routes';
 import type { TagGroupsData } from '@/lib/blocks/types';
 
 export default function TagGroupsBlock({ data }: { data: TagGroupsData }) {
@@ -35,11 +36,23 @@ export default function TagGroupsBlock({ data }: { data: TagGroupsData }) {
                 {group.heading}
               </h3>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 font-sans text-xs">
-                {(group.tags || []).map((tag, tagIdx) => (
-                  <div key={tagIdx} className="p-3 bg-white rounded-xl border border-neutral-200/80 text-center font-bold text-neutral-800 shadow-2xs">
-                    {tag}
-                  </div>
-                ))}
+                {(group.tags || []).map((tag, tagIdx) => {
+                  const href = tag.linkUrl || (tag.linkTarget ? getPathForTab(tag.linkTarget) : undefined);
+                  const isExternal = !!tag.linkUrl;
+                  const Tag = href ? 'a' : 'div';
+                  return (
+                    <Tag
+                      key={tagIdx}
+                      {...(href ? { href, target: isExternal ? '_blank' : undefined, rel: isExternal ? 'noopener noreferrer' : undefined } : {})}
+                      className={`p-3 bg-white rounded-xl border border-neutral-200/80 text-center shadow-2xs ${href ? 'hover:border-[#c93838]/40 transition-colors cursor-pointer' : ''}`}
+                    >
+                      <div className="font-bold text-neutral-800">{tag.label}</div>
+                      {tag.description && (
+                        <div className="text-neutral-500 font-normal text-[11px] mt-0.5 leading-snug">{tag.description}</div>
+                      )}
+                    </Tag>
+                  );
+                })}
               </div>
             </div>
           ))}

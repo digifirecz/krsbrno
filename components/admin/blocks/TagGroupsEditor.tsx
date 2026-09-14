@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import IconPicker from '@/components/admin/blocks/IconPicker';
 import ConfirmModal from '@/components/admin/blocks/ConfirmModal';
+import { TAB_TO_PATH, PAGE_TITLES } from '@/lib/routes';
 import type { TagGroupsData, TagGroup } from '@/lib/blocks/types';
 import { Plus, Trash2 } from 'lucide-react';
 
@@ -14,8 +15,13 @@ interface TagGroupsEditorProps {
 const fieldClass = 'w-full px-3.5 py-2.5 rounded-xl border border-neutral-200 text-sm focus:outline-none focus:ring-2 focus:ring-[#c93838]/30 focus:border-[#c93838]';
 const labelClass = 'block text-xs font-bold text-neutral-600 mb-1';
 
+const TARGET_OPTIONS = Object.keys(TAB_TO_PATH).map((tab) => ({
+  tab,
+  label: (PAGE_TITLES[tab] || tab).split(' | ')[0],
+}));
+
 function emptyGroup(): TagGroup {
-  return { heading: '', tags: [''] };
+  return { heading: '', tags: [{ label: '' }] };
 }
 
 export default function TagGroupsEditor({ data, onChange }: TagGroupsEditorProps) {
@@ -92,31 +98,80 @@ export default function TagGroupsEditor({ data, onChange }: TagGroupsEditorProps
                   <span className="text-xs font-semibold text-neutral-500">Štítky</span>
                   <button
                     type="button"
-                    onClick={() => updateGroup(idx, { ...group, tags: [...tags, ''] })}
+                    onClick={() => updateGroup(idx, { ...group, tags: [...tags, { label: '' }] })}
                     className="text-xs font-bold text-[#c93838] hover:underline cursor-pointer"
                   >
                     + štítek
                   </button>
                 </div>
                 {tags.map((tag, tagIdx) => (
-                  <div key={tagIdx} className="flex items-center space-x-2">
+                  <div key={tagIdx} className="p-2.5 rounded-xl border border-neutral-200 space-y-1.5 bg-white">
+                    <div className="flex items-center space-x-2">
+                      <input
+                        type="text"
+                        value={tag.label}
+                        onChange={(e) => {
+                          const next = [...tags];
+                          next[tagIdx] = { ...next[tagIdx], label: e.target.value };
+                          updateGroup(idx, { ...group, tags: next });
+                        }}
+                        placeholder="Název *"
+                        className={fieldClass}
+                      />
+                      <button
+                        type="button"
+                        onClick={() => updateGroup(idx, { ...group, tags: tags.filter((_, i) => i !== tagIdx) })}
+                        className="text-neutral-400 hover:text-[#c93838] cursor-pointer shrink-0"
+                      >
+                        <Trash2 className="w-3.5 h-3.5" />
+                      </button>
+                    </div>
                     <input
                       type="text"
-                      value={tag}
+                      value={tag.description || ''}
                       onChange={(e) => {
                         const next = [...tags];
-                        next[tagIdx] = e.target.value;
+                        next[tagIdx] = { ...next[tagIdx], description: e.target.value || undefined };
                         updateGroup(idx, { ...group, tags: next });
                       }}
+                      placeholder="Krátký popisek (nepovinné)"
                       className={fieldClass}
                     />
-                    <button
-                      type="button"
-                      onClick={() => updateGroup(idx, { ...group, tags: tags.filter((_, i) => i !== tagIdx) })}
-                      className="text-neutral-400 hover:text-[#c93838] cursor-pointer shrink-0"
-                    >
-                      <Trash2 className="w-3.5 h-3.5" />
-                    </button>
+                    <div className="flex items-center space-x-2">
+                      <select
+                        value={tag.linkUrl !== undefined ? '__external__' : (tag.linkTarget || '')}
+                        onChange={(e) => {
+                          const value = e.target.value;
+                          const next = [...tags];
+                          if (value === '__external__') {
+                            next[tagIdx] = { ...next[tagIdx], linkTarget: undefined, linkUrl: next[tagIdx].linkUrl || '' };
+                          } else {
+                            next[tagIdx] = { ...next[tagIdx], linkTarget: value || undefined, linkUrl: undefined };
+                          }
+                          updateGroup(idx, { ...group, tags: next });
+                        }}
+                        className={`${fieldClass} bg-white`}
+                      >
+                        <option value="">Bez odkazu</option>
+                        {TARGET_OPTIONS.map(({ tab, label }) => (
+                          <option key={tab} value={tab}>{label}</option>
+                        ))}
+                        <option value="__external__">Externí URL (otevře se v nové záložce)</option>
+                      </select>
+                    </div>
+                    {tag.linkUrl !== undefined && (
+                      <input
+                        type="text"
+                        value={tag.linkUrl}
+                        onChange={(e) => {
+                          const next = [...tags];
+                          next[tagIdx] = { ...next[tagIdx], linkUrl: e.target.value };
+                          updateGroup(idx, { ...group, tags: next });
+                        }}
+                        placeholder="https://…"
+                        className={fieldClass}
+                      />
+                    )}
                   </div>
                 ))}
               </div>

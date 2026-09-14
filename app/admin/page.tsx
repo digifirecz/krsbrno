@@ -5,7 +5,7 @@ import RequireAuth from '@/components/admin/RequireAuth';
 import { Files, Users, LayoutTemplate, Newspaper, Layers } from 'lucide-react';
 import { getAllRoles } from '@/lib/actions/roles';
 import { getNavConfig } from '@/lib/actions/pages';
-import { getArticles } from '@/lib/actions/articles';
+import { getAllArticlesForAdmin } from '@/lib/actions/articles';
 import { getSections } from '@/lib/actions/sections';
 import { MANAGEABLE_PAGES } from '@/lib/blocks/pageRegistry';
 
@@ -23,7 +23,7 @@ export default function AdminDashboardPage() {
   useEffect(() => {
     let active = true;
     const staticIds = new Set(MANAGEABLE_PAGES.map((p) => p.id));
-    Promise.all([getArticles(), getNavConfig(), getAllRoles(), getSections()])
+    Promise.all([getAllArticlesForAdmin(), getNavConfig(), getAllRoles(), getSections()])
       .then(([articles, navConfig, roles, sections]) => {
         if (!active) return;
         const customCount = navConfig.filter((p) => !staticIds.has(p.id)).length;

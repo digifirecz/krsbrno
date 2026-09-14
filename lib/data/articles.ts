@@ -27,8 +27,12 @@ function fromRow(r: Row): Article {
   };
 }
 
-export async function getArticles(): Promise<Article[]> {
-  const rows = await db.select().from(articles).orderBy(asc(articles.order));
+export async function getArticles(opts?: { visibleOnly?: boolean }): Promise<Article[]> {
+  const rows = await db
+    .select()
+    .from(articles)
+    .where(opts?.visibleOnly ? eq(articles.visible, true) : undefined)
+    .orderBy(asc(articles.order));
   return rows.map(fromRow);
 }
 

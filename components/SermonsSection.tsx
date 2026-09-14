@@ -27,7 +27,7 @@ export default function SermonsSection() {
 
   useEffect(() => {
     let active = true;
-    Promise.all([getSermonCategories(), getSermonSpeakers(), getSermons({ visibleOnly: true })])
+    Promise.all([getSermonCategories(), getSermonSpeakers(), getSermons()])
       .then(([c, sp, s]) => {
         if (!active) return;
         setCats(c);

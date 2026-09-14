@@ -46,3 +46,19 @@ export async function getSession(): Promise<SessionUser | null> {
 export async function clearSession(): Promise<void> {
   (await cookies()).delete(COOKIE_NAME);
 }
+
+// Server actions are callable directly (their reference ships in the client
+// bundle of any page that renders them), independent of whatever UI gating
+// wraps the component — so every mutating/non-public action must check this
+// itself rather than relying on RequireAuth/RequireAdmin alone.
+export async function requireSession(): Promise<SessionUser> {
+  const session = await getSession();
+  if (!session) throw new Error('Neautorizováno.');
+  return session;
+}
+
+export async function requireAdmin(): Promise<SessionUser> {
+  const session = await requireSession();
+  if (session.role !== 'admin') throw new Error('Nemáte oprávnění.');
+  return session;
+}

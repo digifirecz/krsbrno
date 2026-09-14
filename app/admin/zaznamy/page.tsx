@@ -7,7 +7,7 @@ import SearchSelect from '@/components/admin/blocks/SearchSelect';
 import ConfirmModal from '@/components/admin/blocks/ConfirmModal';
 import Badge from '@/components/admin/blocks/Badge';
 import { useToast } from '@/components/admin/ToastProvider';
-import { getSermons, getSermonCategories, getSermonSpeakers, deleteSermon } from '@/lib/actions/sermons';
+import { getAllSermonsForAdmin, getSermonCategories, getSermonSpeakers, deleteSermon } from '@/lib/actions/sermons';
 import type { Sermon, SermonCategory, SermonSpeaker } from '@/lib/sermons';
 import { AudioLines, Plus, Eye, EyeOff, Pencil, Trash2, ChevronDown, ChevronUp } from 'lucide-react';
 
@@ -52,7 +52,7 @@ export default function AdminSermonsListPage() {
   const [sortDir, setSortDir] = useState<'asc' | 'desc'>('desc');
 
   useEffect(() => {
-    Promise.all([getSermons(), getSermonCategories(), getSermonSpeakers()])
+    Promise.all([getAllSermonsForAdmin(), getSermonCategories(), getSermonSpeakers()])
       .then(([s, c, sp]) => {
         setSermons(s);
         setCats(c);

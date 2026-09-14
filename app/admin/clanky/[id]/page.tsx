@@ -11,7 +11,7 @@ import RichTextEditor from '@/components/admin/blocks/RichTextEditor';
 import EventDatePicker from '@/components/admin/blocks/EventDatePicker';
 import LocationInput from '@/components/admin/blocks/LocationInput';
 import { useToast } from '@/components/admin/ToastProvider';
-import { getArticle, getArticles, createArticle, updateArticle, deleteArticle, getArticleLocations } from '@/lib/actions/articles';
+import { getArticle, getAllArticlesForAdmin, createArticle, updateArticle, deleteArticle, getArticleLocations } from '@/lib/actions/articles';
 import type { Article } from '@/lib/articles';
 import { ArrowLeft, Trash2, Save, CheckCircle2, Eye, EyeOff, CalendarPlus, History } from 'lucide-react';
 
@@ -114,7 +114,7 @@ export default function AdminArticleEditor() {
           };
           try {
             if (isNew) {
-              const existing = await getArticles();
+              const existing = await getAllArticlesForAdmin();
               const newId = await createArticle(patch, existing.length, user.email);
               showToast(visible ? 'Článek byl vytvořen.' : 'Článek byl vytvořen a je skrytý na webu.');
               router.replace(`/admin/clanky/${newId}`);

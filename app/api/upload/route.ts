@@ -29,6 +29,20 @@ const AUDIO_ROOT = path.join(process.cwd(), 'public', 'audio');
 
 const safeSegment = (v: string) => v.replace(/[^a-zA-Z0-9_-]/g, '').slice(0, 64);
 
+// Denylist strip, not a full parser — good enough to kill the common script/
+// event-handler XSS vectors in an uploaded SVG (e.g. a logo) without a new
+// dependency. Legitimate vector art never needs any of these.
+function sanitizeSvg(svg: string): string {
+  return svg
+    .replace(/<script[\s\S]*?<\/script>/gi, '')
+    .replace(/\son\w+\s*=\s*"[^"]*"/gi, '')
+    .replace(/\son\w+\s*=\s*'[^']*'/gi, '')
+    .replace(/\son\w+\s*=\s*[^\s>]+/gi, '')
+    .replace(/(href|xlink:href)\s*=\s*"(\s*javascript:[^"]*)"/gi, '')
+    .replace(/(href|xlink:href)\s*=\s*'(\s*javascript:[^']*)'/gi, '')
+    .replace(/<foreignObject[\s\S]*?<\/foreignObject>/gi, '');
+}
+
 function safeName(original: string, fallback: string): string {
   const ext = path.extname(original).toLowerCase();
   const base =
@@ -74,7 +88,13 @@ export async function POST(req: Request) {
   const root = kind.publicDir === 'audio' ? AUDIO_ROOT : IMAGE_ROOT;
   const dir = path.join(root, folder, id);
   await mkdir(dir, { recursive: true });
-  await writeFile(path.join(dir, name), Buffer.from(await file.arrayBuffer()));
+
+  let bytes = Buffer.from(await file.arrayBuffer());
+  // SVGs can embed <script>/event-handler XSS that fires if the raw file is
+  // opened directly in a browser tab — strip that before it ever touches disk.
+  if (ext === '.svg') bytes = Buffer.from(sanitizeSvg(bytes.toString('utf8')), 'utf8');
+
+  await writeFile(path.join(dir, name), bytes);
 
   return NextResponse.json({ url: `/${kind.publicDir}/${folder}/${id}/${name}` });
 }

@@ -58,52 +58,80 @@ export default function SupportOptionsEditor({ data, onChange, pageId }: Support
       <div className="p-3 rounded-xl border border-neutral-200 space-y-3 bg-neutral-50/60">
         <span className={sectionLabelClass}>Karta s platbou</span>
 
-        <IconPicker
-          value={data.financial.icon}
-          onChange={(icon) => onChange({ ...data, financial: { ...data.financial, icon } })}
-        />
-        <input
-          type="text"
-          value={data.financial.title}
-          onChange={(e) => onChange({ ...data, financial: { ...data.financial, title: e.target.value } })}
-          placeholder="Titulek karty *"
-          className={fieldClass}
-        />
-        <textarea
-          rows={2}
-          value={data.financial.text || ''}
-          onChange={(e) => onChange({ ...data, financial: { ...data.financial, text: e.target.value || undefined } })}
-          placeholder="Text"
-          className={fieldClass}
-        />
-        <textarea
-          rows={2}
-          value={data.financial.highlight || ''}
-          onChange={(e) => onChange({ ...data, financial: { ...data.financial, highlight: e.target.value || undefined } })}
-          placeholder="Zvýrazněný dodatek"
-          className={fieldClass}
-        />
-        <input
-          type="text"
-          value={data.financial.bankName || ''}
-          onChange={(e) => onChange({ ...data, financial: { ...data.financial, bankName: e.target.value || undefined } })}
-          placeholder="Název banky"
-          className={fieldClass}
-        />
-        <input
-          type="text"
-          value={data.financial.accountNumber}
-          onChange={(e) => onChange({ ...data, financial: { ...data.financial, accountNumber: e.target.value } })}
-          placeholder="Číslo účtu *"
-          className={fieldClass}
-        />
-        <input
-          type="text"
-          value={data.financial.iban}
-          onChange={(e) => onChange({ ...data, financial: { ...data.financial, iban: e.target.value } })}
-          placeholder="IBAN * (podle něj se generuje QR platba)"
-          className={fieldClass}
-        />
+        <div>
+          <label className={labelClass}>Ikona</label>
+          <IconPicker
+            value={data.financial.icon}
+            onChange={(icon) => onChange({ ...data, financial: { ...data.financial, icon } })}
+          />
+        </div>
+        <div>
+          <label className={labelClass}>
+            Nadpis <span className="text-[#c93838]">*</span>
+          </label>
+          <input
+            type="text"
+            value={data.financial.title}
+            onChange={(e) => onChange({ ...data, financial: { ...data.financial, title: e.target.value } })}
+            className={fieldClass}
+          />
+        </div>
+        <div>
+          <label className={labelClass}>Popis</label>
+          <textarea
+            rows={2}
+            value={data.financial.text || ''}
+            onChange={(e) => onChange({ ...data, financial: { ...data.financial, text: e.target.value || undefined } })}
+            className={fieldClass}
+          />
+        </div>
+        <div>
+          <label className={labelClass}>Zvýrazněný dodatek</label>
+          <textarea
+            rows={2}
+            value={data.financial.highlight || ''}
+            onChange={(e) => onChange({ ...data, financial: { ...data.financial, highlight: e.target.value || undefined } })}
+            className={fieldClass}
+          />
+        </div>
+
+        <div className="pt-1 border-t border-neutral-200 space-y-2">
+          <span className="text-xs font-semibold text-neutral-500">Bankovní účet</span>
+          <div>
+            <label className={labelClass}>Název banky</label>
+            <input
+              type="text"
+              value={data.financial.bankName || ''}
+              onChange={(e) => onChange({ ...data, financial: { ...data.financial, bankName: e.target.value || undefined } })}
+              placeholder="Např. Fio banka, a.s."
+              className={fieldClass}
+            />
+          </div>
+          <div>
+            <label className={labelClass}>
+              Číslo účtu <span className="text-[#c93838]">*</span>
+            </label>
+            <input
+              type="text"
+              value={data.financial.accountNumber}
+              onChange={(e) => onChange({ ...data, financial: { ...data.financial, accountNumber: e.target.value } })}
+              placeholder="Např. 2500752953/2010"
+              className={fieldClass}
+            />
+          </div>
+          <div>
+            <label className={labelClass}>
+              IBAN <span className="text-[#c93838]">*</span>
+            </label>
+            <input
+              type="text"
+              value={data.financial.iban}
+              onChange={(e) => onChange({ ...data, financial: { ...data.financial, iban: e.target.value } })}
+              placeholder="Podle něj se generuje QR platba"
+              className={fieldClass}
+            />
+          </div>
+        </div>
 
         <div className="space-y-1.5">
           <div className="flex items-center justify-between">

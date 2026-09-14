@@ -70,7 +70,7 @@ export default function SupportOptionsBlock({ data }: { data: SupportOptionsData
               <div className="space-y-3 font-sans text-xs sm:text-sm text-neutral-600 leading-relaxed">
                 {data.financial.text && <p className="whitespace-pre-line">{data.financial.text}</p>}
                 {data.financial.highlight && (
-                  <div className="p-3.5 rounded-xl bg-red-50/70 border border-red-100 text-neutral-900 font-bold text-xs sm:text-sm font-sans whitespace-pre-line">
+                  <div className="p-3.5 rounded-xl bg-red-50/70 border border-red-100 text-neutral-900 text-xs sm:text-sm font-sans whitespace-pre-line">
                     {data.financial.highlight}
                   </div>
                 )}

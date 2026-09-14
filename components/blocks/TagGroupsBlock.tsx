@@ -1,3 +1,4 @@
+import { ExternalLink } from 'lucide-react';
 import { getIcon } from '@/lib/blocks/icons';
 import type { TagGroupsData } from '@/lib/blocks/types';
 
@@ -43,7 +44,10 @@ export default function TagGroupsBlock({ data }: { data: TagGroupsData }) {
                       {...(tag.linkUrl ? { href: tag.linkUrl, target: '_blank', rel: 'noopener noreferrer' } : {})}
                       className={`p-3 bg-white rounded-xl border border-neutral-200/80 text-center shadow-2xs ${tag.linkUrl ? 'hover:border-[#c93838]/40 transition-colors cursor-pointer' : ''}`}
                     >
-                      <div className="font-bold text-neutral-800">{tag.label}</div>
+                      <div className="font-bold text-neutral-800 flex items-center justify-center gap-1">
+                        <span>{tag.label}</span>
+                        {tag.linkUrl && <ExternalLink className="w-3 h-3 text-neutral-400 shrink-0" />}
+                      </div>
                       {tag.description && (
                         <div className="text-neutral-500 font-normal text-[11px] mt-0.5 leading-snug">{tag.description}</div>
                       )}

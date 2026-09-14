@@ -147,64 +147,80 @@ export default function SupportOptionsEditor({ data, onChange, pageId }: Support
           </div>
           {vs.map((item, idx) => (
             <div key={idx} className="p-2.5 rounded-xl border border-neutral-200 space-y-2 bg-white">
-              <div className="flex items-center space-x-2">
-                <input
-                  type="text"
-                  value={item.code}
-                  onChange={(e) => {
-                    const next = [...vs];
-                    next[idx] = { ...next[idx], code: e.target.value };
-                    onChange({ ...data, financial: { ...data.financial, variableSymbols: next } });
-                  }}
-                  placeholder="Kód"
-                  className={`${fieldBase} w-28 shrink-0`}
-                />
-                <input
-                  type="text"
-                  value={item.label}
-                  onChange={(e) => {
-                    const next = [...vs];
-                    next[idx] = { ...next[idx], label: e.target.value };
-                    onChange({ ...data, financial: { ...data.financial, variableSymbols: next } });
-                  }}
-                  placeholder="Účel"
-                  className={`${fieldBase} flex-1 min-w-0`}
-                />
+              <div className="flex items-center justify-between">
+                <span className="text-xs font-bold text-neutral-500">Symbol {idx + 1}</span>
                 <button
                   type="button"
                   onClick={() => setDeleteVsIdx(idx)}
-                  className="text-neutral-400 hover:text-[#c93838] cursor-pointer shrink-0"
+                  className="text-neutral-400 hover:text-[#c93838] cursor-pointer"
                 >
                   <Trash2 className="w-3.5 h-3.5" />
                 </button>
               </div>
-              <textarea
-                rows={2}
-                value={item.description || ''}
-                onChange={(e) => {
-                  const next = [...vs];
-                  next[idx] = { ...next[idx], description: e.target.value || undefined };
-                  onChange({ ...data, financial: { ...data.financial, variableSymbols: next } });
-                }}
-                placeholder="Krátký popisek (nepovinné, např. o rodině/projektu) — zobrazí se po rozkliknutí"
-                className={fieldClass}
-              />
-              <PhotoUpload
-                value={item.photo?.src || ''}
-                pageId={pageId}
-                aspectRatio={16 / 9}
-                focal={item.photo?.focalX !== undefined ? { x: item.photo.focalX, y: item.photo.focalY ?? 50, zoom: item.photo.zoom } : undefined}
-                onFocalChange={(f) => {
-                  const next = [...vs];
-                  next[idx] = { ...next[idx], photo: { ...next[idx].photo, src: next[idx].photo?.src || '', focalX: f.x, focalY: f.y, zoom: f.zoom } };
-                  onChange({ ...data, financial: { ...data.financial, variableSymbols: next } });
-                }}
-                onChange={(src) => {
-                  const next = [...vs];
-                  next[idx] = { ...next[idx], photo: src ? { ...next[idx].photo, src } : undefined };
-                  onChange({ ...data, financial: { ...data.financial, variableSymbols: next } });
-                }}
-              />
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                <div>
+                  <label className={labelClass}>
+                    Kód <span className="text-[#c93838]">*</span>
+                  </label>
+                  <input
+                    type="text"
+                    value={item.code}
+                    onChange={(e) => {
+                      const next = [...vs];
+                      next[idx] = { ...next[idx], code: e.target.value };
+                      onChange({ ...data, financial: { ...data.financial, variableSymbols: next } });
+                    }}
+                    className={fieldClass}
+                  />
+                </div>
+                <div>
+                  <label className={labelClass}>
+                    Účel <span className="text-[#c93838]">*</span>
+                  </label>
+                  <input
+                    type="text"
+                    value={item.label}
+                    onChange={(e) => {
+                      const next = [...vs];
+                      next[idx] = { ...next[idx], label: e.target.value };
+                      onChange({ ...data, financial: { ...data.financial, variableSymbols: next } });
+                    }}
+                    className={fieldClass}
+                  />
+                </div>
+              </div>
+              <div>
+                <label className={labelClass}>Popis (zobrazí se po rozkliknutí)</label>
+                <textarea
+                  rows={2}
+                  value={item.description || ''}
+                  onChange={(e) => {
+                    const next = [...vs];
+                    next[idx] = { ...next[idx], description: e.target.value || undefined };
+                    onChange({ ...data, financial: { ...data.financial, variableSymbols: next } });
+                  }}
+                  className={fieldClass}
+                />
+              </div>
+              <div>
+                <label className={labelClass}>Fotka</label>
+                <PhotoUpload
+                  value={item.photo?.src || ''}
+                  pageId={pageId}
+                  aspectRatio={16 / 9}
+                  focal={item.photo?.focalX !== undefined ? { x: item.photo.focalX, y: item.photo.focalY ?? 50, zoom: item.photo.zoom } : undefined}
+                  onFocalChange={(f) => {
+                    const next = [...vs];
+                    next[idx] = { ...next[idx], photo: { ...next[idx].photo, src: next[idx].photo?.src || '', focalX: f.x, focalY: f.y, zoom: f.zoom } };
+                    onChange({ ...data, financial: { ...data.financial, variableSymbols: next } });
+                  }}
+                  onChange={(src) => {
+                    const next = [...vs];
+                    next[idx] = { ...next[idx], photo: src ? { ...next[idx].photo, src } : undefined };
+                    onChange({ ...data, financial: { ...data.financial, variableSymbols: next } });
+                  }}
+                />
+              </div>
             </div>
           ))}
         </div>
@@ -213,83 +229,106 @@ export default function SupportOptionsEditor({ data, onChange, pageId }: Support
       <div className="p-3 rounded-xl border border-neutral-200 space-y-3 bg-neutral-50/60">
         <span className={sectionLabelClass}>Karta s popisem</span>
 
-        <IconPicker
-          value={data.involvement.icon}
-          onChange={(icon) => onChange({ ...data, involvement: { ...data.involvement, icon } })}
-        />
-        <input
-          type="text"
-          value={data.involvement.title}
-          onChange={(e) => onChange({ ...data, involvement: { ...data.involvement, title: e.target.value } })}
-          placeholder="Titulek karty *"
-          className={fieldClass}
-        />
-        <textarea
-          rows={3}
-          value={data.involvement.text || ''}
-          onChange={(e) => onChange({ ...data, involvement: { ...data.involvement, text: e.target.value || undefined } })}
-          placeholder="Text"
-          className={fieldClass}
-        />
+        <div>
+          <label className={labelClass}>Ikona</label>
+          <IconPicker
+            value={data.involvement.icon}
+            onChange={(icon) => onChange({ ...data, involvement: { ...data.involvement, icon } })}
+          />
+        </div>
+        <div>
+          <label className={labelClass}>
+            Nadpis <span className="text-[#c93838]">*</span>
+          </label>
+          <input
+            type="text"
+            value={data.involvement.title}
+            onChange={(e) => onChange({ ...data, involvement: { ...data.involvement, title: e.target.value } })}
+            className={fieldClass}
+          />
+        </div>
+        <div>
+          <label className={labelClass}>Popis</label>
+          <textarea
+            rows={3}
+            value={data.involvement.text || ''}
+            onChange={(e) => onChange({ ...data, involvement: { ...data.involvement, text: e.target.value || undefined } })}
+            className={fieldClass}
+          />
+        </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-          <input
-            type="text"
-            value={data.involvement.linkLabel || ''}
-            onChange={(e) => onChange({ ...data, involvement: { ...data.involvement, linkLabel: e.target.value || undefined } })}
-            placeholder="Text odkazu (např. Přehled služeb)"
-            className={fieldClass}
-          />
-          <select
-            value={data.involvement.linkUrl !== undefined ? '__external__' : (data.involvement.linkTarget || '')}
-            onChange={(e) => {
-              const value = e.target.value;
-              if (value === '__external__') {
-                onChange({ ...data, involvement: { ...data.involvement, linkTarget: undefined, linkUrl: data.involvement.linkUrl || '' } });
-              } else {
-                onChange({ ...data, involvement: { ...data.involvement, linkTarget: value || undefined, linkUrl: undefined } });
-              }
-            }}
-            className={`${fieldClass} bg-white`}
-          >
-            <option value="">Bez odkazu</option>
-            {TARGET_OPTIONS.map(({ tab, label }) => (
-              <option key={tab} value={tab}>{label}</option>
-            ))}
-            <option value="__external__">Externí odkaz (URL)</option>
-          </select>
+          <div>
+            <label className={labelClass}>Text odkazu</label>
+            <input
+              type="text"
+              value={data.involvement.linkLabel || ''}
+              onChange={(e) => onChange({ ...data, involvement: { ...data.involvement, linkLabel: e.target.value || undefined } })}
+              placeholder="Např. Přehled služeb"
+              className={fieldClass}
+            />
+          </div>
+          <div>
+            <label className={labelClass}>Cíl odkazu</label>
+            <select
+              value={data.involvement.linkUrl !== undefined ? '__external__' : (data.involvement.linkTarget || '')}
+              onChange={(e) => {
+                const value = e.target.value;
+                if (value === '__external__') {
+                  onChange({ ...data, involvement: { ...data.involvement, linkTarget: undefined, linkUrl: data.involvement.linkUrl || '' } });
+                } else {
+                  onChange({ ...data, involvement: { ...data.involvement, linkTarget: value || undefined, linkUrl: undefined } });
+                }
+              }}
+              className={`${fieldClass} bg-white`}
+            >
+              <option value="">Bez odkazu</option>
+              {TARGET_OPTIONS.map(({ tab, label }) => (
+                <option key={tab} value={tab}>{label}</option>
+              ))}
+              <option value="__external__">Externí odkaz (URL)</option>
+            </select>
+          </div>
         </div>
         {data.involvement.linkUrl !== undefined && (
-          <input
-            type="text"
-            value={data.involvement.linkUrl}
-            onChange={(e) => onChange({ ...data, involvement: { ...data.involvement, linkUrl: e.target.value } })}
-            placeholder="https://…"
-            className={fieldClass}
-          />
+          <div>
+            <label className={labelClass}>URL odkazu</label>
+            <input
+              type="text"
+              value={data.involvement.linkUrl}
+              onChange={(e) => onChange({ ...data, involvement: { ...data.involvement, linkUrl: e.target.value } })}
+              placeholder="https://…"
+              className={fieldClass}
+            />
+          </div>
         )}
 
-        <PhotoUpload
-          value={data.involvement.photo?.src || ''}
-          pageId={pageId}
-          aspectRatio={16 / 10}
-          focal={data.involvement.photo?.focalX !== undefined ? { x: data.involvement.photo.focalX, y: data.involvement.photo.focalY ?? 50, zoom: data.involvement.photo.zoom } : undefined}
-          onFocalChange={(f) =>
-            onChange({
-              ...data,
-              involvement: { ...data.involvement, photo: { ...data.involvement.photo, src: data.involvement.photo?.src || '', focalX: f.x, focalY: f.y, zoom: f.zoom } },
-            })
-          }
-          onChange={(src) => onChange({ ...data, involvement: { ...data.involvement, photo: src ? { ...data.involvement.photo, src } : undefined } })}
-        />
-        {data.involvement.photo?.src && (
-          <input
-            type="text"
-            value={data.involvement.photo.caption || ''}
-            onChange={(e) => onChange({ ...data, involvement: { ...data.involvement, photo: { ...data.involvement.photo!, caption: e.target.value || undefined } } })}
-            placeholder="Popisek fotky"
-            className={fieldClass}
+        <div>
+          <label className={labelClass}>Fotka</label>
+          <PhotoUpload
+            value={data.involvement.photo?.src || ''}
+            pageId={pageId}
+            aspectRatio={16 / 10}
+            focal={data.involvement.photo?.focalX !== undefined ? { x: data.involvement.photo.focalX, y: data.involvement.photo.focalY ?? 50, zoom: data.involvement.photo.zoom } : undefined}
+            onFocalChange={(f) =>
+              onChange({
+                ...data,
+                involvement: { ...data.involvement, photo: { ...data.involvement.photo, src: data.involvement.photo?.src || '', focalX: f.x, focalY: f.y, zoom: f.zoom } },
+              })
+            }
+            onChange={(src) => onChange({ ...data, involvement: { ...data.involvement, photo: src ? { ...data.involvement.photo, src } : undefined } })}
           />
+        </div>
+        {data.involvement.photo?.src && (
+          <div>
+            <label className={labelClass}>Popisek fotky</label>
+            <input
+              type="text"
+              value={data.involvement.photo.caption || ''}
+              onChange={(e) => onChange({ ...data, involvement: { ...data.involvement, photo: { ...data.involvement.photo!, caption: e.target.value || undefined } } })}
+              className={fieldClass}
+            />
+          </div>
         )}
       </div>
 

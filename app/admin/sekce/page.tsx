@@ -21,7 +21,7 @@ function fmtDate(v: Date | null | undefined): string {
   if (!v) return '';
   const d = v instanceof Date ? v : new Date(v);
   if (Number.isNaN(d.getTime())) return '';
-  return d.toLocaleDateString('cs-CZ', { day: 'numeric', month: 'numeric', year: 'numeric' });
+  return d.toLocaleDateString('cs-CZ', { day: 'numeric', month: 'numeric', year: 'numeric', hour: '2-digit', minute: '2-digit' });
 }
 
 function Author({ by, at }: { by?: string | null; at?: Date | null }) {

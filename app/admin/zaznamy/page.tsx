@@ -34,7 +34,7 @@ const filterInput =
 function Author({ by, at }: { by?: string | null; at?: Date | null }) {
   if (!by && !at) return <span className="text-neutral-300">—</span>;
   const d = at ? (at instanceof Date ? at : new Date(at)) : null;
-  const when = d && !Number.isNaN(d.getTime()) ? d.toLocaleDateString('cs-CZ', { day: 'numeric', month: 'numeric', year: 'numeric' }) : '';
+  const when = d && !Number.isNaN(d.getTime()) ? d.toLocaleDateString('cs-CZ', { day: 'numeric', month: 'numeric', year: 'numeric', hour: '2-digit', minute: '2-digit' }) : '';
   return (
     <div className="leading-tight">
       <div className="text-neutral-800 truncate">{by || '—'}</div>

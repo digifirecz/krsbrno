@@ -157,7 +157,8 @@ export interface MapEmbedData {
 export interface TagItem {
   label: string;
   description?: string;
-  linkTarget?: string;
+  // Always an external site (these tags name outside orgs/people, e.g. TWR) —
+  // no internal-page target, just a URL, opened in a new tab.
   linkUrl?: string;
 }
 

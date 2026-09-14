@@ -3,7 +3,6 @@
 import { useState } from 'react';
 import IconPicker from '@/components/admin/blocks/IconPicker';
 import ConfirmModal from '@/components/admin/blocks/ConfirmModal';
-import { TAB_TO_PATH, PAGE_TITLES } from '@/lib/routes';
 import type { TagGroupsData, TagGroup } from '@/lib/blocks/types';
 import { Plus, Trash2 } from 'lucide-react';
 
@@ -14,11 +13,6 @@ interface TagGroupsEditorProps {
 
 const fieldClass = 'w-full px-3.5 py-2.5 rounded-xl border border-neutral-200 text-sm focus:outline-none focus:ring-2 focus:ring-[#c93838]/30 focus:border-[#c93838]';
 const labelClass = 'block text-xs font-bold text-neutral-600 mb-1';
-
-const TARGET_OPTIONS = Object.keys(TAB_TO_PATH).map((tab) => ({
-  tab,
-  label: (PAGE_TITLES[tab] || tab).split(' | ')[0],
-}));
 
 function emptyGroup(): TagGroup {
   return { heading: '', tags: [{ label: '' }] };
@@ -137,41 +131,17 @@ export default function TagGroupsEditor({ data, onChange }: TagGroupsEditorProps
                       placeholder="Krátký popisek (nepovinné)"
                       className={fieldClass}
                     />
-                    <div className="flex items-center space-x-2">
-                      <select
-                        value={tag.linkUrl !== undefined ? '__external__' : (tag.linkTarget || '')}
-                        onChange={(e) => {
-                          const value = e.target.value;
-                          const next = [...tags];
-                          if (value === '__external__') {
-                            next[tagIdx] = { ...next[tagIdx], linkTarget: undefined, linkUrl: next[tagIdx].linkUrl || '' };
-                          } else {
-                            next[tagIdx] = { ...next[tagIdx], linkTarget: value || undefined, linkUrl: undefined };
-                          }
-                          updateGroup(idx, { ...group, tags: next });
-                        }}
-                        className={`${fieldClass} bg-white`}
-                      >
-                        <option value="">Bez odkazu</option>
-                        {TARGET_OPTIONS.map(({ tab, label }) => (
-                          <option key={tab} value={tab}>{label}</option>
-                        ))}
-                        <option value="__external__">Externí URL (otevře se v nové záložce)</option>
-                      </select>
-                    </div>
-                    {tag.linkUrl !== undefined && (
-                      <input
-                        type="text"
-                        value={tag.linkUrl}
-                        onChange={(e) => {
-                          const next = [...tags];
-                          next[tagIdx] = { ...next[tagIdx], linkUrl: e.target.value };
-                          updateGroup(idx, { ...group, tags: next });
-                        }}
-                        placeholder="https://…"
-                        className={fieldClass}
-                      />
-                    )}
+                    <input
+                      type="text"
+                      value={tag.linkUrl || ''}
+                      onChange={(e) => {
+                        const next = [...tags];
+                        next[tagIdx] = { ...next[tagIdx], linkUrl: e.target.value || undefined };
+                        updateGroup(idx, { ...group, tags: next });
+                      }}
+                      placeholder="Odkaz — https://… (nepovinné, otevře se v nové záložce)"
+                      className={fieldClass}
+                    />
                   </div>
                 ))}
               </div>

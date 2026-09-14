@@ -79,13 +79,17 @@ export default function TagGroupsEditor({ data, onChange }: TagGroupsEditorProps
                 </button>
               </div>
 
-              <input
-                type="text"
-                value={group.heading}
-                onChange={(e) => updateGroup(idx, { ...group, heading: e.target.value })}
-                placeholder="Nadpis skupiny *"
-                className={fieldClass}
-              />
+              <div>
+                <label className={labelClass}>
+                  Nadpis skupiny <span className="text-[#c93838]">*</span>
+                </label>
+                <input
+                  type="text"
+                  value={group.heading}
+                  onChange={(e) => updateGroup(idx, { ...group, heading: e.target.value })}
+                  className={fieldClass}
+                />
+              </div>
 
               <div className="space-y-1.5">
                 <div className="flex items-center justify-between">
@@ -99,8 +103,21 @@ export default function TagGroupsEditor({ data, onChange }: TagGroupsEditorProps
                   </button>
                 </div>
                 {tags.map((tag, tagIdx) => (
-                  <div key={tagIdx} className="p-2.5 rounded-xl border border-neutral-200 space-y-1.5 bg-white">
-                    <div className="flex items-center space-x-2">
+                  <div key={tagIdx} className="p-2.5 rounded-xl border border-neutral-200 space-y-2 bg-white">
+                    <div className="flex items-center justify-between">
+                      <span className="text-xs font-bold text-neutral-500">Štítek {tagIdx + 1}</span>
+                      <button
+                        type="button"
+                        onClick={() => updateGroup(idx, { ...group, tags: tags.filter((_, i) => i !== tagIdx) })}
+                        className="text-neutral-400 hover:text-[#c93838] cursor-pointer"
+                      >
+                        <Trash2 className="w-3.5 h-3.5" />
+                      </button>
+                    </div>
+                    <div>
+                      <label className={labelClass}>
+                        Nadpis <span className="text-[#c93838]">*</span>
+                      </label>
                       <input
                         type="text"
                         value={tag.label}
@@ -109,39 +126,35 @@ export default function TagGroupsEditor({ data, onChange }: TagGroupsEditorProps
                           next[tagIdx] = { ...next[tagIdx], label: e.target.value };
                           updateGroup(idx, { ...group, tags: next });
                         }}
-                        placeholder="Název *"
                         className={fieldClass}
                       />
-                      <button
-                        type="button"
-                        onClick={() => updateGroup(idx, { ...group, tags: tags.filter((_, i) => i !== tagIdx) })}
-                        className="text-neutral-400 hover:text-[#c93838] cursor-pointer shrink-0"
-                      >
-                        <Trash2 className="w-3.5 h-3.5" />
-                      </button>
                     </div>
-                    <input
-                      type="text"
-                      value={tag.description || ''}
-                      onChange={(e) => {
-                        const next = [...tags];
-                        next[tagIdx] = { ...next[tagIdx], description: e.target.value || undefined };
-                        updateGroup(idx, { ...group, tags: next });
-                      }}
-                      placeholder="Krátký popisek (nepovinné)"
-                      className={fieldClass}
-                    />
-                    <input
-                      type="text"
-                      value={tag.linkUrl || ''}
-                      onChange={(e) => {
-                        const next = [...tags];
-                        next[tagIdx] = { ...next[tagIdx], linkUrl: e.target.value || undefined };
-                        updateGroup(idx, { ...group, tags: next });
-                      }}
-                      placeholder="Odkaz — https://… (nepovinné, otevře se v nové záložce)"
-                      className={fieldClass}
-                    />
+                    <div>
+                      <label className={labelClass}>Popis</label>
+                      <input
+                        type="text"
+                        value={tag.description || ''}
+                        onChange={(e) => {
+                          const next = [...tags];
+                          next[tagIdx] = { ...next[tagIdx], description: e.target.value || undefined };
+                          updateGroup(idx, { ...group, tags: next });
+                        }}
+                        className={fieldClass}
+                      />
+                    </div>
+                    <div>
+                      <label className={labelClass}>Odkaz</label>
+                      <input
+                        type="text"
+                        value={tag.linkUrl || ''}
+                        onChange={(e) => {
+                          const next = [...tags];
+                          next[tagIdx] = { ...next[tagIdx], linkUrl: e.target.value || undefined };
+                          updateGroup(idx, { ...group, tags: next });
+                        }}
+                        className={fieldClass}
+                      />
+                    </div>
                   </div>
                 ))}
               </div>

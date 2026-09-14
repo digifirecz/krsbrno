@@ -46,7 +46,7 @@ export default function TagGroupsBlock({ data }: { data: TagGroupsData }) {
                     >
                       <div className="font-bold text-neutral-800 flex items-center justify-center gap-1">
                         <span>{tag.label}</span>
-                        {tag.linkUrl && <ExternalLink className="w-3 h-3 text-neutral-400 shrink-0" />}
+                        {tag.linkUrl && <ExternalLink className="w-3 h-3 text-[#c93838] shrink-0" />}
                       </div>
                       {tag.description && (
                         <div className="text-neutral-500 font-normal text-[11px] mt-0.5 leading-snug">{tag.description}</div>

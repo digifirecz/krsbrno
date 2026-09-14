@@ -207,7 +207,7 @@ export default function SupportOptionsEditor({ data, onChange, pageId }: Support
                 <PhotoUpload
                   value={item.photo?.src || ''}
                   pageId={pageId}
-                  aspectRatio={16 / 9}
+                  aspectRatio={3}
                   focal={item.photo?.focalX !== undefined ? { x: item.photo.focalX, y: item.photo.focalY ?? 50, zoom: item.photo.zoom } : undefined}
                   onFocalChange={(f) => {
                     const next = [...vs];

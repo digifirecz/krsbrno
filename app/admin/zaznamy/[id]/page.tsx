@@ -11,6 +11,7 @@ import CategorySelect from '@/components/admin/blocks/CategorySelect';
 import SpeakerSelect from '@/components/admin/blocks/SpeakerSelect';
 import { useToast } from '@/components/admin/ToastProvider';
 import { getSermon, createSermon, updateSermon, deleteSermon } from '@/lib/actions/sermons';
+import { getYoutubeEmbedUrl } from '@/lib/youtube';
 import { ArrowLeft, Trash2, Save, CheckCircle2, Eye, EyeOff } from 'lucide-react';
 
 const fieldClass =
@@ -37,6 +38,7 @@ export default function AdminSermonEditor() {
   const [categoryId, setCategoryId] = useState('');
   const [description, setDescription] = useState('');
   const [audioUrl, setAudioUrl] = useState('');
+  const [youtubeUrl, setYoutubeUrl] = useState('');
   const [visible, setVisible] = useState(true);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -60,6 +62,7 @@ export default function AdminSermonEditor() {
           setCategoryId(s.categoryId || '');
           setDescription(s.description || '');
           setAudioUrl(s.audioUrl || '');
+          setYoutubeUrl(s.youtubeUrl || '');
           setVisible(s.visible);
         }
         setLoading(false);
@@ -86,8 +89,9 @@ export default function AdminSermonEditor() {
             speakerId: speakerId || null,
             date: dateStr ? new Date(`${dateStr}T12:00:00`) : null,
             categoryId: categoryId || null,
-            description: description.trim() || undefined,
-            audioUrl: audioUrl || undefined,
+            description: description.trim() || null,
+            audioUrl: audioUrl || null,
+            youtubeUrl: youtubeUrl.trim() || null,
             visible,
           };
           try {
@@ -217,6 +221,32 @@ export default function AdminSermonEditor() {
                   <div>
                     <label className={labelClass}>Nahrávka</label>
                     <AudioUpload value={audioUrl} onChange={setAudioUrl} id={sermonId} folder="sermons" />
+                  </div>
+
+                  <div>
+                    <label className={labelClass}>YouTube</label>
+                    <input
+                      type="text"
+                      value={youtubeUrl}
+                      onChange={(e) => setYoutubeUrl(e.target.value)}
+                      className={fieldClass}
+                    />
+                    {youtubeUrl.trim() && !getYoutubeEmbedUrl(youtubeUrl) && (
+                      <p className="text-xs font-medium text-[#c93838] mt-1">
+                        Tenhle odkaz nevypadá jako platné YouTube video — na webu se nezobrazí.
+                      </p>
+                    )}
+                    {getYoutubeEmbedUrl(youtubeUrl) && (
+                      <div className="mt-2 aspect-video w-full max-w-sm rounded-xl overflow-hidden bg-neutral-100">
+                        <iframe
+                          src={getYoutubeEmbedUrl(youtubeUrl) ?? undefined}
+                          className="w-full h-full"
+                          title="Náhled YouTube videa"
+                          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                          allowFullScreen
+                        />
+                      </div>
+                    )}
                   </div>
 
                   <div>

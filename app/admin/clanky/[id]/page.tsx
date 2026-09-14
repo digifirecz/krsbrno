@@ -102,11 +102,11 @@ export default function AdminArticleEditor() {
           setSaving(true);
           const patch = {
             title: title.trim(),
-            subtitle: subtitle.trim() || undefined,
+            subtitle: subtitle.trim() || null,
             dateText: dateText.trim(),
-            timeText: timeText.trim() || undefined,
-            location: location.trim() || undefined,
-            image: image || undefined,
+            timeText: timeText.trim() || null,
+            location: location.trim() || null,
+            image: image || null,
             focalX: focal?.x,
             focalY: focal?.y,
             zoom: focal?.zoom,

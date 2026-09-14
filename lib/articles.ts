@@ -5,11 +5,11 @@
 export interface Article {
   id: string;
   title: string;
-  subtitle?: string;
+  subtitle?: string | null;
   dateText: string;
-  timeText?: string;
-  location?: string;
-  image?: string;
+  timeText?: string | null;
+  location?: string | null;
+  image?: string | null;
   focalX?: number;
   focalY?: number;
   zoom?: number;

@@ -155,6 +155,7 @@ export const sermons = mysqlTable('sermons', {
   categoryId: varchar('category_id', { length: 64 }),
   description: text('description'),
   audioUrl: varchar('audio_url', { length: 1024 }),
+  youtubeUrl: varchar('youtube_url', { length: 1024 }),
   visible: boolean('visible').notNull().default(true),
   order: int('sort_order').notNull().default(0),
   createdAt: datetime('created_at'),

@@ -21,8 +21,9 @@ export interface Sermon {
   speakerId?: string | null;
   date?: Date | null;
   categoryId?: string | null;
-  description?: string;
-  audioUrl?: string;
+  description?: string | null;
+  audioUrl?: string | null;
+  youtubeUrl?: string | null;
   visible: boolean;
   order: number;
   createdAt?: Date | null;

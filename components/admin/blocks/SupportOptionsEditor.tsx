@@ -190,7 +190,7 @@ export default function SupportOptionsEditor({ data, onChange, pageId }: Support
                 </div>
               </div>
               <div>
-                <label className={labelClass}>Popis (zobrazí se po rozkliknutí)</label>
+                <label className={labelClass}>Popis</label>
                 <textarea
                   rows={2}
                   value={item.description || ''}

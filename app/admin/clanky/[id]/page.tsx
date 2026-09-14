@@ -11,7 +11,7 @@ import RichTextEditor from '@/components/admin/blocks/RichTextEditor';
 import EventDatePicker from '@/components/admin/blocks/EventDatePicker';
 import LocationInput from '@/components/admin/blocks/LocationInput';
 import { useToast } from '@/components/admin/ToastProvider';
-import { getArticle, updateArticle, deleteArticle, getArticleLocations } from '@/lib/actions/articles';
+import { getArticle, getArticles, createArticle, updateArticle, deleteArticle, getArticleLocations } from '@/lib/actions/articles';
 import type { Article } from '@/lib/articles';
 import { ArrowLeft, Trash2, Save, CheckCircle2, Eye, EyeOff, CalendarPlus, History } from 'lucide-react';
 
@@ -33,6 +33,7 @@ export default function AdminArticleEditor() {
   const params = useParams<{ id: string }>();
   const router = useRouter();
   const articleId = params.id;
+  const isNew = articleId === 'novy';
   const { showToast } = useToast();
 
   const [title, setTitle] = useState('');
@@ -52,6 +53,10 @@ export default function AdminArticleEditor() {
   const [titleError, setTitleError] = useState(false);
 
   useEffect(() => {
+    if (isNew) {
+      setLoading(false);
+      return;
+    }
     let active = true;
     getArticle(articleId)
       .then((fetched) => {
@@ -95,29 +100,33 @@ export default function AdminArticleEditor() {
           }
           setTitleError(false);
           setSaving(true);
+          const patch = {
+            title: title.trim(),
+            subtitle: subtitle.trim() || undefined,
+            dateText: dateText.trim(),
+            timeText: timeText.trim() || undefined,
+            location: location.trim() || undefined,
+            image: image || undefined,
+            focalX: focal?.x,
+            focalY: focal?.y,
+            zoom: focal?.zoom,
+            visible,
+          };
           try {
-            await updateArticle(
-              articleId,
-              {
-                title: title.trim(),
-                subtitle: subtitle.trim() || undefined,
-                dateText: dateText.trim(),
-                timeText: timeText.trim() || undefined,
-                location: location.trim() || undefined,
-                image: image || undefined,
-                focalX: focal?.x,
-                focalY: focal?.y,
-                zoom: focal?.zoom,
-                visible,
-              },
-              user.email
-            );
+            if (isNew) {
+              const existing = await getArticles();
+              const newId = await createArticle(patch, existing.length, user.email);
+              showToast(visible ? 'Článek byl vytvořen.' : 'Článek byl vytvořen a je skrytý na webu.');
+              router.replace(`/admin/clanky/${newId}`);
+              return;
+            }
+            await updateArticle(articleId, patch, user.email);
             setMeta((prev) => ({ ...prev, updatedAt: new Date(), updatedBy: user.email }));
             setSaved(true);
             setTimeout(() => setSaved(false), 3000);
             showToast(visible ? 'Článek byl uložen.' : 'Článek byl uložen a je skrytý na webu.');
           } catch (err) {
-            showToast(`Článek se nepodařilo uložit${err instanceof Error ? `: ${err.message}` : '.'}`, 'error');
+            showToast(`Článek se nepodařilo ${isNew ? 'vytvořit' : 'uložit'}${err instanceof Error ? `: ${err.message}` : '.'}`, 'error');
           } finally {
             setSaving(false);
           }
@@ -152,7 +161,7 @@ export default function AdminArticleEditor() {
                     className="inline-flex items-center justify-center space-x-2 px-5 py-2.5 rounded-xl bg-[#c93838] hover:bg-[#b02f2f] text-white font-bold text-sm transition-all shadow-sm hover:shadow-md active:scale-[0.98] cursor-pointer disabled:opacity-60"
                   >
                     {saved ? <CheckCircle2 className="w-4 h-4" /> : <Save className="w-4 h-4" />}
-                    <span>{saving ? 'Ukládám…' : saved ? 'Uloženo' : 'Uložit'}</span>
+                    <span>{saving ? (isNew ? 'Vytvářím…' : 'Ukládám…') : saved ? 'Uloženo' : isNew ? 'Vytvořit' : 'Uložit'}</span>
                   </button>
                   <button
                     onClick={() => setVisible((v) => !v)}
@@ -166,14 +175,16 @@ export default function AdminArticleEditor() {
                   >
                     {visible ? <Eye className="w-4 h-4" /> : <EyeOff className="w-4 h-4" />}
                   </button>
-                  <button
-                    onClick={() => setDeleteConfirmOpen(true)}
-                    title="Smazat článek"
-                    aria-label="Smazat článek"
-                    className="inline-flex items-center justify-center w-11 h-11 rounded-xl border border-neutral-200 bg-white hover:border-[#c93838] hover:bg-red-50 text-neutral-500 hover:text-[#c93838] transition-all cursor-pointer"
-                  >
-                    <Trash2 className="w-4 h-4" />
-                  </button>
+                  {!isNew && (
+                    <button
+                      onClick={() => setDeleteConfirmOpen(true)}
+                      title="Smazat článek"
+                      aria-label="Smazat článek"
+                      className="inline-flex items-center justify-center w-11 h-11 rounded-xl border border-neutral-200 bg-white hover:border-[#c93838] hover:bg-red-50 text-neutral-500 hover:text-[#c93838] transition-all cursor-pointer"
+                    >
+                      <Trash2 className="w-4 h-4" />
+                    </button>
+                  )}
                 </div>
               )}
             </div>

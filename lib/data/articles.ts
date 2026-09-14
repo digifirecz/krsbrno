@@ -48,21 +48,24 @@ export async function getArticleLocations(): Promise<string[]> {
   return rows.map((r) => r.location).filter((l): l is string => !!l && l.trim() !== '');
 }
 
-export async function createArticle(order: number, createdBy?: string | null): Promise<string> {
+// Only called once the admin has filled out the form and hit "Vytvořit" —
+// unlike the old flow, no blank/untitled row is ever persisted just from
+// clicking "Přidat článek".
+export async function createArticle(patch: ArticlePatch, order: number, createdBy?: string | null): Promise<string> {
   const id = await nextId('articleCounter');
   const now = new Date();
   await db.insert(articles).values({
     id,
-    title: '',
-    subtitle: null,
-    dateText: '',
-    timeText: null,
-    location: null,
-    image: null,
-    focalX: null,
-    focalY: null,
-    zoom: null,
-    visible: true,
+    title: patch.title?.trim() || '',
+    subtitle: patch.subtitle || null,
+    dateText: patch.dateText?.trim() || '',
+    timeText: patch.timeText || null,
+    location: patch.location || null,
+    image: patch.image || null,
+    focalX: patch.focalX ?? null,
+    focalY: patch.focalY ?? null,
+    zoom: patch.zoom ?? null,
+    visible: patch.visible ?? true,
     order,
     createdAt: now,
     createdBy: createdBy || null,

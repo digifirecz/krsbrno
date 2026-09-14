@@ -6,7 +6,7 @@ import { useRouter } from 'next/navigation';
 import RequireAuth from '@/components/admin/RequireAuth';
 import ConfirmModal from '@/components/admin/blocks/ConfirmModal';
 import { useToast } from '@/components/admin/ToastProvider';
-import { getArticles, createArticle, deleteArticle } from '@/lib/actions/articles';
+import { getArticles, deleteArticle } from '@/lib/actions/articles';
 import type { Article } from '@/lib/articles';
 import { eventDateSortKey } from '@/lib/eventDate';
 import { Newspaper, Plus, Pencil, Trash2, ChevronDown, ChevronUp, Eye, EyeOff } from 'lucide-react';
@@ -113,14 +113,8 @@ export default function AdminArticlesListPage() {
   return (
     <RequireAuth>
       {(user) => {
-        const handleAdd = async () => {
-          try {
-            const id = await createArticle(articles.length, user.email);
-            showToast('Článek byl vytvořen.');
-            router.push(`/admin/clanky/${id}`);
-          } catch (err) {
-            showToast(`Článek se nepodařilo vytvořit${err instanceof Error ? `: ${err.message}` : '.'}`, 'error');
-          }
+        const handleAdd = () => {
+          router.push('/admin/clanky/novy');
         };
 
         const handleDelete = async () => {

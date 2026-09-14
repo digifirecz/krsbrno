@@ -19,8 +19,8 @@ export async function getArticleLocations(): Promise<string[]> {
   return data.getArticleLocations();
 }
 
-export async function createArticle(order: number, createdBy?: string | null): Promise<string> {
-  return data.createArticle(order, createdBy);
+export async function createArticle(patch: ArticlePatch, order: number, createdBy?: string | null): Promise<string> {
+  return data.createArticle(patch, order, createdBy);
 }
 
 export async function updateArticle(id: string, patch: ArticlePatch, updatedBy?: string | null): Promise<void> {

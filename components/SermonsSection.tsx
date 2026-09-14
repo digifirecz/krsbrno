@@ -147,7 +147,9 @@ export default function SermonsSection() {
                       <span className="text-xs font-bold text-red-400 uppercase tracking-wider block">
                         {isPlaying ? 'Právě hraje' : 'Vybraný záznam'}
                       </span>
-                      <h3 className="text-base sm:text-lg font-bold font-serif text-white truncate">{active.title || 'Bez názvu'}</h3>
+                      {active.title && (
+                        <h3 className="text-base sm:text-lg font-bold font-serif text-white truncate">{active.title}</h3>
+                      )}
                       <p className="text-xs text-neutral-400 font-sans truncate">
                         {[speakerName(active.speakerId), fmtDate(active.date)].filter(Boolean).join(' • ')}
                       </p>
@@ -221,7 +223,7 @@ export default function SermonsSection() {
                             <span className="text-xs text-neutral-400 font-medium shrink-0">{fmtDate(s.date)}</span>
                           </div>
 
-                          <h3 className="text-xl font-bold text-neutral-900 font-serif mb-2">{s.title || 'Bez názvu'}</h3>
+                          {s.title && <h3 className="text-xl font-bold text-neutral-900 font-serif mb-2">{s.title}</h3>}
 
                           {speakerName(s.speakerId) && (
                             <div className="flex items-center space-x-1 text-xs text-neutral-600 font-semibold mb-3">

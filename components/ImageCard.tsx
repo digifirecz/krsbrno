@@ -116,7 +116,7 @@ export default function ImageCard({
                   src={src}
                   alt={alt}
                   fill
-                  className="object-contain"
+                  className="object-contain rounded-2xl"
                   referrerPolicy="no-referrer"
                 />
               </div>

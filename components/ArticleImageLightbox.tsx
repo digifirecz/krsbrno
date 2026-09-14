@@ -77,7 +77,7 @@ export default function ArticleImageLightbox({ src, alt }: ArticleImageLightboxP
               <X className="w-6 h-6" />
             </button>
             <div className="relative w-full h-full max-w-6xl" onClick={(e) => e.stopPropagation()}>
-              <SafeImage src={src} alt={alt} fill className="object-contain" referrerPolicy="no-referrer" />
+              <SafeImage src={src} alt={alt} fill className="object-contain rounded-2xl" referrerPolicy="no-referrer" />
             </div>
           </div>,
           document.body

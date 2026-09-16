@@ -13,11 +13,7 @@
     "lint": "eslint .",
     "clean": "next clean",
     "db:push": "drizzle-kit push",
-    "db:studio": "drizzle-kit studio",
-    "db:export": "node scripts/export-firestore.mjs",
-    "db:import": "node --env-file=.env scripts/import-firestore.mjs",
-    "images:download": "node scripts/download-storage.mjs",
-    "images:localize": "node --env-file=.env scripts/localize-images.mjs"
+    "db:studio": "drizzle-kit studio"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.1",

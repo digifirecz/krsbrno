@@ -22,7 +22,7 @@ function fromRow(r: Row): Section {
 }
 
 export async function getSections(): Promise<Section[]> {
-  const rows = await db.select().from(sections).orderBy(sql`CAST(${sections.id} AS UNSIGNED)`);
+  const rows = await db.select().from(sections).orderBy(sql`CAST(${sections.id} AS INTEGER)`);
   return rows.map(fromRow);
 }
 

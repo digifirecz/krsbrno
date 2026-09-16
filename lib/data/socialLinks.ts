@@ -9,8 +9,8 @@ export async function getSocialLinks(): Promise<SocialLink[]> {
 }
 
 export async function createSocialLink(icon: string, url: string, order: number): Promise<string> {
-  const [res] = await db.insert(socialLinks).values({ icon, url, order });
-  return String(res.insertId);
+  const [row] = await db.insert(socialLinks).values({ icon, url, order }).returning({ id: socialLinks.id });
+  return String(row.id);
 }
 
 export async function updateSocialLink(

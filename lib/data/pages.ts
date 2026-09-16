@@ -104,7 +104,7 @@ export async function savePageBlocks(
     ...(navConfig?.headerIcon !== undefined ? { headerIcon: navConfig.headerIcon } : {}),
   };
   const { id: _id, ...update } = values;
-  await db.insert(pages).values(values).onDuplicateKeyUpdate({ set: update });
+  await db.insert(pages).values(values).onConflictDoUpdate({ target: pages.id, set: update });
 
   return slug;
 }
@@ -207,7 +207,10 @@ export async function resolvePageBySlug(slug: string): Promise<{ pageId: string;
   const [hist] = await db
     .select({ id: pages.id, slug: pages.slug })
     .from(pages)
-    .where(sql`JSON_CONTAINS(${pages.slugHistory}, ${JSON.stringify(slug)})`)
+    // @> is Postgres's jsonb "contains" operator — checks slug_history (a jsonb
+    // array) contains this one value. ${} is a bound parameter, not string
+    // concatenation, so an arbitrary/malicious slug can't affect the query.
+    .where(sql`${pages.slugHistory} @> ${JSON.stringify([slug])}::jsonb`)
     .limit(1);
   if (hist) return { pageId: hist.id, redirectSlug: hist.slug || hist.id };
 

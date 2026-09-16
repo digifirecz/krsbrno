@@ -8,8 +8,8 @@ const nextConfig: NextConfig = {
   typescript: {
     ignoreBuildErrors: false,
   },
-  // Photos are served locally from /public/image. Only a couple of remote
-  // hosts remain for seed placeholders / generated QR codes.
+  // Photos/audio now live in Supabase Storage (public buckets). picsum/qrserver
+  // remain for seed placeholders / generated QR codes.
   images: {
     remotePatterns: [
       {
@@ -23,6 +23,12 @@ const nextConfig: NextConfig = {
         hostname: 'api.qrserver.com',
         port: '',
         pathname: '/**',
+      },
+      {
+        protocol: 'https',
+        hostname: '*.supabase.co',
+        port: '',
+        pathname: '/storage/v1/object/public/**',
       },
     ],
   },

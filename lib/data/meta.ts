@@ -16,7 +16,7 @@ export async function setMeta(id: string, data: Record<string, unknown>, merge =
   await db
     .insert(meta)
     .values({ id, data })
-    .onDuplicateKeyUpdate({ set: { data } });
+    .onConflictDoUpdate({ target: meta.id, set: { data } });
 }
 
 export { sql };

@@ -7,9 +7,11 @@ import { meta } from '@/lib/db/schema';
 // app-wide, same as the Firestore doc ids were).
 export async function nextId(counter: 'pageCounter' | 'articleCounter' | 'sectionCounter' | 'sermonCounter' | 'contactMessageCounter'): Promise<string> {
   return db.transaction(async (tx) => {
+    // ${counter} is a bound parameter (drizzle's sql`` tag), not string
+    // concatenation — safe against injection regardless of the value.
     await tx.execute(sql`
-      INSERT INTO meta (id, data) VALUES (${counter}, JSON_OBJECT('value', 1))
-      ON DUPLICATE KEY UPDATE data = JSON_SET(data, '$.value', CAST(JSON_EXTRACT(data, '$.value') AS UNSIGNED) + 1)
+      INSERT INTO meta (id, data) VALUES (${counter}, '{"value":1}'::jsonb)
+      ON CONFLICT (id) DO UPDATE SET data = jsonb_set(meta.data, '{value}', to_jsonb((meta.data->>'value')::int + 1))
     `);
     const [row] = await tx.select({ data: meta.data }).from(meta).where(eq(meta.id, counter)).limit(1);
     const value = Number((row?.data as { value?: number } | undefined)?.value ?? 1);

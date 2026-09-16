@@ -1,31 +1,48 @@
 import { NextResponse } from 'next/server';
-import { writeFile, mkdir, unlink } from 'node:fs/promises';
 import path from 'node:path';
 import { randomUUID } from 'node:crypto';
 import { getSession } from '@/lib/auth/session';
+import { supabaseAdmin } from '@/lib/supabaseAdmin';
 
-// Local replacement for Firebase Storage uploads. Images land in
-// public/image/<folder>/<id>/, audio in public/audio/<folder>/<id>/, served at
-// /image/... or /audio/...
+// Supabase Storage replacement for the old local-disk uploader (couldn't
+// survive on Vercel — serverless functions have no persistent disk). Images
+// go in the `images` bucket, audio in the `audio` bucket, both public buckets
+// created ahead of time in the Supabase dashboard. Object key layout mirrors
+// the old filesystem layout: <folder>/<id>/<uuid>-<name>.<ext>.
 
-type Kind = { publicDir: 'image' | 'audio'; exts: Set<string>; max: number; label: string };
+type Kind = { bucket: 'images' | 'audio'; exts: Set<string>; max: number; label: string; contentTypes: Record<string, string> };
 
 const IMAGE: Kind = {
-  publicDir: 'image',
+  bucket: 'images',
   exts: new Set(['.jpg', '.jpeg', '.png', '.webp', '.gif', '.avif', '.svg']),
   max: 15 * 1024 * 1024,
   label: 'obrázku',
+  contentTypes: {
+    '.jpg': 'image/jpeg',
+    '.jpeg': 'image/jpeg',
+    '.png': 'image/png',
+    '.webp': 'image/webp',
+    '.gif': 'image/gif',
+    '.avif': 'image/avif',
+    '.svg': 'image/svg+xml',
+  },
 };
 const AUDIO: Kind = {
-  publicDir: 'audio',
+  bucket: 'audio',
   exts: new Set(['.mp3', '.m4a', '.aac', '.wav', '.ogg', '.opus']),
-  max: 300 * 1024 * 1024,
+  max: 50 * 1024 * 1024, // matches Supabase's free-tier global file size cap
   label: 'zvuku',
+  contentTypes: {
+    '.mp3': 'audio/mpeg',
+    '.m4a': 'audio/mp4',
+    '.aac': 'audio/aac',
+    '.wav': 'audio/wav',
+    '.ogg': 'audio/ogg',
+    '.opus': 'audio/opus',
+  },
 };
 
 const ALLOWED_FOLDERS = new Set(['pages', 'articles', 'social', 'branding', 'sermons']);
-const IMAGE_ROOT = path.join(process.cwd(), 'public', 'image');
-const AUDIO_ROOT = path.join(process.cwd(), 'public', 'audio');
 
 const safeSegment = (v: string) => v.replace(/[^a-zA-Z0-9_-]/g, '').slice(0, 64);
 
@@ -56,6 +73,21 @@ function safeName(original: string, fallback: string): string {
   return `${randomUUID()}-${base}${ext}`;
 }
 
+// Recovers {bucket, objectPath} from one of our own public Storage URLs, for
+// DELETE. Rejects anything that isn't actually a public URL for one of our
+// two known buckets — same defensive intent as the old path-traversal check.
+function parseOwnPublicUrl(url: string): { bucket: 'images' | 'audio'; objectPath: string } | null {
+  let parsed: URL;
+  try {
+    parsed = new URL(url);
+  } catch {
+    return null;
+  }
+  const match = parsed.pathname.match(/^\/storage\/v1\/object\/public\/(images|audio)\/(.+)$/);
+  if (!match) return null;
+  return { bucket: match[1] as 'images' | 'audio', objectPath: decodeURIComponent(match[2]) };
+}
+
 export async function POST(req: Request) {
   const session = await getSession();
   if (!session) return NextResponse.json({ error: 'Neautorizováno.' }, { status: 401 });
@@ -84,19 +116,24 @@ export async function POST(req: Request) {
     );
   }
 
-  const name = safeName(file.name, kind.publicDir);
-  const root = kind.publicDir === 'audio' ? AUDIO_ROOT : IMAGE_ROOT;
-  const dir = path.join(root, folder, id);
-  await mkdir(dir, { recursive: true });
+  const name = safeName(file.name, kind.bucket);
+  const objectPath = `${folder}/${id}/${name}`;
 
   let bytes = Buffer.from(await file.arrayBuffer());
   // SVGs can embed <script>/event-handler XSS that fires if the raw file is
-  // opened directly in a browser tab — strip that before it ever touches disk.
+  // opened directly in a browser tab — strip that before it's ever stored.
   if (ext === '.svg') bytes = Buffer.from(sanitizeSvg(bytes.toString('utf8')), 'utf8');
 
-  await writeFile(path.join(dir, name), bytes);
+  const { error } = await supabaseAdmin.storage.from(kind.bucket).upload(objectPath, bytes, {
+    contentType: kind.contentTypes[ext] || 'application/octet-stream',
+    upsert: false,
+  });
+  if (error) {
+    return NextResponse.json({ error: 'Nahrání se nezdařilo.' }, { status: 500 });
+  }
 
-  return NextResponse.json({ url: `/${kind.publicDir}/${folder}/${id}/${name}` });
+  const { data } = supabaseAdmin.storage.from(kind.bucket).getPublicUrl(objectPath);
+  return NextResponse.json({ url: data.publicUrl });
 }
 
 export async function DELETE(req: Request) {
@@ -104,14 +141,10 @@ export async function DELETE(req: Request) {
   if (!session) return NextResponse.json({ error: 'Neautorizováno.' }, { status: 401 });
 
   const { url } = (await req.json().catch(() => ({}))) as { url?: string };
-  const root = url?.startsWith('/image/') ? IMAGE_ROOT : url?.startsWith('/audio/') ? AUDIO_ROOT : null;
-  if (!url || !root) {
+  const parsed = url ? parseOwnPublicUrl(url) : null;
+  if (!parsed) {
     return NextResponse.json({ error: 'Neplatná cesta.' }, { status: 400 });
   }
-  const target = path.normalize(path.join(process.cwd(), 'public', url));
-  if (!target.startsWith(root + path.sep)) {
-    return NextResponse.json({ error: 'Mimo povolený adresář.' }, { status: 400 });
-  }
-  await unlink(target).catch(() => {});
+  await supabaseAdmin.storage.from(parsed.bucket).remove([parsed.objectPath]);
   return NextResponse.json({ ok: true });
 }

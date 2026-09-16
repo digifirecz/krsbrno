@@ -32,7 +32,7 @@ export async function setRole(email: string, role: Role, actor?: string | null):
   await db
     .insert(users)
     .values({ email: key, role, createdAt: now, createdBy: actor || null, updatedAt: now, updatedBy: actor || null })
-    .onDuplicateKeyUpdate({ set: { role, updatedAt: now, updatedBy: actor || null } });
+    .onConflictDoUpdate({ target: users.email, set: { role, updatedAt: now, updatedBy: actor || null } });
   const [row] = await db.select().from(users).where(eq(users.email, key)).limit(1);
   return {
     email: key,

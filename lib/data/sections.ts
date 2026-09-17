@@ -3,6 +3,7 @@ import { db } from '@/lib/db';
 import { sections } from '@/lib/db/schema';
 import { nextId } from '@/lib/data/counters';
 import { emptyBlockData } from '@/lib/blocks/defaults';
+import { sanitizeBlockData } from '@/lib/sanitizeHtml';
 import type { BlockType, BlockData } from '@/lib/blocks/types';
 import type { Section } from '@/lib/sections';
 
@@ -62,11 +63,17 @@ export async function updateSection(
   patch: { name?: string; data?: BlockData },
   updatedBy?: string | null,
 ): Promise<void> {
+  let sanitizedData = patch.data;
+  if (patch.data !== undefined) {
+    const [existing] = await db.select({ type: sections.type }).from(sections).where(eq(sections.id, id)).limit(1);
+    if (existing) sanitizedData = sanitizeBlockData(existing.type, patch.data) as BlockData;
+  }
+
   await db
     .update(sections)
     .set({
       ...(patch.name !== undefined ? { name: patch.name } : {}),
-      ...(patch.data !== undefined ? { data: patch.data } : {}),
+      ...(patch.data !== undefined ? { data: sanitizedData } : {}),
       updatedAt: new Date(),
       updatedBy: updatedBy || null,
     })

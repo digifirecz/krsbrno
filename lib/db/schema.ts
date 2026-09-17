@@ -89,6 +89,11 @@ export const users = pgTable('users', {
   email: varchar('email', { length: 255 }).primaryKey(),
   role: varchar('role', { length: 32 }).notNull().default('sprava'),
   passwordHash: varchar('password_hash', { length: 255 }),
+  // Set whenever an admin sets/resets someone else's password (a "here's a
+  // temp password, change it" handoff) — cleared once the user sets their
+  // own password (self-service change, or the forgot-password email flow).
+  // Forces the change through before the account can use anything else.
+  mustChangePassword: boolean('must_change_password').notNull().default(false),
   createdAt: datetime('created_at'),
   createdBy: varchar('created_by', { length: 255 }),
   updatedAt: datetime('updated_at'),
@@ -102,6 +107,16 @@ export const passwordResetTokens = pgTable('password_reset_tokens', {
   email: varchar('email', { length: 255 }).notNull(),
   expiresAt: datetime('expires_at').notNull(),
   createdAt: datetime('created_at'),
+});
+
+// Brute-force protection for login: counts consecutive failed attempts per
+// email, and locks that email out (lockedUntil) once too many pile up within
+// a short window. A successful login or the window expiring resets it.
+export const loginLockouts = pgTable('login_lockouts', {
+  email: varchar('email', { length: 255 }).primaryKey(),
+  failedCount: integer('failed_count').notNull().default(0),
+  lastAttemptAt: datetime('last_attempt_at').notNull(),
+  lockedUntil: datetime('locked_until'),
 });
 
 // Submissions from the public "Napište nám zprávu" contact form (viewed in

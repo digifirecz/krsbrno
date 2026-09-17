@@ -1,7 +1,9 @@
 import { redirect } from 'next/navigation';
 import SiteChrome from '@/components/SiteChrome';
 import AdminLayout from '@/components/admin/AdminLayout';
+import ForcePasswordChangeGate from '@/components/admin/ForcePasswordChangeGate';
 import { getSession } from '@/lib/auth/session';
+import { getMustChangePassword } from '@/lib/data/auth';
 import { getPathForTab } from '@/lib/routes';
 import { getChromeData } from '@/lib/chromeData';
 import type { Role } from '@/lib/roles';
@@ -15,11 +17,15 @@ export const dynamic = 'force-dynamic';
 export default async function AdminRoutesLayout({ children }: { children: React.ReactNode }) {
   const session = await getSession();
   if (!session) redirect(getPathForTab('login'));
-  const chromeData = await getChromeData();
+  const [chromeData, mustChangePassword] = await Promise.all([getChromeData(), getMustChangePassword(session.email)]);
 
   return (
     <SiteChrome activeTab="admin" {...chromeData}>
-      <AdminLayout user={{ email: session.email, role: session.role as Role }}>{children}</AdminLayout>
+      {mustChangePassword ? (
+        <ForcePasswordChangeGate />
+      ) : (
+        <AdminLayout user={{ email: session.email, role: session.role as Role }}>{children}</AdminLayout>
+      )}
     </SiteChrome>
   );
 }

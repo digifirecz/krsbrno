@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { logout } from '@/lib/actions/auth';
-import { LogOut, LayoutDashboard, FileText, Users, Settings, LayoutTemplate, Newspaper, Layers, ChevronDown, AudioLines, Tag, Mic, MessageSquare } from 'lucide-react';
+import { LogOut, LayoutDashboard, FileText, Users, Settings, LayoutTemplate, Newspaper, Layers, ChevronDown, AudioLines, Tag, Mic, MessageSquare, KeyRound } from 'lucide-react';
 import { getPathForTab } from '@/lib/routes';
 import type { Role } from '@/lib/roles';
 
@@ -191,6 +191,18 @@ export default function AdminLayout({ children, user, setActiveTab }: AdminLayou
             >
               <Settings className="w-5 h-5" />
               <span>Nastavení stránky</span>
+            </Link>
+
+            <Link
+              href="/admin/ucet"
+              className={`flex items-center space-x-3 w-full px-4 py-3 rounded-xl text-sm font-semibold transition-colors cursor-pointer ${
+                isActive('/admin/ucet', false)
+                  ? 'bg-red-50 text-[#c93838]'
+                  : 'text-neutral-600 font-medium hover:bg-neutral-50 hover:text-neutral-900'
+              }`}
+            >
+              <KeyRound className="w-5 h-5" />
+              <span>Změnit heslo</span>
             </Link>
 
             <div className="mt-auto pt-8">

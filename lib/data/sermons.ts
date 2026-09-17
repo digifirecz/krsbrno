@@ -3,6 +3,7 @@ import { db } from '@/lib/db';
 import { sermons, sermonCategories, sermonSpeakers } from '@/lib/db/schema';
 import { nextId } from '@/lib/data/counters';
 import { slugify } from '@/lib/pages';
+import { sanitizeRichText } from '@/lib/sanitizeHtml';
 import type { Sermon, SermonPatch, SermonCategory, SermonSpeaker, SermonTaxon } from '@/lib/sermons';
 
 function uniqueId(base: string, taken: Set<string>): string {
@@ -183,7 +184,7 @@ export async function createSermon(patch: SermonPatch, createdBy?: string | null
     speakerId: patch.speakerId || null,
     date: patch.date ?? now,
     categoryId: patch.categoryId || null,
-    description: patch.description || null,
+    description: patch.description ? sanitizeRichText(patch.description) : null,
     audioUrl: patch.audioUrl || null,
     youtubeUrl: patch.youtubeUrl || null,
     visible: patch.visible ?? true,
@@ -204,7 +205,7 @@ export async function updateSermon(id: string, patch: SermonPatch, updatedBy?: s
       ...('speakerId' in patch ? { speakerId: patch.speakerId || null } : {}),
       ...('date' in patch ? { date: patch.date ?? null } : {}),
       ...('categoryId' in patch ? { categoryId: patch.categoryId || null } : {}),
-      ...('description' in patch ? { description: patch.description || null } : {}),
+      ...('description' in patch ? { description: patch.description ? sanitizeRichText(patch.description) : null } : {}),
       ...('audioUrl' in patch ? { audioUrl: patch.audioUrl || null } : {}),
       ...('youtubeUrl' in patch ? { youtubeUrl: patch.youtubeUrl || null } : {}),
       ...('visible' in patch ? { visible: patch.visible ?? true } : {}),

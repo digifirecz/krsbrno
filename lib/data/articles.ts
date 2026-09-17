@@ -2,6 +2,7 @@ import { asc, eq, isNotNull } from 'drizzle-orm';
 import { db } from '@/lib/db';
 import { articles } from '@/lib/db/schema';
 import { nextId } from '@/lib/data/counters';
+import { sanitizeRichText } from '@/lib/sanitizeHtml';
 import type { Article, ArticlePatch } from '@/lib/articles';
 
 type Row = typeof articles.$inferSelect;
@@ -61,7 +62,7 @@ export async function createArticle(patch: ArticlePatch, order: number, createdB
   await db.insert(articles).values({
     id,
     title: patch.title?.trim() || '',
-    subtitle: patch.subtitle || null,
+    subtitle: patch.subtitle ? sanitizeRichText(patch.subtitle) : null,
     dateText: patch.dateText?.trim() || '',
     timeText: patch.timeText || null,
     location: patch.location || null,
@@ -84,7 +85,7 @@ export async function updateArticle(id: string, patch: ArticlePatch, updatedBy?:
     .update(articles)
     .set({
       ...('title' in patch ? { title: patch.title ?? '' } : {}),
-      ...('subtitle' in patch ? { subtitle: patch.subtitle ?? null } : {}),
+      ...('subtitle' in patch ? { subtitle: patch.subtitle ? sanitizeRichText(patch.subtitle) : null } : {}),
       ...('dateText' in patch ? { dateText: patch.dateText ?? '' } : {}),
       ...('timeText' in patch ? { timeText: patch.timeText || null } : {}),
       ...('location' in patch ? { location: patch.location || null } : {}),

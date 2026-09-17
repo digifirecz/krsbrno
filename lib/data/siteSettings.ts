@@ -1,4 +1,5 @@
 import { getMeta, setMeta } from '@/lib/data/meta';
+import { sanitizeRichText } from '@/lib/sanitizeHtml';
 import { DEFAULT_SITE_SETTINGS, type SiteSettings } from '@/lib/siteSettings';
 
 export async function getSiteSettings(): Promise<SiteSettings> {
@@ -14,5 +15,6 @@ export async function getSiteSettings(): Promise<SiteSettings> {
 }
 
 export async function setSiteSettings(patch: Partial<SiteSettings>): Promise<void> {
-  await setMeta('siteSettings', patch, true);
+  const sanitized = 'gdprText' in patch && patch.gdprText ? { ...patch, gdprText: sanitizeRichText(patch.gdprText) } : patch;
+  await setMeta('siteSettings', sanitized, true);
 }

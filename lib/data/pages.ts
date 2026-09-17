@@ -4,6 +4,7 @@ import { pages, navGroups } from '@/lib/db/schema';
 import { nextId } from '@/lib/data/counters';
 import { getMeta, setMeta } from '@/lib/data/meta';
 import { getSectionsByIds } from '@/lib/data/sections';
+import { sanitizeBlockData } from '@/lib/sanitizeHtml';
 import { slugify } from '@/lib/pages';
 import { MANAGEABLE_PAGES } from '@/lib/blocks/pageRegistry';
 import type { BlockInstance, PageDoc } from '@/lib/blocks/types';
@@ -91,10 +92,12 @@ export async function savePageBlocks(
     slugHistory = slugHistory.filter((s) => s !== slug);
   }
 
+  const sanitizedBlocks = blocks.map((b) => ({ ...b, data: sanitizeBlockData(b.type, b.data) })) as BlockInstance[];
+
   const now = new Date();
   const values = {
     id: pageId,
-    blocks,
+    blocks: sanitizedBlocks,
     title: trimmedTitle || null,
     slug,
     slugHistory,

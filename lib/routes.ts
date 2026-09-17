@@ -124,7 +124,7 @@ export const PAGE_TITLES: Record<string, string> = {
   kids: 'Program pro děti | Křesťanský sbor Brno',
   groups: 'Program pro děti a mládež | Křesťanský sbor Brno',
   events: 'Kalendář akcí | Křesťanský sbor Brno',
-  login: 'Přihlášení do sboru | Křesťanský sbor Brno',
+  login: 'Přihlášení do administrace | Křesťanský sbor Brno',
   admin: 'Administrace | Křesťanský sbor Brno',
 };
 

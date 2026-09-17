@@ -120,7 +120,6 @@ export default function ContactFormBlock({ data }: { data: ContactFormBlockData 
                     <input
                       type="text"
                       required
-                      placeholder="Jan Novák"
                       value={formData.name}
                       onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                       className="w-full px-4 py-2.5 rounded-xl border border-neutral-200/80 text-sm focus:outline-none focus:ring-2 focus:ring-[#c93838]"
@@ -134,7 +133,6 @@ export default function ContactFormBlock({ data }: { data: ContactFormBlockData 
                     <input
                       type="email"
                       required
-                      placeholder="jan.novak@email.cz"
                       value={formData.email}
                       onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                       className="w-full px-4 py-2.5 rounded-xl border border-neutral-200/80 text-sm focus:outline-none focus:ring-2 focus:ring-[#c93838]"

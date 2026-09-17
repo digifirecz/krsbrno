@@ -83,7 +83,7 @@ export default function LoginSection({ setActiveTab }: LoginSectionProps) {
             <Lock className="w-7 h-7" />
           </div>
           <h1 className="text-2xl sm:text-3xl font-extrabold text-neutral-900 font-serif tracking-tight">
-            Přihlášení do sboru
+            Přihlášení do administrace
           </h1>
           <p className="text-sm text-neutral-600">
             Zadejte své přihlašovací údaje
@@ -135,7 +135,6 @@ export default function LoginSection({ setActiveTab }: LoginSectionProps) {
                   required
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  placeholder="např. clen@krsbrno.cz"
                   className="w-full pl-10 pr-4 py-3 bg-neutral-50/50 border border-neutral-200 rounded-xl text-neutral-900 text-sm focus:outline-none focus:ring-2 focus:ring-[#c93838]/20 focus:border-[#c93838] transition-all placeholder:text-neutral-400"
                 />
               </div>
@@ -163,7 +162,6 @@ export default function LoginSection({ setActiveTab }: LoginSectionProps) {
                   required
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  placeholder="••••••••"
                   className="w-full pl-10 pr-11 py-3 bg-neutral-50/50 border border-neutral-200 rounded-xl text-neutral-900 text-sm focus:outline-none focus:ring-2 focus:ring-[#c93838]/20 focus:border-[#c93838] transition-all placeholder:text-neutral-400"
                 />
                 <button

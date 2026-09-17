@@ -3,6 +3,8 @@ import { redirect } from 'next/navigation';
 import ChurchApp from '@/components/ChurchApp';
 import { getTabFromSlug, getTitleForTab, resolveDynamicSlug } from '@/lib/routes';
 import { getPageDoc } from '@/lib/data/pages';
+import { getChromeData } from '@/lib/chromeData';
+import { getHomePageId } from '@/lib/actions/pages';
 
 interface SlugPageProps {
   params: Promise<{ slug: string }>;
@@ -79,6 +81,7 @@ export default async function SlugPage({ params }: SlugPageProps) {
     redirect(dynamic.redirectPath);
   }
   const tab = dynamic?.tab || getTabFromSlug(slug);
+  const [chromeData, homePageId] = await Promise.all([getChromeData(), getHomePageId()]);
 
-  return <ChurchApp initialTab={tab} />;
+  return <ChurchApp initialTab={tab} homePageId={homePageId} {...chromeData} />;
 }

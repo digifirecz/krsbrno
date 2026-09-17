@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { Cookie } from 'lucide-react';
-import { useSiteSettings } from '@/lib/useSiteSettings';
+import type { SiteSettings } from '@/lib/siteSettings';
 
 const STORAGE_KEY = 'krsbrno-cookie-consent';
 
@@ -21,10 +21,13 @@ function saveConsent(analytics: boolean) {
   }
 }
 
-export default function CookieConsent() {
+interface CookieConsentProps {
+  siteSettings: SiteSettings;
+}
+
+export default function CookieConsent({ siteSettings }: CookieConsentProps) {
   const [visible, setVisible] = useState(false);
   const [infoOpen, setInfoOpen] = useState(false);
-  const siteSettings = useSiteSettings();
 
   useEffect(() => {
     try {

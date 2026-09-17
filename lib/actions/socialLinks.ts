@@ -4,7 +4,7 @@ import * as data from '@/lib/data/socialLinks';
 import type { SocialLink } from '@/lib/socialLinks';
 import { requireSession } from '@/lib/auth/session';
 
-// Public — Footer reads this via useSocialLinks.
+// Public — fetched server-side via lib/chromeData.ts for the Footer.
 export async function getSocialLinks(): Promise<SocialLink[]> {
   return data.getSocialLinks();
 }

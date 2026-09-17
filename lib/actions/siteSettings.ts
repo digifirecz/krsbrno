@@ -4,7 +4,7 @@ import * as data from '@/lib/data/siteSettings';
 import type { SiteSettings } from '@/lib/siteSettings';
 import { requireSession } from '@/lib/auth/session';
 
-// Public — Footer/Navbar/CookieConsent read this via useSiteSettings.
+// Public — fetched server-side via lib/chromeData.ts for Footer/Navbar/CookieConsent.
 export async function getSiteSettings(): Promise<SiteSettings> {
   return data.getSiteSettings();
 }

@@ -5,20 +5,21 @@ import Image from 'next/image';
 import { MapPin, Mail, Share2 } from 'lucide-react';
 import { getPathForTab } from '@/lib/routes';
 import { PAGE_ID_TO_TAB } from '@/lib/blocks/pageRegistry';
-import { useNavConfig } from '@/lib/useNavConfig';
-import { useSocialLinks } from '@/lib/useSocialLinks';
-import { useSiteSettings } from '@/lib/useSiteSettings';
+import type { PageNavEntry } from '@/lib/pages';
+import type { SiteSettings } from '@/lib/siteSettings';
+import type { SocialLink } from '@/lib/socialLinks';
 
 interface FooterProps {
   setActiveTab: (tab: string) => void;
+  navConfigEntries: PageNavEntry[];
+  socialLinks: SocialLink[];
+  siteSettings: SiteSettings;
 }
 
-export default function Footer({ setActiveTab }: FooterProps) {
+export default function Footer({ setActiveTab, navConfigEntries, socialLinks, siteSettings }: FooterProps) {
   const [gdprOpen, setGdprOpen] = useState(false);
-  const navConfig = useNavConfig();
-  const footerEntries = navConfig ? [...navConfig.values()].filter((e) => e.showInFooter) : [];
-  const socialLinks = useSocialLinks();
-  const siteSettings = useSiteSettings();
+  const navConfig = new Map(navConfigEntries.map((e) => [e.id, e]));
+  const footerEntries = [...navConfig.values()].filter((e) => e.showInFooter);
   const logo = siteSettings?.logo;
   const logoAlt = siteSettings?.logoAlt || '';
   const address = siteSettings?.address;
@@ -102,9 +103,8 @@ export default function Footer({ setActiveTab }: FooterProps) {
             )}
           </div>
 
-          {/* Social Networks Column — wait for confirmed data, don't show the
-              heading/blurb optimistically while socialLinks is still loading. */}
-          {socialLinks && socialLinks.length > 0 && (
+          {/* Social Networks Column */}
+          {socialLinks.length > 0 && (
             <div className="md:col-span-5 space-y-4 md:text-right">
               <h4 className="text-xs font-bold uppercase tracking-wider text-neutral-400 font-sans">
                 Sledujte nás

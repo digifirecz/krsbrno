@@ -19,8 +19,8 @@ import CustomPageSection from '@/components/CustomPageSection';
 import EmptyPageState from '@/components/EmptyPageState';
 import Footer from '@/components/Footer';
 import { getPathForTab, getTabFromPath, getTitleForTab, preloadPageSlugs, resolveDynamicSlug } from '@/lib/routes';
-import { useHomePageId } from '@/lib/useHomePageId';
 import { PAGE_IDS } from '@/lib/blocks/pageRegistry';
+import type { ChromeData } from '@/lib/chromeData';
 
 const KNOWN_TABS = new Set([
   'home', 'about', 'beliefs', 'confession', 'history', 'management', 'leadership',
@@ -28,8 +28,9 @@ const KNOWN_TABS = new Set([
   'support', 'events', 'login',
 ]);
 
-interface ChurchAppProps {
+interface ChurchAppProps extends ChromeData {
   initialTab?: string;
+  homePageId: string | null;
 }
 
 async function resolvePathToTab(pathname: string): Promise<string> {
@@ -38,9 +39,8 @@ async function resolvePathToTab(pathname: string): Promise<string> {
   return getTabFromPath(pathname);
 }
 
-export default function ChurchApp({ initialTab = 'home' }: ChurchAppProps) {
+export default function ChurchApp({ initialTab = 'home', siteSettings, navConfigEntries, socialLinks, homePageId }: ChurchAppProps) {
   const [activeTab, setActiveTabState] = useState<string>(initialTab);
-  const homePageId = useHomePageId();
 
   // Warm the dynamic-page slug cache used by getPathForTab() for managed pages.
   useEffect(() => {
@@ -101,6 +101,8 @@ export default function ChurchApp({ initialTab = 'home' }: ChurchAppProps) {
       <Navbar
         activeTab={activeTab}
         setActiveTab={setActiveTab}
+        navConfigEntries={navConfigEntries}
+        siteSettings={siteSettings}
       />
 
       {/* Main Page Body depending on selection */}
@@ -109,7 +111,7 @@ export default function ChurchApp({ initialTab = 'home' }: ChurchAppProps) {
         {/* 1. Úvod (Home Page) */}
         {activeTab === 'home' && (
           <div>
-            {homePageId === undefined ? null : homePageId ? (
+            {homePageId ? (
               <CustomPageSection pageId={homePageId} />
             ) : (
               <EmptyPageState />
@@ -204,7 +206,7 @@ export default function ChurchApp({ initialTab = 'home' }: ChurchAppProps) {
       </main>
 
       {/* Footer with URL routing */}
-      <Footer setActiveTab={setActiveTab} />
+      <Footer setActiveTab={setActiveTab} navConfigEntries={navConfigEntries} socialLinks={socialLinks} siteSettings={siteSettings} />
 
     </div>
   );

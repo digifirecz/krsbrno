@@ -13,33 +13,33 @@ import { getPathForTab } from '@/lib/routes';
 import { getCurrentUser } from '@/lib/actions/auth';
 import { PAGE_ID_TO_TAB } from '@/lib/blocks/pageRegistry';
 import { getIcon } from '@/lib/blocks/icons';
-import { useNavConfig } from '@/lib/useNavConfig';
-import { useSiteSettings } from '@/lib/useSiteSettings';
 import type { PageNavEntry } from '@/lib/pages';
+import type { SiteSettings } from '@/lib/siteSettings';
 
 interface NavbarProps {
   activeTab: string;
   setActiveTab: (tab: string) => void;
+  navConfigEntries: PageNavEntry[];
+  siteSettings: SiteSettings;
 }
 
 function tabFor(entry: PageNavEntry): string {
   return PAGE_ID_TO_TAB[entry.id] || entry.id;
 }
 
-export default function Navbar({ activeTab, setActiveTab }: NavbarProps) {
+export default function Navbar({ activeTab, setActiveTab, navConfigEntries, siteSettings }: NavbarProps) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [openGroup, setOpenGroup] = useState<string | null>(null);
   const [mobileOpenGroups, setMobileOpenGroups] = useState<Set<string>>(new Set());
 
   const [scrolled, setScrolled] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const navConfig = useNavConfig();
-  const siteSettings = useSiteSettings();
   const logo = siteSettings?.logo;
   const logoAlt = siteSettings?.logoAlt || '';
   const navRef = useRef<HTMLDivElement>(null);
 
-  const headerEntries = navConfig ? [...navConfig.values()].filter((e) => e.showInHeader) : [];
+  const navConfig = new Map(navConfigEntries.map((e) => [e.id, e]));
+  const headerEntries = [...navConfig.values()].filter((e) => e.showInHeader);
   const groupedEntries = new Map<string, { label: string; items: PageNavEntry[] }>();
   const standaloneEntries: PageNavEntry[] = [];
   headerEntries.forEach((entry) => {

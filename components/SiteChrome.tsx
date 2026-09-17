@@ -4,8 +4,9 @@ import { useRouter } from 'next/navigation';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import { getPathForTab } from '@/lib/routes';
+import type { ChromeData } from '@/lib/chromeData';
 
-interface SiteChromeProps {
+interface SiteChromeProps extends ChromeData {
   children: React.ReactNode;
   activeTab: string;
 }
@@ -15,7 +16,7 @@ interface SiteChromeProps {
  * auth pages) with the same public site header/footer that ChurchApp renders,
  * so the header/footer stay visible while navigating through it.
  */
-export default function SiteChrome({ children, activeTab }: SiteChromeProps) {
+export default function SiteChrome({ children, activeTab, siteSettings, navConfigEntries, socialLinks }: SiteChromeProps) {
   const router = useRouter();
 
   const setActiveTab = (tab: string) => {
@@ -24,9 +25,9 @@ export default function SiteChrome({ children, activeTab }: SiteChromeProps) {
 
   return (
     <div className="min-h-screen flex flex-col">
-      <Navbar activeTab={activeTab} setActiveTab={setActiveTab} />
+      <Navbar activeTab={activeTab} setActiveTab={setActiveTab} navConfigEntries={navConfigEntries} siteSettings={siteSettings} />
       <main className="flex-grow">{children}</main>
-      <Footer setActiveTab={setActiveTab} />
+      <Footer setActiveTab={setActiveTab} navConfigEntries={navConfigEntries} socialLinks={socialLinks} siteSettings={siteSettings} />
     </div>
   );
 }

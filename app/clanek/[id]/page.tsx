@@ -7,6 +7,7 @@ import ArticleBackLink from '@/components/ArticleBackLink';
 import { getArticle } from '@/lib/data/articles';
 import { getPathForTab } from '@/lib/routes';
 import { BADGE_COLORS } from '@/lib/blocks/badgeColors';
+import { getChromeData } from '@/lib/chromeData';
 
 interface ArticlePageProps {
   params: Promise<{ id: string }>;
@@ -48,9 +49,10 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
   const { id } = await params;
   const article = await getArticle(id);
   if (!article || !article.visible) notFound();
+  const chromeData = await getChromeData();
 
   return (
-    <SiteChrome activeTab="events">
+    <SiteChrome activeTab="events" {...chromeData}>
       <section className="py-10 sm:py-14 bg-white">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6">
           <ArticleBackLink fallbackHref={getPathForTab('events')} />

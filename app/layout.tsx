@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import { PT_Serif, Open_Sans } from 'next/font/google';
 import ToastProvider from '@/components/admin/ToastProvider';
 import CookieConsent from '@/components/CookieConsent';
+import { getChromeData } from '@/lib/chromeData';
 import './globals.css';
 
 const ptSerif = PT_Serif({
@@ -24,12 +25,14 @@ export const metadata: Metadata = {
   description: 'Křesťanský sbor Brno – otevřené společenství lidí v Brně-Židenicích. Běžná setkávání, nedělní bohoslužby, mládež Elevate, besídka pro děti, knihovna DEN a kázání.',
 };
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default async function RootLayout({ children }: { children: React.ReactNode }) {
+  const { siteSettings } = await getChromeData();
+
   return (
     <html lang="cs" className={`${ptSerif.variable} ${openSans.variable}`}>
       <body className={openSans.className} suppressHydrationWarning>
         <ToastProvider>{children}</ToastProvider>
-        <CookieConsent />
+        <CookieConsent siteSettings={siteSettings} />
       </body>
     </html>
   );

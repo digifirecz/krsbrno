@@ -49,7 +49,7 @@ export async function getAllPageSlugs(): Promise<PageSlugEntry[]> {
   return data.getAllPageSlugs();
 }
 
-// Public — used by the Navbar/Footer (useNavConfig) to know what to show.
+// Public — fetched server-side via lib/chromeData.ts for the Navbar/Footer.
 export async function getNavConfig(): Promise<PageNavEntry[]> {
   return data.getNavConfig();
 }
@@ -77,7 +77,7 @@ export async function deletePage(pageId: string): Promise<void> {
   return data.deletePage(pageId);
 }
 
-// Public — used by the homepage (useHomePageId) to know which managed page to render at "/".
+// Public — fetched server-side (app/page.tsx, app/[slug]/page.tsx) to know which managed page to render at "/".
 export async function getHomePageId(): Promise<string | null> {
   return data.getHomePageId();
 }

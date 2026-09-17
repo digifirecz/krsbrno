@@ -193,7 +193,7 @@ export default function EventsSection({ icon, heading, description, sortBy = 'ev
                 transform: `translateX(-${(effectiveIndex * 100) / visibleCards}%)`
               }}
             >
-              {sortedArticles.map((article) => (
+              {sortedArticles.map((article, index) => (
                 <div
                   key={article.id}
                   className="w-full sm:w-1/2 lg:w-1/4 flex-shrink-0 px-3"
@@ -214,6 +214,9 @@ export default function EventsSection({ icon, heading, description, sortBy = 'ev
                           className="object-cover group-hover:scale-105 transition-transform duration-500 ease-out"
                           style={focalCropStyle({ src: article.image, focalX: article.focalX, focalY: article.focalY, zoom: article.zoom })}
                           referrerPolicy="no-referrer"
+                          // First row of cards is visible without scrolling — this is
+                          // consistently the LCP element, so skip lazy-loading for it.
+                          priority={index < 4}
                         />
                       </div>
                     )}

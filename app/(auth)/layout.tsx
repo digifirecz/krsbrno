@@ -1,5 +1,7 @@
 import SiteChrome from '@/components/SiteChrome';
+import { getChromeData } from '@/lib/chromeData';
 
-export default function AuthRoutesLayout({ children }: { children: React.ReactNode }) {
-  return <SiteChrome activeTab="login">{children}</SiteChrome>;
+export default async function AuthRoutesLayout({ children }: { children: React.ReactNode }) {
+  const chromeData = await getChromeData();
+  return <SiteChrome activeTab="login" {...chromeData}>{children}</SiteChrome>;
 }

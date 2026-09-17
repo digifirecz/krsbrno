@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { createPortal } from 'react-dom';
 import SafeImage from '@/components/SafeImage';
 import ImageCard from '@/components/ImageCard';
 import { getIcon } from '@/lib/blocks/icons';
@@ -210,11 +211,13 @@ export default function SupportOptionsBlock({ data }: { data: SupportOptionsData
         </div>
       </div>
 
-      {showQrModal && (
-        <div
-          className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4 cursor-pointer"
-          onClick={() => setShowQrModal(false)}
-        >
+      {showQrModal &&
+        typeof document !== 'undefined' &&
+        createPortal(
+          <div
+            className="fixed inset-0 z-[9999] bg-black/60 backdrop-blur-xs flex items-center justify-center p-4 cursor-pointer"
+            onClick={() => setShowQrModal(false)}
+          >
           <div
             className="bg-white rounded-2xl p-6 sm:p-8 max-w-md w-full shadow-2xl space-y-6 animate-in zoom-in-95 duration-150 border border-neutral-200"
             onClick={(e) => e.stopPropagation()}
@@ -280,8 +283,9 @@ export default function SupportOptionsBlock({ data }: { data: SupportOptionsData
               Zavřít
             </button>
           </div>
-        </div>
-      )}
+          </div>,
+          document.body
+        )}
     </section>
   );
 }

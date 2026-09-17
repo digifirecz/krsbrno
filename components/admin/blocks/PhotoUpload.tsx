@@ -19,10 +19,12 @@ interface PhotoUploadProps {
   aspectRatio?: number;
 }
 
-// Only ever try to delete our own uploaded files — never the static default
-// logo path ("/logo.png") or a pasted external URL.
+// Only ever try to delete our own uploaded files (Supabase Storage) — never
+// the static default logo path ("/logo.png") or a pasted external URL. The
+// server independently re-validates this (parseOwnPublicUrl in the upload
+// route), so this is just a cheap pre-filter to skip the request otherwise.
 async function deleteIfLocalImage(url: string) {
-  if (!url || !url.startsWith('/image/')) return;
+  if (!url || !url.includes('/storage/v1/object/public/images/')) return;
   try {
     await fetch('/api/upload', {
       method: 'DELETE',

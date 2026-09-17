@@ -11,8 +11,11 @@ interface AudioUploadProps {
   folder?: string;
 }
 
+// Only ever try to delete our own uploaded files (Supabase Storage) — the
+// server independently re-validates this (parseOwnPublicUrl in the upload
+// route), so this is just a cheap pre-filter to skip the request otherwise.
 async function deleteIfLocal(url: string) {
-  if (!url || !url.startsWith('/audio/')) return;
+  if (!url || !url.includes('/storage/v1/object/public/audio/')) return;
   try {
     await fetch('/api/upload', {
       method: 'DELETE',

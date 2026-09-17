@@ -12,11 +12,6 @@ interface ArticleImageLightboxProps {
 
 export default function ArticleImageLightbox({ src, alt }: ArticleImageLightboxProps) {
   const [open, setOpen] = useState(false);
-  // Dokud se obrázek nenačte, hádáme širší poměr — ať náhled nenaskočí z nuly.
-  // Jakmile jsou známé skutečné rozměry, box se jim přesně přizpůsobí (šířka podle
-  // pevné výšky), takže žádné prázdné bílé okraje po stranách a text vedle dostane
-  // zbylou šířku.
-  const [ratio, setRatio] = useState(3 / 2);
 
   useEffect(() => {
     if (!open) return;
@@ -33,10 +28,7 @@ export default function ArticleImageLightbox({ src, alt }: ArticleImageLightboxP
 
   return (
     <>
-      <div
-        className="relative w-full h-[360px] md:h-[600px] md:w-auto md:max-w-[65%] md:min-w-[35%] md:ml-auto shrink-0 bg-white"
-        style={{ aspectRatio: `${ratio}` }}
-      >
+      <div className="relative w-full h-[360px] md:h-[600px] md:w-[45%] md:ml-auto shrink-0 bg-white">
         <button
           type="button"
           onClick={() => setOpen(true)}
@@ -49,12 +41,6 @@ export default function ArticleImageLightbox({ src, alt }: ArticleImageLightboxP
             fill
             className="object-contain"
             referrerPolicy="no-referrer"
-            onLoad={(e) => {
-              const img = e.currentTarget;
-              if (img.naturalWidth && img.naturalHeight) {
-                setRatio(img.naturalWidth / img.naturalHeight);
-              }
-            }}
           />
           <span className="absolute bottom-3 right-3 w-9 h-9 rounded-full bg-black/50 text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
             <ZoomIn className="w-4.5 h-4.5" />

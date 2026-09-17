@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import path from 'node:path';
 import { randomUUID } from 'node:crypto';
+import sharp from 'sharp';
 import { getSession } from '@/lib/auth/session';
 import { supabaseAdmin } from '@/lib/supabaseAdmin';
 
@@ -58,6 +59,40 @@ function sanitizeSvg(svg: string): string {
     .replace(/(href|xlink:href)\s*=\s*"(\s*javascript:[^"]*)"/gi, '')
     .replace(/(href|xlink:href)\s*=\s*'(\s*javascript:[^']*)'/gi, '')
     .replace(/<foreignObject[\s\S]*?<\/foreignObject>/gi, '');
+}
+
+// Photos straight off a phone can be 10+ MB at 4000px+ — way more than any
+// layout on the site ever displays, even in the full-size lightbox view.
+// Shrinking + recompressing on upload keeps that one-time cost on the admin
+// (who already expects a short wait when uploading) instead of taxing every
+// future first-time viewer of that image via Next.js's own on-demand resize.
+// Moderate settings on purpose: still sharp enough to zoom into, not
+// aiming for maximum compression.
+const MAX_IMAGE_DIMENSION = 2000;
+const RESIZABLE_EXTS = new Set(['.jpg', '.jpeg', '.png', '.webp', '.avif']);
+
+async function compressImage(bytes: Buffer, ext: string): Promise<Buffer> {
+  if (!RESIZABLE_EXTS.has(ext)) return bytes; // .svg (not raster), .gif (would lose animation)
+
+  // .rotate() with no args bakes in the EXIF orientation as real pixels,
+  // since re-encoding can otherwise lose the tag phones rely on for "portrait".
+  const image = sharp(bytes)
+    .rotate()
+    .resize({ width: MAX_IMAGE_DIMENSION, height: MAX_IMAGE_DIMENSION, fit: 'inside', withoutEnlargement: true });
+
+  switch (ext) {
+    case '.jpg':
+    case '.jpeg':
+      return Buffer.from(await image.jpeg({ quality: 82, mozjpeg: true }).toBuffer());
+    case '.png':
+      return Buffer.from(await image.png({ compressionLevel: 9 }).toBuffer());
+    case '.webp':
+      return Buffer.from(await image.webp({ quality: 82 }).toBuffer());
+    case '.avif':
+      return Buffer.from(await image.avif({ quality: 82 }).toBuffer());
+    default:
+      return bytes;
+  }
 }
 
 function safeName(original: string, fallback: string): string {
@@ -119,10 +154,20 @@ export async function POST(req: Request) {
   const name = safeName(file.name, kind.bucket);
   const objectPath = `${folder}/${id}/${name}`;
 
-  let bytes = Buffer.from(await file.arrayBuffer());
+  let bytes: Buffer = Buffer.from(await file.arrayBuffer());
   // SVGs can embed <script>/event-handler XSS that fires if the raw file is
   // opened directly in a browser tab — strip that before it's ever stored.
   if (ext === '.svg') bytes = Buffer.from(sanitizeSvg(bytes.toString('utf8')), 'utf8');
+
+  if (kind === IMAGE) {
+    try {
+      bytes = await compressImage(bytes, ext);
+    } catch {
+      // Most likely a mislabeled/corrupt file (e.g. a HEIC renamed to .jpg —
+      // real HEIC exports are already blocked by the extension allowlist above).
+      return NextResponse.json({ error: 'Obrázek se nepodařilo zpracovat. Zkuste jej exportovat jako JPEG.' }, { status: 400 });
+    }
+  }
 
   const { error } = await supabaseAdmin.storage.from(kind.bucket).upload(objectPath, bytes, {
     contentType: kind.contentTypes[ext] || 'application/octet-stream',

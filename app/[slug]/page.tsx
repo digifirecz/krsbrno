@@ -10,45 +10,14 @@ interface SlugPageProps {
   params: Promise<{ slug: string }>;
 }
 
-export function generateStaticParams() {
-  return [
-    { slug: 'podpora' },
-    { slug: 'kazani' },
-    { slug: 'kontakt' },
-    { slug: 'cemu-verime' },
-    { slug: 'o-nas' },
-    { slug: 'nase-vyznani' },
-    { slug: 'historie' },
-    { slug: 'sprava-sboru' },
-    { slug: 'vedeni' },
-    { slug: 'setkavani' },
-    { slug: 'knihovna' },
-    { slug: 'mladez' },
-    { slug: 'dorost' },
-    { slug: 'program' },
-    { slug: 'akce' },
-    { slug: 'login' },
-    { slug: 'prihlaseni' },
-    // Aliases
-    { slug: 'verime' },
-    { slug: 'o-nasem-sboru' },
-    { slug: 'kdo-jsme' },
-    { slug: 'vyznani' },
-    { slug: 'organizace' },
-    { slug: 'sprava' },
-    { slug: 'bohosluzby' },
-    { slug: 'knihovna-den' },
-    { slug: 'zaznamy' },
-    { slug: 'audio' },
-    { slug: 'darovat' },
-    { slug: 'finance' },
-    { slug: 'elevate' },
-    { slug: 'poutnici' },
-    { slug: 'deti' },
-    { slug: 'skupinky' },
-    { slug: 'besidka' },
-  ];
-}
+// No generateStaticParams here on purpose — these pages now each fetch
+// chrome data + the DB on render (see SlugPage below), and pre-building all
+// ~35 slugs at once during `next build` fires that many DB round trips
+// concurrently from Vercel's build machine, which the DB's connection pooler
+// can't keep up with inside the 60s per-page build timeout. Rendering these
+// on the first real visitor request (and letting Next cache the result)
+// avoids the build-time burst entirely and works fine at runtime — the same
+// pooler already handles regular traffic without issue.
 
 export async function generateMetadata({ params }: SlugPageProps): Promise<Metadata> {
   const { slug } = await params;

@@ -6,6 +6,12 @@ import { getPathForTab } from '@/lib/routes';
 import { getChromeData } from '@/lib/chromeData';
 import type { Role } from '@/lib/roles';
 
+// Always render per-request — every admin page needs a live session (via
+// cookies) anyway, so there's nothing to gain from build-time prerendering,
+// and letting Next.js attempt it anyway caused build-time DB statement
+// timeouts (too many parallel build workers hitting the DB at once).
+export const dynamic = 'force-dynamic';
+
 export default async function AdminRoutesLayout({ children }: { children: React.ReactNode }) {
   const session = await getSession();
   if (!session) redirect(getPathForTab('login'));

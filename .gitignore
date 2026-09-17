@@ -7,3 +7,8 @@ coverage/
 !.env.example
 tsconfig.tsbuildinfo
 .idea/
+
+# Uploads now live in Supabase Storage — these only ever fill up with local
+# dev-test files, never real content the app actually serves.
+public/image/
+public/audio/

@@ -13,17 +13,22 @@ interface ChangePasswordFormProps {
 export default function ChangePasswordForm({ onSuccess, submitLabel = 'Změnit heslo', className = 'max-w-sm' }: ChangePasswordFormProps) {
   const [currentPassword, setCurrentPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
+  const [newPasswordTouched, setNewPasswordTouched] = useState(false);
   const [confirmPassword, setConfirmPassword] = useState('');
   const [showPasswords, setShowPasswords] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState(false);
 
+  const newPasswordTooShort = newPasswordTouched && newPassword !== '' && newPassword.length < 8;
+  const confirmMismatch = confirmPassword !== '' && newPassword !== confirmPassword;
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
 
     if (newPassword.length < 8) {
+      setNewPasswordTouched(true);
       setError('Nové heslo musí mít alespoň 8 znaků.');
       return;
     }
@@ -96,7 +101,11 @@ export default function ChangePasswordForm({ onSuccess, submitLabel = 'Změnit h
             required
             value={newPassword}
             onChange={(e) => setNewPassword(e.target.value)}
-            className="w-full pl-10 pr-11 py-3 bg-neutral-50/50 border border-neutral-200 rounded-xl text-neutral-900 text-sm focus:outline-none focus:ring-2 focus:ring-[#c93838]/20 focus:border-[#c93838] transition-all"
+            onBlur={() => setNewPasswordTouched(true)}
+            aria-invalid={newPasswordTooShort}
+            className={`w-full pl-10 pr-11 py-3 bg-neutral-50/50 border rounded-xl text-neutral-900 text-sm focus:outline-none focus:ring-2 focus:ring-[#c93838]/20 focus:border-[#c93838] transition-all ${
+              newPasswordTooShort ? 'border-[#c93838]' : 'border-neutral-200'
+            }`}
           />
           <button
             type="button"
@@ -108,6 +117,7 @@ export default function ChangePasswordForm({ onSuccess, submitLabel = 'Změnit h
             {showPasswords ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
           </button>
         </div>
+        {newPasswordTooShort && <p className="text-xs font-medium text-[#c93838]">Heslo musí mít alespoň 8 znaků.</p>}
       </div>
 
       <div className="space-y-1.5">
@@ -117,8 +127,12 @@ export default function ChangePasswordForm({ onSuccess, submitLabel = 'Změnit h
           required
           value={confirmPassword}
           onChange={(e) => setConfirmPassword(e.target.value)}
-          className="w-full px-4 py-3 bg-neutral-50/50 border border-neutral-200 rounded-xl text-neutral-900 text-sm focus:outline-none focus:ring-2 focus:ring-[#c93838]/20 focus:border-[#c93838] transition-all"
+          aria-invalid={confirmMismatch}
+          className={`w-full px-4 py-3 bg-neutral-50/50 border rounded-xl text-neutral-900 text-sm focus:outline-none focus:ring-2 focus:ring-[#c93838]/20 focus:border-[#c93838] transition-all ${
+            confirmMismatch ? 'border-[#c93838]' : 'border-neutral-200'
+          }`}
         />
+        {confirmMismatch && <p className="text-xs font-medium text-[#c93838]">Hesla se neshodují.</p>}
       </div>
 
       <button

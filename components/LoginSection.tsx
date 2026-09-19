@@ -6,6 +6,7 @@ import Link from 'next/link';
 import { Lock, Mail, ArrowLeft, CheckCircle2, AlertCircle, Eye, EyeOff, UserCheck } from 'lucide-react';
 import { getPathForTab } from '@/lib/routes';
 import { login } from '@/lib/actions/auth';
+import { isValidEmail } from '@/lib/validation';
 
 interface LoginSectionProps {
   setActiveTab?: (tab: string) => void;
@@ -14,11 +15,14 @@ interface LoginSectionProps {
 export default function LoginSection({ setActiveTab }: LoginSectionProps) {
   const router = useRouter();
   const [email, setEmail] = useState('');
+  const [emailTouched, setEmailTouched] = useState(false);
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [successMessage, setSuccessMessage] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
+
+  const emailInvalid = emailTouched && email !== '' && !isValidEmail(email);
 
   const handleNavigateHome = (e?: React.MouseEvent) => {
     if (e && (e.metaKey || e.ctrlKey || e.shiftKey || e.button === 1)) {
@@ -41,6 +45,11 @@ export default function LoginSection({ setActiveTab }: LoginSectionProps) {
 
     if (!email || !password) {
       setErrorMessage('Prosím vyplňte e-mail i heslo.');
+      return;
+    }
+    if (!isValidEmail(email)) {
+      setEmailTouched(true);
+      setErrorMessage('Zadejte platnou e-mailovou adresu.');
       return;
     }
 
@@ -135,9 +144,16 @@ export default function LoginSection({ setActiveTab }: LoginSectionProps) {
                   required
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="w-full pl-10 pr-4 py-3 bg-neutral-50/50 border border-neutral-200 rounded-xl text-neutral-900 text-sm focus:outline-none focus:ring-2 focus:ring-[#c93838]/20 focus:border-[#c93838] transition-all placeholder:text-neutral-400"
+                  onBlur={() => setEmailTouched(true)}
+                  aria-invalid={emailInvalid}
+                  className={`w-full pl-10 pr-4 py-3 bg-neutral-50/50 border rounded-xl text-neutral-900 text-sm focus:outline-none focus:ring-2 transition-all placeholder:text-neutral-400 ${
+                    emailInvalid
+                      ? 'border-[#c93838] focus:ring-[#c93838]/20 focus:border-[#c93838]'
+                      : 'border-neutral-200 focus:ring-[#c93838]/20 focus:border-[#c93838]'
+                  }`}
                 />
               </div>
+              {emailInvalid && <p className="text-xs font-medium text-[#c93838]">Zadejte platnou e-mailovou adresu.</p>}
             </div>
 
             {/* Password Field */}

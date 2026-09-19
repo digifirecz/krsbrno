@@ -11,12 +11,16 @@ interface SetPasswordModalProps {
 
 export default function SetPasswordModal({ email, onClose, onSubmit }: SetPasswordModalProps) {
   const [password, setPassword] = useState('');
+  const [passwordTouched, setPasswordTouched] = useState(false);
   const [error, setError] = useState('');
   const [submitting, setSubmitting] = useState(false);
+
+  const passwordTooShort = passwordTouched && password !== '' && password.length < 8;
 
   useEffect(() => {
     if (!email) return;
     setPassword('');
+    setPasswordTouched(false);
     setError('');
     setSubmitting(false);
     const onKey = (e: KeyboardEvent) => e.key === 'Escape' && onClose();
@@ -32,6 +36,7 @@ export default function SetPasswordModal({ email, onClose, onSubmit }: SetPasswo
 
   const handleSubmit = async () => {
     if (password.length < 8) {
+      setPasswordTouched(true);
       setError('Heslo musí mít alespoň 8 znaků.');
       return;
     }
@@ -73,11 +78,16 @@ export default function SetPasswordModal({ email, onClose, onSubmit }: SetPasswo
             type="text"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
+            onBlur={() => setPasswordTouched(true)}
             onKeyDown={(e) => e.key === 'Enter' && handleSubmit()}
             placeholder="alespoň 8 znaků"
-            className="w-full px-3.5 py-2.5 rounded-xl border border-neutral-200 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-[#c93838]/30 focus:border-[#c93838]"
+            aria-invalid={passwordTooShort}
+            className={`w-full px-3.5 py-2.5 rounded-xl border text-sm bg-white focus:outline-none focus:ring-2 focus:ring-[#c93838]/30 focus:border-[#c93838] ${
+              passwordTooShort ? 'border-[#c93838]' : 'border-neutral-200'
+            }`}
             autoFocus
           />
+          {passwordTooShort && <p className="text-xs font-medium text-[#c93838] mt-1">Heslo musí mít alespoň 8 znaků.</p>}
         </div>
 
         {error && <p className="text-xs font-medium text-[#c93838]">{error}</p>}

@@ -3,16 +3,25 @@
 import { useState } from 'react';
 import { Mail, CheckCircle2, AlertCircle } from 'lucide-react';
 import { requestPasswordReset } from '@/lib/actions/auth';
+import { isValidEmail } from '@/lib/validation';
 
 export default function ForgotPasswordForm() {
   const [email, setEmail] = useState('');
+  const [emailTouched, setEmailTouched] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
   const [done, setDone] = useState(false);
 
+  const emailInvalid = emailTouched && email !== '' && !isValidEmail(email);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setErrorMessage('');
+    if (!isValidEmail(email)) {
+      setEmailTouched(true);
+      setErrorMessage('Zadejte platnou e-mailovou adresu.');
+      return;
+    }
     setIsLoading(true);
     try {
       await requestPasswordReset(email);
@@ -60,11 +69,16 @@ export default function ForgotPasswordForm() {
             required
             value={email}
             onChange={(e) => setEmail(e.target.value)}
+            onBlur={() => setEmailTouched(true)}
+            aria-invalid={emailInvalid}
             placeholder="např. clen@krsbrno.cz"
-            className="w-full pl-10 pr-4 py-3 bg-neutral-50/50 border border-neutral-200 rounded-xl text-neutral-900 text-sm focus:outline-none focus:ring-2 focus:ring-[#c93838]/20 focus:border-[#c93838] transition-all placeholder:text-neutral-400"
+            className={`w-full pl-10 pr-4 py-3 bg-neutral-50/50 border rounded-xl text-neutral-900 text-sm focus:outline-none focus:ring-2 focus:ring-[#c93838]/20 focus:border-[#c93838] transition-all placeholder:text-neutral-400 ${
+              emailInvalid ? 'border-[#c93838]' : 'border-neutral-200'
+            }`}
             autoFocus
           />
         </div>
+        {emailInvalid && <p className="text-xs font-medium text-[#c93838]">Zadejte platnou e-mailovou adresu.</p>}
       </div>
 
       <button

@@ -4,12 +4,14 @@ import { useState } from 'react';
 import { createContactMessage } from '@/lib/actions/contactMessages';
 import { Mail, Send, CheckCircle2, MessageSquare } from 'lucide-react';
 import type { ContactFormBlockData } from '@/lib/blocks/types';
+import { isValidEmail } from '@/lib/validation';
 
 export default function ContactFormBlock({ data }: { data: ContactFormBlockData }) {
   const topics = data.topics && data.topics.length > 0 ? data.topics : ['Běžný dotaz'];
   const [formSubmitted, setFormSubmitted] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState(false);
+  const [emailTouched, setEmailTouched] = useState(false);
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -17,9 +19,15 @@ export default function ContactFormBlock({ data }: { data: ContactFormBlockData 
     message: '',
   });
 
+  const emailInvalid = emailTouched && formData.email !== '' && !isValidEmail(formData.email);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!formData.name || !formData.email || !formData.message) return;
+    if (!isValidEmail(formData.email)) {
+      setEmailTouched(true);
+      return;
+    }
     setSubmitting(true);
     setSubmitError(false);
     try {
@@ -135,8 +143,13 @@ export default function ContactFormBlock({ data }: { data: ContactFormBlockData 
                       required
                       value={formData.email}
                       onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                      className="w-full px-4 py-2.5 rounded-xl border border-neutral-200/80 text-sm focus:outline-none focus:ring-2 focus:ring-[#c93838]"
+                      onBlur={() => setEmailTouched(true)}
+                      aria-invalid={emailInvalid}
+                      className={`w-full px-4 py-2.5 rounded-xl border text-sm focus:outline-none focus:ring-2 focus:ring-[#c93838] ${
+                        emailInvalid ? 'border-[#c93838]' : 'border-neutral-200/80'
+                      }`}
                     />
+                    {emailInvalid && <p className="text-xs font-medium text-[#c93838] mt-1">Zadejte platnou e-mailovou adresu.</p>}
                   </div>
                 </div>
 

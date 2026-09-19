@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { X } from 'lucide-react';
 import type { RoleDefinition } from '@/lib/roles';
+import { isValidEmail } from '@/lib/validation';
 
 interface NewUserModalProps {
   open: boolean;
@@ -13,13 +14,17 @@ interface NewUserModalProps {
 
 export default function NewUserModal({ open, roleDefs, onClose, onCreate }: NewUserModalProps) {
   const [email, setEmail] = useState('');
+  const [emailTouched, setEmailTouched] = useState(false);
   const [role, setRole] = useState('sprava');
   const [error, setError] = useState('');
   const [submitting, setSubmitting] = useState(false);
 
+  const emailInvalid = emailTouched && email !== '' && !isValidEmail(email);
+
   useEffect(() => {
     if (!open) return;
     setEmail('');
+    setEmailTouched(false);
     setRole(roleDefs.find((d) => d.id === 'sprava')?.id ?? roleDefs[0]?.id ?? 'sprava');
     setError('');
     setSubmitting(false);
@@ -36,7 +41,8 @@ export default function NewUserModal({ open, roleDefs, onClose, onCreate }: NewU
 
   const handleSubmit = async () => {
     const e = email.trim().toLowerCase();
-    if (!e.includes('@')) {
+    if (!isValidEmail(e)) {
+      setEmailTouched(true);
       setError('Zadejte platný e-mail.');
       return;
     }
@@ -77,11 +83,18 @@ export default function NewUserModal({ open, roleDefs, onClose, onCreate }: NewU
             type="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
+            onBlur={() => setEmailTouched(true)}
             onKeyDown={(e) => e.key === 'Enter' && handleSubmit()}
             placeholder="jan.novak@email.cz"
-            className={fieldClass}
+            aria-invalid={emailInvalid}
+            className={
+              emailInvalid
+                ? 'w-full px-3.5 py-2.5 rounded-xl border border-[#c93838] text-sm bg-white focus:outline-none focus:ring-2 focus:ring-[#c93838]/30 focus:border-[#c93838]'
+                : fieldClass
+            }
             autoFocus
           />
+          {emailInvalid && <p className="text-xs font-medium text-[#c93838] mt-1">Zadejte platný e-mail.</p>}
         </div>
 
         <div>

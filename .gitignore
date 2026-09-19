@@ -12,3 +12,4 @@ tsconfig.tsbuildinfo
 # dev-test files, never real content the app actually serves.
 public/image/
 public/audio/
+.vercel

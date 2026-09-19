@@ -17,6 +17,7 @@
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.1",
+    "@sentry/nextjs": "^10.75.0",
     "@supabase/supabase-js": "^2.116.0",
     "@tiptap/extension-link": "^3.30.2",
     "@tiptap/extension-placeholder": "^3.30.2",

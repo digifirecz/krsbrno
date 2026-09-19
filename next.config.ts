@@ -1,4 +1,5 @@
 import type {NextConfig} from 'next';
+import {withSentryConfig} from '@sentry/nextjs/config';
 
 const nextConfig: NextConfig = {
   reactStrictMode: true,
@@ -61,4 +62,10 @@ const nextConfig: NextConfig = {
   },
 };
 
-export default nextConfig;
+export default withSentryConfig(nextConfig, {
+  org: 'digifire',
+  project: 'krsbrno',
+  // Source maps only upload with a SENTRY_AUTH_TOKEN set (not configured yet) — silent
+  // keeps the build quiet about that instead of warning on every build.
+  silent: true,
+});

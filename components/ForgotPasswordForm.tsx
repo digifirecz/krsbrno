@@ -71,8 +71,7 @@ export default function ForgotPasswordForm() {
             onChange={(e) => setEmail(e.target.value)}
             onBlur={() => setEmailTouched(true)}
             aria-invalid={emailInvalid}
-            placeholder="např. clen@krsbrno.cz"
-            className={`w-full pl-10 pr-4 py-3 bg-neutral-50/50 border rounded-xl text-neutral-900 text-sm focus:outline-none focus:ring-2 focus:ring-[#c93838]/20 focus:border-[#c93838] transition-all placeholder:text-neutral-400 ${
+            className={`w-full pl-10 pr-4 py-3 bg-neutral-50/50 border rounded-xl text-neutral-900 text-sm focus:outline-none focus:ring-2 focus:ring-[#c93838]/20 focus:border-[#c93838] transition-all ${
               emailInvalid ? 'border-[#c93838]' : 'border-neutral-200'
             }`}
             autoFocus

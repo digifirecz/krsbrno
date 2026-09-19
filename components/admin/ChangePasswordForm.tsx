@@ -7,9 +7,10 @@ import { changePassword } from '@/lib/actions/auth';
 interface ChangePasswordFormProps {
   onSuccess?: () => void;
   submitLabel?: string;
+  className?: string;
 }
 
-export default function ChangePasswordForm({ onSuccess, submitLabel = 'Změnit heslo' }: ChangePasswordFormProps) {
+export default function ChangePasswordForm({ onSuccess, submitLabel = 'Změnit heslo', className = 'max-w-sm' }: ChangePasswordFormProps) {
   const [currentPassword, setCurrentPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
@@ -60,7 +61,7 @@ export default function ChangePasswordForm({ onSuccess, submitLabel = 'Změnit h
   }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4 font-sans max-w-sm">
+    <form onSubmit={handleSubmit} className={`space-y-4 font-sans ${className}`}>
       {error && (
         <div className="bg-red-50 border border-red-200 rounded-xl p-3.5 flex items-start space-x-3 text-red-800 text-xs sm:text-sm">
           <AlertCircle className="w-5 h-5 text-[#c93838] shrink-0 mt-0.5" />
@@ -79,7 +80,7 @@ export default function ChangePasswordForm({ onSuccess, submitLabel = 'Změnit h
             required
             value={currentPassword}
             onChange={(e) => setCurrentPassword(e.target.value)}
-            className="w-full pl-10 pr-4 py-2.5 bg-neutral-50/50 border border-neutral-200 rounded-xl text-neutral-900 text-sm focus:outline-none focus:ring-2 focus:ring-[#c93838]/20 focus:border-[#c93838] transition-all"
+            className="w-full pl-10 pr-4 py-3 bg-neutral-50/50 border border-neutral-200 rounded-xl text-neutral-900 text-sm focus:outline-none focus:ring-2 focus:ring-[#c93838]/20 focus:border-[#c93838] transition-all"
           />
         </div>
       </div>
@@ -95,7 +96,7 @@ export default function ChangePasswordForm({ onSuccess, submitLabel = 'Změnit h
             required
             value={newPassword}
             onChange={(e) => setNewPassword(e.target.value)}
-            className="w-full pl-10 pr-11 py-2.5 bg-neutral-50/50 border border-neutral-200 rounded-xl text-neutral-900 text-sm focus:outline-none focus:ring-2 focus:ring-[#c93838]/20 focus:border-[#c93838] transition-all"
+            className="w-full pl-10 pr-11 py-3 bg-neutral-50/50 border border-neutral-200 rounded-xl text-neutral-900 text-sm focus:outline-none focus:ring-2 focus:ring-[#c93838]/20 focus:border-[#c93838] transition-all"
           />
           <button
             type="button"
@@ -116,14 +117,14 @@ export default function ChangePasswordForm({ onSuccess, submitLabel = 'Změnit h
           required
           value={confirmPassword}
           onChange={(e) => setConfirmPassword(e.target.value)}
-          className="w-full px-4 py-2.5 bg-neutral-50/50 border border-neutral-200 rounded-xl text-neutral-900 text-sm focus:outline-none focus:ring-2 focus:ring-[#c93838]/20 focus:border-[#c93838] transition-all"
+          className="w-full px-4 py-3 bg-neutral-50/50 border border-neutral-200 rounded-xl text-neutral-900 text-sm focus:outline-none focus:ring-2 focus:ring-[#c93838]/20 focus:border-[#c93838] transition-all"
         />
       </div>
 
       <button
         type="submit"
         disabled={loading}
-        className="w-full py-3 px-4 bg-[#c93838] hover:bg-[#b02f2f] text-white font-semibold rounded-xl text-sm shadow-md shadow-red-500/20 transition-all cursor-pointer disabled:opacity-70"
+        className="w-full py-3.5 px-4 bg-[#c93838] hover:bg-[#b02f2f] text-white font-semibold rounded-xl text-sm shadow-md shadow-red-500/20 transition-all cursor-pointer disabled:opacity-70"
       >
         {loading ? 'Ukládám…' : submitLabel}
       </button>

@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import path from 'node:path';
 import { randomUUID } from 'node:crypto';
 import sharp from 'sharp';
+import * as Sentry from '@sentry/nextjs';
 import { getSession } from '@/lib/auth/session';
 import { supabaseAdmin } from '@/lib/supabaseAdmin';
 
@@ -162,9 +163,10 @@ export async function POST(req: Request) {
   if (kind === IMAGE) {
     try {
       bytes = await compressImage(bytes, ext);
-    } catch {
+    } catch (err) {
       // Most likely a mislabeled/corrupt file (e.g. a HEIC renamed to .jpg —
       // real HEIC exports are already blocked by the extension allowlist above).
+      Sentry.captureException(err, { extra: { objectPath } });
       return NextResponse.json({ error: 'Obrázek se nepodařilo zpracovat. Zkuste jej exportovat jako JPEG.' }, { status: 400 });
     }
   }
@@ -174,6 +176,7 @@ export async function POST(req: Request) {
     upsert: false,
   });
   if (error) {
+    Sentry.captureException(error, { extra: { objectPath, bucket: kind.bucket } });
     return NextResponse.json({ error: 'Nahrání se nezdařilo.' }, { status: 500 });
   }
 
@@ -190,6 +193,7 @@ export async function DELETE(req: Request) {
   if (!parsed) {
     return NextResponse.json({ error: 'Neplatná cesta.' }, { status: 400 });
   }
-  await supabaseAdmin.storage.from(parsed.bucket).remove([parsed.objectPath]);
+  const { error } = await supabaseAdmin.storage.from(parsed.bucket).remove([parsed.objectPath]);
+  if (error) Sentry.captureException(error, { extra: { objectPath: parsed.objectPath, bucket: parsed.bucket } });
   return NextResponse.json({ ok: true });
 }

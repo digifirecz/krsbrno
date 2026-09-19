@@ -7,102 +7,94 @@ import * as data from '@/lib/data/pages';
 import type { BlockInstance, PageDoc } from '@/lib/blocks/types';
 import type { CustomPage, PageSlugEntry, PageNavEntry, NavGroup, ManagedPage } from '@/lib/pages';
 import { requireSession } from '@/lib/auth/session';
+import { withAction } from '@/lib/sentryAction';
 
 // Public — every content section on the site renders its blocks through this.
-export async function getPageBlocks(pageId: string): Promise<BlockInstance[] | null> {
+export const getPageBlocks = withAction('pages.getPageBlocks', async (pageId: string): Promise<BlockInstance[] | null> => {
   return data.getPageBlocks(pageId);
-}
+});
 
-export async function getPageDoc(pageId: string): Promise<PageDoc | null> {
+export const getPageDoc = withAction('pages.getPageDoc', async (pageId: string): Promise<PageDoc | null> => {
   await requireSession();
   return data.getPageDoc(pageId);
-}
+});
 
-export async function savePageBlocks(
-  pageId: string,
-  blocks: BlockInstance[],
-  title?: string | null,
-  updatedBy?: string | null,
-  navConfig?: { headerGroupId?: string; headerIcon?: string },
-): Promise<string> {
+export const savePageBlocks = withAction('pages.savePageBlocks', async (pageId: string, blocks: BlockInstance[], title?: string | null, updatedBy?: string | null, navConfig?: { headerGroupId?: string; headerIcon?: string }): Promise<string> => {
   await requireSession();
   return data.savePageBlocks(pageId, blocks, title, updatedBy, navConfig);
-}
+});
 
-export async function getCustomPages(): Promise<CustomPage[]> {
+export const getCustomPages = withAction('pages.getCustomPages', async (): Promise<CustomPage[]> => {
   await requireSession();
   return data.getCustomPages();
-}
+});
 
-export async function getManagedPages(): Promise<ManagedPage[]> {
+export const getManagedPages = withAction('pages.getManagedPages', async (): Promise<ManagedPage[]> => {
   await requireSession();
   return data.getManagedPages();
-}
+});
 
-export async function getProtectedPageId(): Promise<string | null> {
+export const getProtectedPageId = withAction('pages.getProtectedPageId', async (): Promise<string | null> => {
   await requireSession();
   return data.getProtectedPageId();
-}
+});
 
 // Public — used by lib/routes.ts to resolve incoming URLs for managed pages.
-export async function getAllPageSlugs(): Promise<PageSlugEntry[]> {
+export const getAllPageSlugs = withAction('pages.getAllPageSlugs', async (): Promise<PageSlugEntry[]> => {
   return data.getAllPageSlugs();
-}
+});
 
 // Public — fetched server-side via lib/chromeData.ts for the Navbar/Footer.
-export async function getNavConfig(): Promise<PageNavEntry[]> {
+export const getNavConfig = withAction('pages.getNavConfig', async (): Promise<PageNavEntry[]> => {
   return data.getNavConfig();
-}
+});
 
-export async function setNavVisibility(
-  pageId: string,
-  visibility: { showInHeader?: boolean; showInFooter?: boolean; headerGroupId?: string; headerIcon?: string },
-): Promise<void> {
+export const setNavVisibility = withAction('pages.setNavVisibility', async (pageId: string, visibility: { showInHeader?: boolean; showInFooter?: boolean; headerGroupId?: string; headerIcon?: string }): Promise<void> => {
   await requireSession();
   return data.setNavVisibility(pageId, visibility);
-}
+});
 
 // Public — used by lib/routes.ts to resolve incoming URLs for managed pages.
-export async function resolvePageBySlug(slug: string): Promise<{ pageId: string; redirectSlug?: string } | null> {
+export const resolvePageBySlug = withAction('pages.resolvePageBySlug', async (slug: string): Promise<{ pageId: string; redirectSlug?: string } | null> => {
   return data.resolvePageBySlug(slug);
-}
+});
 
-export async function createPage(label: string, createdBy?: string | null): Promise<string> {
+export const createPage = withAction('pages.createPage', async (label: string, createdBy?: string | null): Promise<string> => {
   await requireSession();
   return data.createPage(label, createdBy);
-}
+});
 
-export async function deletePage(pageId: string): Promise<void> {
+export const deletePage = withAction('pages.deletePage', async (pageId: string): Promise<void> => {
   await requireSession();
   return data.deletePage(pageId);
-}
+});
 
 // Public — fetched server-side (app/page.tsx, app/[slug]/page.tsx) to know which managed page to render at "/".
-export async function getHomePageId(): Promise<string | null> {
+export const getHomePageId = withAction('pages.getHomePageId', async (): Promise<string | null> => {
   return data.getHomePageId();
-}
+});
 
-export async function setHomePageId(pageId: string | null): Promise<void> {
+export const setHomePageId = withAction('pages.setHomePageId', async (pageId: string | null): Promise<void> => {
   await requireSession();
   return data.setHomePageId(pageId);
-}
+});
 
-export async function getNavGroups(): Promise<NavGroup[]> {
+export const getNavGroups = withAction('pages.getNavGroups', async (): Promise<NavGroup[]> => {
   await requireSession();
   return data.getNavGroups();
-}
+});
 
-export async function createNavGroup(label: string, createdBy?: string | null): Promise<NavGroup> {
+export const createNavGroup = withAction('pages.createNavGroup', async (label: string, createdBy?: string | null): Promise<NavGroup> => {
   await requireSession();
   return data.createNavGroup(label, createdBy);
-}
+});
 
-export async function updateNavGroup(id: string, label: string, updatedBy?: string | null): Promise<void> {
+export const updateNavGroup = withAction('pages.updateNavGroup', async (id: string, label: string, updatedBy?: string | null): Promise<void> => {
   await requireSession();
   return data.updateNavGroup(id, label, updatedBy);
-}
+});
 
-export async function deleteNavGroup(groupId: string): Promise<void> {
+export const deleteNavGroup = withAction('pages.deleteNavGroup', async (groupId: string): Promise<void> => {
   await requireSession();
   return data.deleteNavGroup(groupId);
-}
+});

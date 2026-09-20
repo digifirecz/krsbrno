@@ -90,6 +90,10 @@ export default function SetPasswordModal({ email, onClose, onSubmit }: SetPasswo
           {passwordTooShort && <p className="text-xs font-medium text-[#c93838] mt-1">Heslo musí mít alespoň 8 znaků.</p>}
         </div>
 
+        <p className="text-xs text-neutral-400">
+          Bere se jako dočasné heslo — po přihlášení bude uživatel vyzván, aby si hned nastavil svoje vlastní.
+        </p>
+
         {error && <p className="text-xs font-medium text-[#c93838]">{error}</p>}
 
         <div className="flex justify-end space-x-2 pt-1">

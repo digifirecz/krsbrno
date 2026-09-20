@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { logout } from '@/lib/actions/auth';
-import { LogOut, LayoutDashboard, FileText, Users, Settings, LayoutTemplate, Newspaper, Layers, ChevronDown, AudioLines, Tag, Mic, MessageSquare, KeyRound } from 'lucide-react';
+import { LogOut, LayoutDashboard, FileText, Users, Settings, LayoutTemplate, Newspaper, Layers, ChevronDown, AudioLines, Tag, Mic, MessageSquare, UserCircle, KeyRound } from 'lucide-react';
 import { getPathForTab } from '@/lib/routes';
 import type { Role } from '@/lib/roles';
 
@@ -33,6 +33,8 @@ const SERMONS_GROUP_ITEMS = [
   { href: '/admin/recnici-zaznamu', label: 'Řečníci', icon: Mic },
 ];
 
+const ACCOUNT_GROUP_ITEMS = [{ href: '/admin/ucet', label: 'Změnit heslo', icon: KeyRound }];
+
 export default function AdminLayout({ children, user, setActiveTab }: AdminLayoutProps) {
   const pathname = usePathname();
   const router = useRouter();
@@ -42,6 +44,8 @@ export default function AdminLayout({ children, user, setActiveTab }: AdminLayou
   const [pagesGroupOpen, setPagesGroupOpen] = useState(true);
   const sermonsGroupActive = SERMONS_GROUP_ITEMS.some((item) => pathname === item.href || pathname.startsWith(`${item.href}/`));
   const [sermonsGroupOpen, setSermonsGroupOpen] = useState(true);
+  const accountGroupActive = ACCOUNT_GROUP_ITEMS.some((item) => pathname === item.href || pathname.startsWith(`${item.href}/`));
+  const [accountGroupOpen, setAccountGroupOpen] = useState(true);
 
   const handleLogout = async () => {
     await logout();
@@ -193,17 +197,46 @@ export default function AdminLayout({ children, user, setActiveTab }: AdminLayou
               <span>Nastavení stránky</span>
             </Link>
 
-            <Link
-              href="/admin/ucet"
-              className={`flex items-center space-x-3 w-full px-4 py-3 rounded-xl text-sm font-semibold transition-colors cursor-pointer ${
-                isActive('/admin/ucet', false)
-                  ? 'bg-red-50 text-[#c93838]'
-                  : 'text-neutral-600 font-medium hover:bg-neutral-50 hover:text-neutral-900'
-              }`}
-            >
-              <KeyRound className="w-5 h-5" />
-              <span>Změnit heslo</span>
-            </Link>
+            <div>
+              <button
+                type="button"
+                onClick={() => setAccountGroupOpen((v) => !v)}
+                className={`flex items-center justify-between w-full px-4 py-3 rounded-xl text-sm font-semibold transition-colors cursor-pointer ${
+                  accountGroupActive
+                    ? 'text-[#c93838]'
+                    : 'text-neutral-600 font-medium hover:bg-neutral-50 hover:text-neutral-900'
+                }`}
+              >
+                <span className="flex items-center space-x-3">
+                  <UserCircle className="w-5 h-5" />
+                  <span>Můj účet</span>
+                </span>
+                <ChevronDown className={`w-4 h-4 transition-transform ${accountGroupOpen ? '' : '-rotate-90'}`} />
+              </button>
+
+              {accountGroupOpen && (
+                <div className="pl-4 space-y-1 pt-1">
+                  {ACCOUNT_GROUP_ITEMS.map((item) => {
+                    const active = isActive(item.href, false);
+                    const Icon = item.icon;
+                    return (
+                      <Link
+                        key={item.href}
+                        href={item.href}
+                        className={`flex items-center space-x-3 w-full px-4 py-2.5 rounded-xl text-sm transition-colors cursor-pointer ${
+                          active
+                            ? 'bg-red-50 text-[#c93838] font-semibold'
+                            : 'text-neutral-500 font-medium hover:bg-neutral-50 hover:text-neutral-900'
+                        }`}
+                      >
+                        <Icon className="w-4 h-4" />
+                        <span>{item.label}</span>
+                      </Link>
+                    );
+                  })}
+                </div>
+              )}
+            </div>
 
             <div className="mt-auto pt-8">
               <button
